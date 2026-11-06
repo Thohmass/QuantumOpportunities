@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "series.schema.json",
+  "title": "Series (a recurring event)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "cadence"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 50 },
+    "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "organizers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" }
+    },
+    "cadence": { "enum": ["annual", "biennial", "irregular", "one_off"] },
+    "typical_month": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "url": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "aliases": { "type": "array", "items": { "type": "string", "maxLength": 120 } },
+    "note": { "type": "string", "maxLength": 300 }
+  }
+}

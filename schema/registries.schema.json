@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "registries.schema.json",
+  "title": "Pipeline registries: sources, queries, leads, not-duplicates, redirects, taxonomies",
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 60 },
+    "fullDate": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "url": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "url", "kind"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "name": { "type": "string" },
+          "url": { "$ref": "#/$defs/url" },
+          "kind": {
+            "enum": ["aggregator", "organiser", "community", "university", "company", "other"]
+          },
+          "covers": { "type": "array", "items": { "type": "string" } },
+          "last_scanned": { "$ref": "#/$defs/fullDate" },
+          "scans": { "type": "integer", "minimum": 0 },
+          "yield": { "type": "integer", "minimum": 0 },
+          "zero_yield_streak": { "type": "integer", "minimum": 0 },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "queries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["q"],
+        "properties": {
+          "q": { "type": "string", "minLength": 3 },
+          "last_used": { "$ref": "#/$defs/fullDate" },
+          "uses": { "type": "integer", "minimum": 0 },
+          "yield": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "leads": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "found", "hint"],
+        "properties": {
+          "title": { "type": "string" },
+          "found": { "$ref": "#/$defs/fullDate" },
+          "hint": { "type": "string" },
+          "url": { "type": "string" },
+          "tries": { "type": "integer", "minimum": 0 },
+          "last_tried": { "$ref": "#/$defs/fullDate" }
+        }
+      }
+    },
+    "notDuplicates": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [{ "$ref": "#/$defs/id" }, { "$ref": "#/$defs/id" }],
+        "items": false,
+        "minItems": 2
+      }
+    },
+    "redirects": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/id" }
+    },
+    "taxonomy": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9_]+(-[a-z0-9_]+)*$" },
+          "name": { "type": "string" },
+          "parent": { "type": "string" }
+        }
+      }
+    }
+  }
+}

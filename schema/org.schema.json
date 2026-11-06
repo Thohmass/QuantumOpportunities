@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "org.schema.json",
+  "title": "Organisation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "type"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$", "maxLength": 60 },
+    "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "type": {
+      "enum": ["university", "company", "research_institute", "community", "government", "other"]
+    },
+    "parent": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "city": { "type": "string", "maxLength": 80 },
+    "url": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "aliases": { "type": "array", "items": { "type": "string", "maxLength": 120 } }
+  }
+}

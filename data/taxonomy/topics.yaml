@@ -1,0 +1,26 @@
+# Topics, hierarchical: picking a parent in the filter includes its children.
+# Editable only by humans (protected path).
+- { id: computing, name: Quantum computing }
+- { id: qc-hardware, name: Hardware, parent: computing }
+- { id: hw-superconducting, name: Superconducting qubits, parent: qc-hardware }
+- { id: hw-trapped-ions, name: Trapped ions, parent: qc-hardware }
+- { id: hw-photonics, name: Photonics, parent: qc-hardware }
+- { id: hw-neutral-atoms, name: Neutral atoms, parent: qc-hardware }
+- { id: hw-spins, name: Spins and semiconductors, parent: qc-hardware }
+- { id: hw-topological, name: Topological, parent: qc-hardware }
+- { id: qc-algorithms, name: Algorithms and applications, parent: computing }
+- { id: qc-software, name: Software and compilers, parent: computing }
+- { id: qec, name: Error correction and fault tolerance, parent: computing }
+- { id: qc-benchmarking, name: Benchmarking, parent: computing }
+- { id: communication, name: Quantum communication }
+- { id: qkd, name: QKD and quantum cryptography, parent: communication }
+- { id: networks, name: Networks and quantum internet, parent: communication }
+- { id: sensing, name: Quantum sensing and metrology }
+- { id: simulation, name: Quantum simulation }
+- { id: qml, name: Quantum machine learning }
+- { id: qit, name: Quantum information theory and foundations }
+- { id: materials, name: Quantum materials and condensed matter }
+- { id: optics, name: Quantum optics and atomic physics }
+- { id: pqc, name: Post-quantum cryptography }
+- { id: education, name: Education and outreach }
+- { id: business, name: 'Business, policy and ethics' }
