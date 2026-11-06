@@ -19,6 +19,10 @@ class DataPrs(unittest.TestCase):
         self.assertTrue(d.passed)
         self.assertTrue(d.auto_merge_eligible)
 
+    def test_agent_run_log_and_leads_auto_merge(self):
+        d = decide([F("data/runs.yaml", "modified"), F("data/leads.yaml", "modified"), F("data/queries.yaml", "modified")])
+        self.assertTrue(d.auto_merge_eligible)
+
     def test_agent_new_event_auto_merges(self):
         d = decide([F("data/events/2027/new-hack-2027.yaml", "added"), F("data/orgs/new-org.yaml", "added")])
         self.assertTrue(d.auto_merge_eligible)

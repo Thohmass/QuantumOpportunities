@@ -1,0 +1,21 @@
+name: Correction
+description: Something about an event is wrong or out of date.
+title: "Correction: "
+labels: [correction]
+body:
+  - type: input
+    id: event
+    attributes:
+      label: Event (name or id)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong, and what is correct?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source link for the correct information

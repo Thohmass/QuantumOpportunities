@@ -1,0 +1,25 @@
+name: Suggest an event
+description: A quantum hackathon, conference, school or programme that's missing.
+title: "Suggestion: "
+labels: [suggestion]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks! The weekly Scout agent checks suggestions against the official page and adds them.
+  - type: input
+    id: name
+    attributes:
+      label: Event name
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Official link
+      description: The organiser's page for this edition.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Anything else (dates, place, deadlines)

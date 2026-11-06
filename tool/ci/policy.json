@@ -37,6 +37,7 @@
       "data/leads.yaml",
       "data/sources.yaml",
       "data/queries.yaml",
+      "data/runs.yaml",
       "data/not-duplicates.yaml",
       "data/redirects.yaml"
     ],

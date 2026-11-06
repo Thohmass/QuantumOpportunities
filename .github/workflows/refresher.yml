@@ -1,0 +1,117 @@
+# Data agent: re-checks events with missing or stale data (agents/refresher.md, docs/04-data-pipeline.md).
+# Claude only reads the web and edits files under data/. Deterministic steps before and after it prepare the
+# queue, check that only data/ changed, validate, and open the PR as the Claude App.
+name: Refresher
+
+on:
+  schedule:
+    - cron: "23 4 * * 1,4" # Monday and Thursday, 04:23 UTC
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max events to check"
+        default: "25"
+
+permissions: {}
+
+concurrency:
+  group: data-agents
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  refresh:
+    name: refresh
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+      id-token: write # exchanged for the Claude App token
+    env:
+      LIMIT: ${{ github.event.inputs.limit || '25' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - run: npm ci --ignore-scripts
+
+      - name: Skip if an earlier data PR is still open
+        id: open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          n=$(gh pr list -R "$REPO" --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("data/"))] | length')
+          echo "open=$n" >> "$GITHUB_OUTPUT"
+          [ "$n" = "0" ] || echo "::notice::An agent data PR is still open; skipping this run."
+
+      - name: Expected editions, link check and queue (no AI)
+        id: prep
+        if: steps.open.outputs.open == '0'
+        run: |
+          mkdir -p .run
+          npm run --silent stubs | tee .run/stubs.txt
+          npm run --silent linkcheck -- --out .run/flags.txt || true
+          npm run --silent queue -- --limit "$LIMIT" --flag "$(cat .run/flags.txt 2>/dev/null)" | tee .run/queue.txt
+          due=$(grep -cv '^#' .run/queue.txt || true)
+          echo "due=$due" >> "$GITHUB_OUTPUT"
+
+      - name: Refresher agent
+        id: claude
+        if: steps.open.outputs.open == '0' && steps.prep.outputs.due != '0'
+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the Refresher data agent of Quantum Opportunities. Today is the date of this run.
+            Read CLAUDE.md, agents/common-rules.md and agents/refresher.md, then work through .run/queue.txt.
+            Write your report to .run/report.md and finish with `npm run data:check` passing.
+          claude_args: >-
+            --model claude-sonnet-5-5
+            --max-turns 90
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run find-similar:*),Bash(npm run index),Bash(npm run queue:*)"
+
+      - name: Only data/ changed, and the data is valid
+        if: steps.claude.outcome == 'success'
+        id: guard
+        run: |
+          outside=$(git status --porcelain --untracked-files=all -- . ':!data' ':!.run' | wc -l)
+          protected=$(git status --porcelain --untracked-files=all -- data/taxonomy data/LICENSE | wc -l)
+          if [ "$outside" != "0" ] || [ "$protected" != "0" ]; then
+            git status --porcelain --untracked-files=all
+            echo "::error::The agent changed files outside data/ (or protected data files). Nothing is committed."
+            exit 1
+          fi
+          npm run data:check
+          echo "changed=$(git status --porcelain --untracked-files=all -- data | wc -l)" >> "$GITHUB_OUTPUT"
+
+      - name: Open the data PR as the Claude App
+        if: steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ steps.claude.outputs.github_token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          branch="data/refresh/$(date -u +%F)-${GITHUB_RUN_ID}"
+          git config user.name "claude[bot]"
+          git config user.email "41898282+claude[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add data
+          git commit -q -m "Refresher run $(date -u +%F)"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" "$branch"
+          {
+            [ -f .run/report.md ] && cat .run/report.md || echo "_The agent wrote no report._"
+            echo; echo "---"
+            echo "Expected editions created by script:"; echo '```'; cat .run/stubs.txt; echo '```'
+            echo "[Workflow run]($RUN_URL) · automated data PR: merges on its own when every check passes."
+          } > .run/body.md
+          gh pr create -R "$REPO" --head "$branch" --base main --title "Data: Refresher run $(date -u +%F)" --body-file .run/body.md
