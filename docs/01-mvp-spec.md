@@ -1,0 +1,54 @@
+# MVP Spec (v0.1)
+
+Status: built · 6 Nov 2026
+
+## 1. Goal
+
+A public site on GitHub Pages with linked map, timeline and list views over a seeded dataset of real events, shared search and filters, honest rendering of unknown and expected data, and a working agent data pipeline.
+
+## 2. Layout and state
+
+- **Header:** name; view switcher (Explore on wide screens · List · Timeline · Map); About; search (`/` focuses it); Filters button (drawer on phones and tablets, sidebar from 960 px); result count.
+- **Explore (≥ 1100 px, default there):** map top-left, timeline bottom-left, list on the right, all on one screen.
+- **Active filters** show as removable chips with *Clear all*.
+- **All views share one filtered result set.**
+- **URL state:** view, search and filters live in the hash (`#/map?type=hackathon&country=DK&e=qip-2027`), so any view can be shared or bookmarked; `e=` opens an event. Opening events and switching views create history entries (back button works).
+
+## 3. Linked views (07-design-vision)
+
+- **Cross-highlighting:** hovering or focusing an event in any view highlights it in all others (card outline, timeline bar ring, map halo + tooltip) and scrolls it into sight in the list and timeline.
+- **Map as a lens:** events outside the visible map area are dimmed in the list and timeline; *Only map area* hides them instead. Online events are never dimmed by the map.
+- **Timeline selection:** click a month, a week (W45) or a day (in Week zoom), or drag across the timeline with the mouse, to set the date filter; the selection is shaded and *Clear dates* removes it. The timeline keeps showing events outside the selection, dimmed, so a selection never loses context.
+
+## 4. Views
+
+- **List:** grouped by month of the next relevant date (next open deadline, else start); sorts: next date, start date, recently added, recently checked. Cards show dates, name, status, type, cost, place, next deadline with days left, topics. Expected events have dashed borders.
+- **Timeline:** zoom Week / Month / Quarter / Year, *Today* button, today line. Bars from start to end; expected editions striped; month- or year-precision dates have faded ends; deadlines are diamonds on the same row.
+- **Map:** clustered markers (filled = confirmed, dashed hollow = expected, grey = past); *Fit to results*; a chip with the number of online events that filters to them. Map code loads only when a map is first shown.
+- **Event detail:** side panel on desktop, bottom sheet on mobile, Esc closes. All fields; unknowns read *Not found yet*; expected banner with basis and confidence; official page, registration, add to calendar (.ics, when days are known), copy link; missing-fields note with a "tell us" link; sources with access dates; last checked; links to the data file and its history; correction by email or issue.
+- **About:** how to read the data, data health (upcoming count, share of events with each key field, last runs), how it stays current, how to help, licences and credits.
+
+## 5. Filters
+
+Search (fuzzy, prefix) · when (presets: next 30 days, next 3 months, this year, next year, pick dates; optionally match deadlines) · applications (open now, closing within 2 weeks) · show expected / past / cancelled · event type · topic (parents include children) · format · continent (incl. online only) · country · city · organiser type · organiser · cost (free / paid / not found yet) · travel support · real quantum hardware · audience (incl. not found yet). Options show counts that ignore their own facet; options with 0 results are greyed out.
+
+## 6. Non-functional targets
+
+- Initial JS ≤ 100 KB gzip (v0.1: ~43 KB); event data ≤ 150 KB gzip; enforced by `scripts/size-budget.ts` in CI.
+- 360 px phones to wide desktops; touch targets ≥ 34–44 px; keyboard navigable; visible focus; status never shown by colour alone; reduced motion respected; light and dark themes.
+- No cookies, no analytics, no third-party requests except map tiles.
+
+## 7. Out of scope for v0.1
+
+Accounts, notifications, a submission form with its own backend, newsletter/channel, saved filters, PWA/offline, translations, job/PhD/grant listings, the visual identity and Easter eggs (06-roadmap, 07-design-vision).
+
+## 8. Acceptance criteria
+
+1. Live on GitHub Pages; deploys on merge to `main`.
+2. Seeded data validates (`npm run data:check`).
+3. Explore, list, timeline and map show the same filtered set; filters live in the URL.
+4. Unknowns render as *Not found yet*; expected events are distinct in every view.
+5. Every event shows at least one source and a last-checked date.
+6. Size budgets pass in CI.
+7. A Scout run and a Refresher run produce data-only PRs that pass the gates and merge (after the ruleset exists).
+8. A planted duplicate fails CI (unit-tested).
