@@ -161,24 +161,35 @@
   });
   const outside = (e: Ev) => !!sel && !(e.span[0] <= sel[1] && sel[0] <= e.span[1]);
 
+  // Mouse drag anywhere below the header selects a range. Capture starts only after the pointer moves, so a
+  // plain click on a bar still opens the event. Touch keeps native scrolling; header cells select on tap.
   let drag: { x0: number; x1: number } | undefined = $state();
+  let pending: { x: number; id: number } | undefined;
   let canvas: HTMLDivElement | undefined = $state();
   const localX = (ev: PointerEvent) => ev.clientX - canvas!.getBoundingClientRect().left;
   function down(ev: PointerEvent) {
-    if (ev.pointerType !== 'mouse' || ev.button !== 0) return; // touch scrolls; header cells select
-    if ((ev.target as HTMLElement).closest('button')) return;
-    drag = { x0: localX(ev), x1: localX(ev) };
-    canvas!.setPointerCapture(ev.pointerId);
+    if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
+    if ((ev.target as HTMLElement).closest('.head')) return;
+    pending = { x: localX(ev), id: ev.pointerId };
   }
   function move(ev: PointerEvent) {
-    if (drag) drag.x1 = localX(ev);
+    if (drag) {
+      drag.x1 = localX(ev);
+    } else if (pending && Math.abs(localX(ev) - pending.x) > 6) {
+      drag = { x0: pending.x, x1: localX(ev) };
+      canvas!.setPointerCapture(pending.id);
+    }
   }
   function up() {
+    pending = undefined;
     if (!drag) return;
     const [a, b] = [Math.min(drag.x0, drag.x1), Math.max(drag.x0, drag.x1)];
-    if (b - a > 4) selectRange(isoDay(dayAt(a)), isoDay(dayAt(b)));
+    selectRange(isoDay(dayAt(a)), isoDay(dayAt(b)));
     drag = undefined;
+    suppressClick = true;
+    setTimeout(() => (suppressClick = false), 0);
   }
+  let suppressClick = false;
 
   // ---- scrolling -------------------------------------------------------------
   let scroller: HTMLDivElement | undefined = $state();
@@ -244,7 +255,7 @@
         onpointerdown={down}
         onpointermove={move}
         onpointerup={up}
-        onpointercancel={() => (drag = undefined)}
+        onpointercancel={() => ((drag = undefined), (pending = undefined))}
         role="presentation"
       >
         {#each months as m (m.from)}
@@ -308,7 +319,7 @@
             class:faded
             style:left="{p.left}px"
             style:top="{top}px"
-            onclick={() => openEvent(p.e.id)}
+            onclick={() => !suppressClick && openEvent(p.e.id)}
             onmouseenter={() => hover(p.e.id)}
             onmouseleave={() => hover(undefined)}
             onfocus={() => hover(p.e.id)}
