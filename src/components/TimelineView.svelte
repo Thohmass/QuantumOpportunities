@@ -42,8 +42,15 @@
 
   // ---- header cells: months, then weeks or days ----------------------------
   const months = $derived.by(() => {
-    const out: { x: number; w: number; label: string; from: string; to: string; year: boolean }[] =
-      [];
+    const out: {
+      x: number;
+      w: number;
+      label: string;
+      aria: string;
+      from: string;
+      to: string;
+      year: boolean;
+    }[] = [];
     const d = new Date(range[0]);
     while (d.getTime() <= range[1]) {
       const y = d.getUTCFullYear();
