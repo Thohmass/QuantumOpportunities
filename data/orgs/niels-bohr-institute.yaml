@@ -1,0 +1,8 @@
+id: niels-bohr-institute
+name: Niels Bohr Institute
+type: university
+parent: university-of-copenhagen
+country: DK
+city: Copenhagen
+url: https://nbi.ku.dk/
+aliases: [NBI]

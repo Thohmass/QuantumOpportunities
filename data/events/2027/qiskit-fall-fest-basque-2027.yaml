@@ -1,0 +1,27 @@
+id: qiskit-fall-fest-basque-2027
+series: qiskit-fall-fest-basque
+name: Qiskit Fall Fest 2027 – Basque Country
+type: hackathon
+status: expected
+format: hybrid
+dates:
+  start: 2027-11
+location:
+  city: San Sebastián
+  country: ES
+organizers: [basq, ibm-quantum]
+topics: [computing, qc-algorithms, qc-software]
+url: https://www.basquequantum.eus/en/events/qiskit-fall-fest-2026
+expected:
+  basis: Annual series; previous edition November 2026
+  confidence: medium
+sources:
+  - url: https://www.basquequantum.eus/en/events/qiskit-fall-fest-2026
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: expected-stub

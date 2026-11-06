@@ -1,0 +1,29 @@
+id: global-quantum-ai-challenge-2027
+series: global-quantum-ai-challenge
+name: Global Quantum + AI Challenge 2027
+type: challenge
+status: expected
+format: online
+dates:
+  start: 2027-04
+  end: 2027-11
+organizers: [the-quantum-insider]
+partners: [classiq]
+topics: [computing, qml, qc-algorithms]
+audience: [industry, researcher]
+eligibility: Enterprises, startups and research teams
+url: https://quantumai.thequantuminsider.com/
+description: Multi-month research-collaboration challenge combining quantum computing and AI, run by The Quantum Insider with Classiq as platform partner.
+expected:
+  basis: The 2026 cycle ran Apr – Nov 2026 (Phase I closed 15 Sep 2026)
+  confidence: medium
+sources:
+  - url: https://quantumai.thequantuminsider.com/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

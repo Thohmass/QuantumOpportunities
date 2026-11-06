@@ -1,0 +1,30 @@
+id: niels-bohr-quantum-summer-school-2027
+series: niels-bohr-quantum-summer-school
+name: Niels Bohr Quantum Summer School 2027
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027"
+location:
+  city: Lyngby
+  country: DK
+  venue: DTU
+organizers: [deic, niels-bohr-institute]
+partners: [dtu]
+topics: [computing]
+audience: [phd]
+eligibility: PhD students
+team: n/a
+url: https://www.deic.dk/en/niels-bohr-quantum-summer-school
+description: Quantum computing summer school for PhD students, announced to be hosted at DTU in 2027, including a group student challenge.
+sources:
+  - url: https://www.deic.dk/en/niels-bohr-quantum-summer-school
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

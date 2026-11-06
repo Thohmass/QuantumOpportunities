@@ -1,0 +1,44 @@
+id: berlin-quantum-hackathon-2027
+series: berlin-quantum-hackathon
+name: Berlin Quantum Hackathon 2027
+type: hackathon
+status: expected
+format: hybrid
+dates:
+  start: 2027-01
+  end: 2027-03
+location:
+  city: Berlin
+  country: DE
+  note: Remote coding phase, final in Berlin
+organizers: [kipu-quantum, berlin-quantum]
+topics: [computing, qc-algorithms, qc-software]
+eligibility: Python skills; quantum experience optional
+team:
+  min: 2
+  max: 5
+  note: Pre-formed teams; six teams picked from 180+ applications (2026)
+hardware:
+  real_qpu: true
+  note: 20+ backends including IBM, IonQ, Rigetti and IQM (2026)
+prizes: "2026: €9k / €6k / €5k in compute credits"
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: Travel and accommodation for all six finalist teams (2026)
+url: https://berlinquantumhackathon.com/
+description: "Application-based team hackathon: selected teams code remotely on real quantum backends for about a month, then six finalist teams pitch at a funded final in Berlin."
+expected:
+  basis: "Annual; 2026 edition: call 18 Nov 2025, remote coding 19 Jan – 20 Feb 2026, final 5 Mar 2026"
+  confidence: medium
+sources:
+  - url: https://berlinquantumhackathon.com/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

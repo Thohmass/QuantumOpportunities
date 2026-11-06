@@ -1,0 +1,31 @@
+id: midqwest-2026
+series: midqwest
+name: MidQWest 2026
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-21
+  end: 2026-11-22
+location:
+  city: Chicago
+  country: US
+  venue: University of Illinois Chicago
+organizers: [midqwest]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc, phd]
+eligibility: Students at US Midwest universities
+cost:
+  kind: free
+url: https://www.midqwest.dev/
+description: Regional quantum hackathon run by student chapters at UIUC, UChicago, Purdue, PNW, UW-Madison and UIC, for students in the US Midwest.
+sources:
+  - url: https://www.midqwest.dev/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

@@ -1,0 +1,29 @@
+id: q2b-chicago-2026
+series: q2b
+name: Q2B26 × Chicago Quantum Summit
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-12-08
+  end: 2026-12-10
+location:
+  city: Chicago
+  country: US
+  venue: Chicago Marriott Marquis
+organizers: [qc-ware]
+topics: [computing, business, qc-hardware]
+audience: [industry, researcher]
+url: https://q2b.qcware.com/conference/2026-chicago
+description: Industry-focused quantum computing conference by QC Ware, held together with the Chicago Quantum Summit, with keynotes, a startup pitch competition and a poster session. In person only.
+sources:
+  - url: https://q2b.qcware.com/ja/conference/2026-chicago
+    kind: official
+    accessed: 2026-11-06
+    note: Japanese version of the official page
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

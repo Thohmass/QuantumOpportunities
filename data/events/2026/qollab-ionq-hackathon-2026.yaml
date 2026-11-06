@@ -1,0 +1,33 @@
+id: qollab-ionq-hackathon-2026
+series: qollab-ionq-hackathon
+name: Qollab × IonQ Global Quantum Hackathon 2026
+type: hackathon
+status: confirmed
+format: online
+dates:
+  start: 2026-10-09
+  end: 2026-10-11
+organizers: [qollab, ionq]
+topics: [computing, qc-algorithms, qc-software]
+audience: [anyone]
+eligibility: 18+, residents of 45 listed countries
+team:
+  max: 4
+hardware:
+  real_qpu: false
+  note: IonQ simulator; hardware time as prizes
+prizes: $10k plus $20k of hardware time
+cost:
+  kind: free
+url: https://qollab.xyz/programs/hackathon
+description: Global online quantum hackathon with distributed university nodes, run by Qollab with IonQ.
+sources:
+  - url: https://qollab.xyz/programs/hackathon
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

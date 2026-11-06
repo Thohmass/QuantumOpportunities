@@ -1,0 +1,34 @@
+id: qiskit-fall-fest-stuttgart-2026
+series: qiskit-fall-fest-stuttgart
+name: Qiskit Fall Fest 2026 – University of Stuttgart
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-09
+  end: 2026-11-11
+  note: Hackathon on 10 Nov, 13:45–20:00
+location:
+  city: Stuttgart
+  country: DE
+  venue: Stuttgart-Vaihingen and IBM Ehningen
+organizers: [university-of-stuttgart, ibm-quantum]
+topics: [computing, simulation, qc-algorithms]
+audience: [bsc, msc, phd]
+eligibility: Students of all levels
+hardware:
+  real_qpu: true
+  note: Circuits run on real IBM quantum hardware
+prizes: IBM Quantum certificate; awards ceremony
+url: https://qiskit-fall-fest-bw.com/
+description: Qiskit Fall Fest with a one-afternoon hackathon (an NMR-simulation prompt from HQS) and a tour of the IBM quantum showroom in Ehningen.
+sources:
+  - url: https://qiskit-fall-fest-bw.com/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

@@ -35,7 +35,7 @@ function trigrams(s: string): Set<string> {
 
 /** Words too common in event names to identify one on their own. */
 const GENERIC = new Set(
-  'quantum hackathon hack conference summer winter school workshop challenge computing computer computers international week symposium meeting annual global european world technology technologies science sciences information days day event fest festival program programme'.split(
+  'quantum hackathon hack conference summer winter school workshop challenge computing computer computers international week symposium meeting annual global european world technology technologies science sciences information days day event fest festival program programme ai ml machine learning'.split(
     ' ',
   ),
 );
@@ -59,7 +59,14 @@ export function nameSimilarity(a: string, b: string): number {
   const [small, large] = wa.size <= wb.size ? [wa, wb] : [wb, wa];
   if (!small.size) return dice;
   let shared = 0;
-  for (const w of small) if (large.has(w)) shared++;
+  let sharedChars = 0;
+  for (const w of small)
+    if (large.has(w)) {
+      shared++;
+      sharedChars += w.length;
+    }
+  // Short shared words ("ai", "uk") are too weak to identify an event.
+  if (sharedChars < 4) return dice;
   return Math.max(dice, (shared / small.size) * 0.9);
 }
 

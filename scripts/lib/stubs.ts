@@ -1,6 +1,6 @@
 // Expected-edition stubs (docs/04-data-pipeline.md §3): for recurring series, predict the next edition
 // from past ones so it shows as "Expected" until an official source announces it.
-import { bounds, eventSpan, isoDay } from '../../src/lib/dates.ts';
+import { bounds, eventSpan, formatPartial, isoDay } from '../../src/lib/dates.ts';
 import type { Confidence, RawEvent, RawSeries } from '../../src/lib/types.ts';
 
 const HORIZON_DAYS = 365;
@@ -49,8 +49,8 @@ export function planStubs(
       dated.length >= 2 ? 'high' : dated.length === 1 ? 'medium' : 'low';
     const past = dated
       .slice(-2)
-      .map((e) => e.dates.start.slice(0, 7))
-      .join(', ');
+      .map((e) => formatPartial(e.dates.start.slice(0, 7)))
+      .join(' and ');
     const today = isoDay(todayMs);
     const sources = last.sources.filter((x) => x.kind === 'official').slice(0, 1);
     const event: RawEvent = {
@@ -70,7 +70,7 @@ export function planStubs(
       ...(last.topics ? { topics: last.topics } : {}),
       ...(s.url || last.url ? { url: s.url ?? last.url } : {}),
       expected: {
-        basis: `${s.cadence} series; previous edition${dated.length > 1 ? 's' : ''} ${past || 'month from the series record'}`,
+        basis: `${s.cadence === 'annual' ? 'Annual' : 'Biennial'} series; previous edition${dated.length > 1 ? 's' : ''} ${past || 'in the month on record for the series'}`,
         confidence,
       },
       sources: sources.length ? sources : last.sources.slice(0, 1),

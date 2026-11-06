@@ -1,0 +1,37 @@
+id: eth-zurich-quantum-hackathon-2027
+series: eth-zurich-quantum-hackathon
+name: ETH Zurich Quantum Hackathon 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-05
+location:
+  city: Zurich
+  country: CH
+  venue: ETH Hönggerberg
+organizers: [amiv-qec]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc, phd]
+eligibility: "2026: students from all universities welcome"
+cost:
+  kind: paid
+  min: 10
+  max: 10
+  currency: CHF
+  note: 2026 participation fee
+url: https://qec.amiv.ethz.ch/
+description: Student hackathon at ETH Hönggerberg run by AMIV’s Quantum Engineering Commission, with sponsors such as Alice & Bob, Zurich Instruments, IQM and QuEra (2026). In person only.
+expected:
+  basis: Annual; last edition 8–10 May 2026
+  confidence: medium
+sources:
+  - url: https://qec.amiv.ethz.ch/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

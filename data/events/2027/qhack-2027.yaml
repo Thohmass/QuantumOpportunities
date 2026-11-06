@@ -1,0 +1,36 @@
+id: qhack-2027
+series: qhack
+name: QHack 2027
+type: hackathon
+status: expected
+format: online
+dates:
+  start: 2027-10
+organizers: [xanadu]
+topics: [computing, qc-software, qml]
+audience: [anyone]
+team:
+  min: 1
+  max: 4
+  note: Solo or teams of up to 4
+hardware:
+  real_qpu: false
+  note: PennyLane simulators
+prizes: "2026: up to US$67,000 cash"
+cost:
+  kind: free
+url: https://qhack.ai/
+description: Xanadu’s online quantum programming competition built around PennyLane, with coding challenges and large cash prizes.
+expected:
+  basis: Annual; QHack 2026 ran 16–23 Oct 2026
+  confidence: medium
+sources:
+  - url: https://qhack.ai/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

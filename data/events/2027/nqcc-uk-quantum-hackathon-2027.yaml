@@ -1,0 +1,34 @@
+id: nqcc-uk-quantum-hackathon-2027
+series: nqcc-uk-quantum-hackathon
+name: NQCC UK Quantum Hackathon 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-08
+organizers: [nqcc]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc, phd]
+eligibility: "2026: students at UK universities or UK residents, 18+"
+team:
+  min: 5
+  max: 5
+  note: About five per team, allocated by NQCC
+hardware:
+  real_qpu: true
+  note: Providers such as IBM and AWS Braket
+url: https://www.nqcc.ac.uk/
+description: The UK National Quantum Computing Centre’s annual hackathon (sixth edition in 2026, at the University of Warwick), with teams allocated by the NQCC.
+expected:
+  basis: Annual; last edition 18–20 Aug 2026 (application deadline 23 Jun 2026)
+  confidence: medium
+sources:
+  - url: https://www.nqcc.ac.uk/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

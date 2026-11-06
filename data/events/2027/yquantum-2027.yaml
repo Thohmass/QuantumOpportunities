@@ -1,0 +1,41 @@
+id: yquantum-2027
+series: yquantum
+name: YQuantum 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-04
+location:
+  city: New Haven
+  country: US
+  venue: Yale University
+organizers: [yale]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc, phd]
+eligibility: Undergraduate and graduate students worldwide; no high-school students
+team:
+  min: 3
+  max: 5
+  note: Pre-formed teams allowed
+prizes: "2024: $2,000 / $1,000 / $500"
+cost:
+  kind: free
+support:
+  travel_grants: false
+  note: No travel reimbursement
+url: https://www.yquantum.dev/
+description: Yale’s student quantum hackathon, run by Yale Undergraduate Quantum Computing and the Yale Quantum Institute with industry sponsors.
+expected:
+  basis: Annual; last edition 4–5 Apr 2026
+  confidence: medium
+sources:
+  - url: https://www.yquantum.dev/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

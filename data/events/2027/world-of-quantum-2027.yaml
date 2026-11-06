@@ -1,0 +1,32 @@
+id: world-of-quantum-2027
+series: world-of-quantum
+name: World of Quantum 2027
+type: other
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-22
+  end: 2027-06-25
+location:
+  city: Munich
+  country: DE
+  venue: Messe München
+organizers: [messe-muenchen]
+topics: [computing, sensing, communication, business]
+audience: [industry, anyone]
+url: https://automatica-munich.com/en/world-of-quantum/
+description: The largest trade fair for quantum technologies (160 exhibitors in 2025), held every two years alongside Laser World of Photonics and automatica, with forums, posters and a PhD symposium.
+sources:
+  - url: https://automatica-munich.com/en/world-of-quantum/
+    kind: official
+    accessed: 2026-11-06
+  - url: https://world-of-quantum.com/en/trade-fair/press/press-releases/
+    kind: official
+    accessed: 2026-11-06
+    note: press release, 7 May 2026
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

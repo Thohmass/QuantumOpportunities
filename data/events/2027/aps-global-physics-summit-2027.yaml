@@ -1,0 +1,31 @@
+id: aps-global-physics-summit-2027
+series: aps-global-physics-summit
+name: APS Global Physics Summit 2027
+type: conference
+status: confirmed
+format: hybrid
+dates:
+  start: 2027-04-11
+  end: 2027-04-16
+location:
+  city: Atlanta
+  country: US
+  venue: Georgia World Congress Center
+organizers: [aps]
+topics: [computing, qit, materials, optics]
+audience: [bsc, msc, phd, postdoc, researcher, industry]
+url: https://www.aps.org/events/2027/summit
+description: The joint APS March and April Meeting, the largest physics research conference in the world (14,000+ attendees), with a large quantum information track and a career fair.
+sources:
+  - url: https://www.aps.org/events/2027/summit
+    kind: official
+    accessed: 2026-11-06
+  - url: https://summit.aps.org/about
+    kind: official
+    accessed: 2026-11-06
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

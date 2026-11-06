@@ -62,6 +62,7 @@ export function validateDataset(ds: Dataset): Report {
     ['data/leads.yaml', ds.leads, 'leads'],
     ['data/not-duplicates.yaml', ds.notDuplicates, 'notDuplicates'],
     ['data/redirects.yaml', ds.redirects, 'redirects'],
+    ['data/runs.yaml', ds.runs, 'runs'],
   ] as const) {
     const fn = v.reg(def);
     if (!fn(list)) errors.push(`${name}: ${schemaErrors(fn)}`);

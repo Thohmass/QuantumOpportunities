@@ -1,0 +1,31 @@
+id: nyuad-hackathon-2027
+series: nyuad-hackathon
+name: NYUAD Hackathon for Social Good 2027
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2027-04-22
+  end: 2027-04-25
+  note: The homepage also says 22–26 Apr
+location:
+  city: Abu Dhabi
+  country: AE
+  venue: NYU Abu Dhabi
+organizers: [nyu-abu-dhabi]
+topics: [computing, qc-algorithms]
+audience: [bsc, msc, phd]
+eligibility: Students worldwide
+prizes: "Past editions: Womanium fellowships and scholarships"
+url: https://hackathon.nyuad.nyu.edu/apply/
+description: The 14th NYU Abu Dhabi Hackathon for Social Good, with a quantum track. Applications for 2027 have closed; the next round usually opens around October.
+sources:
+  - url: https://hackathon.nyuad.nyu.edu/apply/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import
