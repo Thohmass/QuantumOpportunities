@@ -1,5 +1,5 @@
 <script lang="ts">
-  import EventInfo from './EventInfo.svelte';
+  import EventBrief from './EventBrief.svelte';
   import { daysBetween, formatPartial } from '../lib/dates';
   import { NOT_FOUND, costBadge, costText, statusLabel, whenText, whereText } from '../lib/format';
   import { flag } from '../lib/geo';
@@ -26,11 +26,7 @@
   let el: HTMLElement | undefined = $state();
   const hot = $derived(app.hoverId === e.id);
   const open = $derived(expandable && app.eventId === e.id);
-  // Hovered in another view → bring into sight; selected anywhere → scroll to its top.
-  $effect(() => {
-    if (hot && el && !el.matches(':hover'))
-      el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-  });
+  // Selected (clicked) anywhere → scroll to its top. Hovering only highlights, it never scrolls.
   $effect(() => {
     void app.focusTick;
     if (open && el)
@@ -131,7 +127,7 @@
     </div>
   {/if}
   {#if open}
-    <div class="more"><EventInfo {e} {meta} {today} /></div>
+    <div class="more"><EventBrief {e} {meta} /></div>
   {/if}
 </article>
 

@@ -15,6 +15,8 @@ export const app = $state({
   mapOnly: false,
   /** Bumped when an event is selected from a list card, so the map and timeline focus on it. */
   focusTick: 0,
+  /** The full details pop-up is open for the selected event (the list card shows only the essentials). */
+  detailOpen: false,
 });
 
 // ---- preferences kept in this browser ---------------------------------------
@@ -36,13 +38,32 @@ function save(key: string, value: string): void {
   }
 }
 
+function loadNumber(key: string, min: number, max: number, fallback: number): number {
+  try {
+    const v = Number(localStorage.getItem(key));
+    return localStorage.getItem(key) !== null && v >= min && v <= max ? v : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+/** Explore: the map's share of the height it splits with the timeline. */
+export const SPLIT = { min: 0.2, max: 0.8, initial: 0.53 } as const;
+
 export const prefs = $state({
   theme: load<Theme>('qo-theme', ['system', 'light', 'dark'], 'system'),
   layout: load<Layout>('qo-layout', ['grid', 'wide'], 'grid'),
   sidebar: load<'shown' | 'hidden'>('qo-sidebar', ['shown', 'hidden'], 'shown'),
   listOpen: false, // wide layout: list drawer
-  collapsed: [] as string[], // collapsed filter groups (this visit)
+  /** Filter groups the user opened or closed this visit (others use their default). */
+  toggled: [] as string[],
+  split: loadNumber('qo-split', SPLIT.min, SPLIT.max, SPLIT.initial),
 });
+
+export function setSplit(value: number): void {
+  prefs.split = Math.min(SPLIT.max, Math.max(SPLIT.min, value));
+  save('qo-split', prefs.split.toFixed(3));
+}
 
 export function setPref<K extends 'theme' | 'layout' | 'sidebar'>(
   key: K,

@@ -1,75 +1,127 @@
 <script lang="ts">
-  // Our own minimal map: land, sea and country borders only (no tiles, labels, roads or rivers).
-  // Lazy-loaded with its geometry. Panning and zooming move one transformed layer; event dots are drawn on top
-  // at constant size, so it stays smooth on phones.
+  // Our own minimal map: land and sea only (no tiles, borders, labels, roads or rivers). Lazy-loaded with its
+  // geometry. The land is painted on a canvas, redrawn sharply at most once per frame while panning and zooming;
+  // event dots are drawn on top at a constant size. Dots that would overlap snap onto a small hexagonal pattern.
   import { onMount, untrack } from 'svelte';
   import { geoMercator, geoPath, type GeoProjection } from 'd3-geo';
   import { select } from 'd3-selection';
   import 'd3-transition';
   import { zoom as d3zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
   import { formatRange } from '../lib/dates';
+  import { whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
-  import { app, hover, openEvent } from '../lib/state.svelte';
+  import { hexPack } from '../lib/pack';
+  import { app, hover, openEvent, prefs } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
-  import { loadWorld } from '../lib/world';
+  import { loadLand } from '../lib/world';
 
   let { events, meta, compact = false }: { events: Ev[]; meta: Meta; compact?: boolean } = $props();
 
-  const world = loadWorld();
+  /** Closest two dots may come, centre to centre (px). */
+  const SPACING = 15;
+  const land = loadLand();
   let box: HTMLDivElement;
   let svg: SVGSVGElement;
+  let canvas: HTMLCanvasElement;
   let w = $state(0);
   let h = $state(0);
-  let t: ZoomTransform = $state(zoomIdentity);
+  let dpr = $state(1);
+  let t: ZoomTransform = $state.raw(zoomIdentity);
   let moving = $state(false);
   let zoomer: ZoomBehavior<SVGSVGElement, unknown> | undefined;
+  /** Becomes true once the zoom behaviour exists, so the first framing and deep-linked events can run. */
+  let ready = $state(false);
   let fitted = false;
 
-  // ---- projection, fitted to the box --------------------------------------
+  // ---- projection and land, fitted to the box -------------------------------
   const projection = $derived.by((): GeoProjection | undefined => {
     if (!w || !h) return undefined;
-    return geoMercator().fitSize([w, h], world.land);
+    return geoMercator().fitSize([w, h], land);
   });
-  const path = $derived(projection ? geoPath(projection) : undefined);
-  const landD = $derived(path?.(world.land) ?? '');
-  const bordersD = $derived(path?.(world.borders) ?? '');
-  const countryD = $derived(
-    path ? world.countries.map((c) => ({ name: c.properties.name, d: path(c) ?? '' })) : [],
-  );
+  const landPath = $derived.by(() => {
+    if (!projection) return undefined;
+    return new Path2D(geoPath(projection)(land) ?? '');
+  });
 
-  // ---- events: projected once per layout, offset when several share a place ----
+  let colors = { land: '#fff', coast: '#888' };
+  function readColors() {
+    if (!box) return;
+    const cs = getComputedStyle(box);
+    colors = {
+      land: cs.getPropertyValue('--map-land').trim() || colors.land,
+      coast: cs.getPropertyValue('--map-coast').trim() || colors.coast,
+    };
+  }
+  function draw() {
+    const ctx = canvas?.getContext('2d');
+    if (!ctx || !landPath) return;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    ctx.translate(t.x, t.y);
+    ctx.scale(t.k, t.k);
+    ctx.fillStyle = colors.land;
+    ctx.fill(landPath);
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 1.1 / t.k;
+    ctx.strokeStyle = colors.coast;
+    ctx.stroke(landPath);
+  }
+  // Redraw when the view, the size or the shape changes (the canvas is cleared when it is resized).
+  $effect(() => {
+    void w;
+    void h;
+    void dpr;
+    void landPath;
+    void t;
+    draw();
+  });
+  // Theme switches change the colours.
+  $effect(() => {
+    void prefs.theme;
+    requestAnimationFrame(() => (readColors(), draw()));
+  });
+
+  // ---- events: projected once per layout; packed so they never overlap -------------
   interface Dot {
     e: Ev;
     x: number;
     y: number;
-    dx: number;
-    dy: number;
   }
   const dots = $derived.by((): Dot[] => {
     if (!projection) return [];
-    const located = events.filter((e) => e.lat !== undefined && e.lon !== undefined);
-    const groups = new Map<string, Ev[]>();
-    for (const e of located) {
-      const k = `${e.lat!.toFixed(2)},${e.lon!.toFixed(2)}`;
-      groups.set(k, [...(groups.get(k) ?? []), e]);
-    }
     const out: Dot[] = [];
-    for (const list of groups.values()) {
-      list.forEach((e, i) => {
-        const [x, y] = projection([e.lon!, e.lat!]) ?? [0, 0];
-        // Same place: spread around a small circle (constant screen size) so each dot is reachable.
-        const r = list.length > 1 ? 7 + list.length : 0;
-        const a = (2 * Math.PI * i) / list.length - Math.PI / 2;
-        out.push({ e, x, y, dx: r * Math.cos(a), dy: r * Math.sin(a) });
-      });
+    for (const e of events) {
+      if (e.lat === undefined || e.lon === undefined) continue;
+      const [x, y] = projection([e.lon, e.lat]) ?? [0, 0];
+      out.push({ e, x, y });
     }
     return out;
   });
+  // Overlaps depend only on the zoom level (not on panning). The level is rounded to small steps and each step's
+  // layout is kept, so zooming doesn't recompute it every frame; dots glide to their new spots.
+  const kStep = $derived(2 ** (Math.round(Math.log2(t.k) * 8) / 8));
+  let packCache = new Map<number, [number, number][]>();
+  let packFor: Dot[] | undefined;
+  const offsets = $derived.by(() => {
+    if (packFor !== dots) {
+      packCache = new Map();
+      packFor = dots;
+    }
+    let o = packCache.get(kStep);
+    if (!o) {
+      o = hexPack(
+        dots.map((d) => ({ x: d.x * kStep, y: d.y * kStep })),
+        SPACING,
+      );
+      packCache.set(kStep, o);
+    }
+    return o;
+  });
   const online = $derived(events.filter((e) => e.format === 'online').length);
-  const sx = (d: Dot) => t.applyX(d.x) + d.dx;
-  const sy = (d: Dot) => t.applyY(d.y) + d.dy;
 
-  // ---- zoom & pan -------------------------------------------------------------
+  // ---- zoom & pan: at most one update per frame ----------------------------------
+  let next: ZoomTransform | undefined;
+  let frame = 0;
   function setupZoom() {
     zoomer = d3zoom<SVGSVGElement, unknown>()
       .scaleExtent([1, 60])
@@ -82,19 +134,30 @@
         [w, h],
       ])
       .on('start', () => (moving = true))
-      .on('zoom', (ev) => (t = ev.transform))
-      .on('end', () => {
+      .on('zoom', (ev) => {
+        next = ev.transform;
+        frame ||= requestAnimationFrame(() => {
+          frame = 0;
+          if (next) t = next;
+        });
+      })
+      .on('end', (ev) => {
+        cancelAnimationFrame(frame);
+        frame = 0;
+        t = ev.transform;
         moving = false;
         publishBounds();
       });
     select(svg).call(zoomer).on('dblclick.zoom', null);
+    ready = true;
   }
 
   function publishBounds() {
     if (!projection) return;
-    // Clamp to the drawn world first: beyond the date line, inverting would wrap around to the other side.
-    const [wx0] = projection([-180, 0])!;
-    const [wx1] = projection([180, 0])!;
+    // Clamp to just inside the drawn world first: at or beyond the date line, inverting wraps around to the other
+    // side (180° comes back as −180°).
+    const [wx0] = projection([-179.999, 0])!;
+    const [wx1] = projection([179.999, 0])!;
     const clampX = (v: number) => Math.min(wx1, Math.max(wx0, v));
     const [x0, y0] = t.invert([0, 0]);
     const [x1, y1] = t.invert([w, h]);
@@ -104,13 +167,20 @@
   }
 
   onMount(() => {
+    readColors();
     const ro = new ResizeObserver(([entry]) => {
       w = Math.round(entry!.contentRect.width);
       h = Math.round(entry!.contentRect.height);
+      dpr = Math.min(3, window.devicePixelRatio || 1);
     });
     ro.observe(box);
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    const onScheme = () => requestAnimationFrame(() => (readColors(), draw()));
+    mq.addEventListener('change', onScheme);
     return () => {
       ro.disconnect();
+      mq.removeEventListener('change', onScheme);
+      cancelAnimationFrame(frame);
       app.mapBounds = undefined;
     };
   });
@@ -126,7 +196,7 @@
   });
   // First time there are events: frame them.
   $effect(() => {
-    if (fitted || !zoomer || !dots.length) return;
+    if (fitted || !ready || !dots.length) return;
     fitted = true;
     untrack(() => fitToResults(false));
   });
@@ -151,32 +221,31 @@
     zoomTo(Math.max(1, k), (x0 + x1) / 2, (y0 + y1) / 2, animate);
   }
 
-  // An event selected in the list or timeline: fly there.
+  // An event selected (clicked) in the list or timeline: fly there.
   $effect(() => {
     void app.focusTick;
     const id = app.eventId;
-    if (!id || !zoomer) return;
+    if (!id || !ready) return;
     const d = untrack(() => dots.find((x) => x.e.id === id));
     if (d) untrack(() => zoomTo(Math.max(t.k, 5), d.x, d.y));
   });
 
-  // ---- country hover (desktop) / tap (touch) -------------------------------------
-  let country: { name: string; x: number; y: number } | undefined = $state();
-  let countryTimer: ReturnType<typeof setTimeout> | undefined;
-  function onCountry(ev: PointerEvent, name: string) {
-    if (moving) return;
-    const r = box.getBoundingClientRect();
-    country = { name, x: ev.clientX - r.left, y: ev.clientY - r.top };
-    clearTimeout(countryTimer);
-    if (ev.pointerType !== 'mouse') countryTimer = setTimeout(() => (country = undefined), 1800);
-  }
-
   // ---- event tooltip ------------------------------------------------------------------
-  const hot = $derived(app.hoverId ? dots.find((d) => d.e.id === app.hoverId) : undefined);
+  const hotIndex = $derived(app.hoverId ? dots.findIndex((d) => d.e.id === app.hoverId) : -1);
+  const hot = $derived(hotIndex >= 0 ? dots[hotIndex] : undefined);
+  const hotOff = $derived<[number, number]>(offsets[hotIndex] ?? [0, 0]);
 </script>
 
 <section class="mapview" class:compact aria-label="Map">
   <div class="box" bind:this={box} class:moving>
+    <canvas
+      bind:this={canvas}
+      width={Math.round(w * dpr)}
+      height={Math.round(h * dpr)}
+      style:width="{w}px"
+      style:height="{h}px"
+      aria-hidden="true"
+    ></canvas>
     <svg
       bind:this={svg}
       width={w}
@@ -184,38 +253,18 @@
       role="img"
       aria-label="World map with {dots.length} events"
     >
-      <defs>
-        <radialGradient id="qo-sea" cx="50%" cy="45%" r="75%">
-          <stop offset="0%" stop-color="var(--map-sea-1)" />
-          <stop offset="100%" stop-color="var(--map-sea-2)" />
-        </radialGradient>
-      </defs>
-      <rect class="sea" width={w} height={h} fill="url(#qo-sea)" />
-      <g transform={t.toString()}>
-        <path class="land" d={landD} />
-        {#each countryD as c (c.name)}
-          <path
-            class="country"
-            class:on={country?.name === c.name}
-            d={c.d}
-            role="presentation"
-            onpointermove={(ev) => onCountry(ev, c.name)}
-            onpointerleave={(ev) => ev.pointerType === 'mouse' && (country = undefined)}
-          />
-        {/each}
-        <path class="borders" d={bordersD} />
-        <path class="coast" d={landD} />
-      </g>
       <g class="dots">
-        {#each dots as d (d.e.id)}
-          {@const x = sx(d)}
-          {@const y = sy(d)}
-          {#if x > -20 && x < w + 20 && y > -20 && y < h + 20}
+        {#each dots as d, i (d.e.id)}
+          {@const x = t.applyX(d.x)}
+          {@const y = t.applyY(d.y)}
+          {@const o = offsets[i] ?? [0, 0]}
+          {#if x > -30 && x < w + 30 && y > -30 && y < h + 30}
+            {@const isHot = app.hoverId === d.e.id}
             <g
               class="dot t-{d.e.type} {d.e.status}"
               class:past={d.e.isPast}
               class:picked={app.eventId === d.e.id}
-              class:hot={app.hoverId === d.e.id}
+              class:hot={isHot}
               transform="translate({x} {y})"
               role="button"
               tabindex="0"
@@ -227,29 +276,30 @@
               onfocus={() => hover(d.e.id)}
               onblur={() => hover(undefined)}
             >
-              <circle class="hit" r="13" />
-              {#if d.dx || d.dy}<line class="tether" x1="0" y1="0" x2={-d.dx} y2={-d.dy} />{/if}
-              <circle class="ring" r="9" />
-              <circle class="pin" r="5.5" />
+              <g class="shift" style:transform="translate({o[0]}px, {o[1]}px)">
+                {#if isHot && (o[0] || o[1])}
+                  <!-- Moved to avoid an overlap: show where it really is. -->
+                  <line class="tether" x1="0" y1="0" x2={-o[0]} y2={-o[1]} />
+                  <circle class="origin" cx={-o[0]} cy={-o[1]} r="2.2" />
+                {/if}
+                <circle class="hit" r={SPACING / 2 + 1} />
+                <circle class="ring" r="8.5" />
+                <circle class="pin" r="5.5" />
+              </g>
             </g>
           {/if}
         {/each}
       </g>
     </svg>
 
-    {#if country && !hot}
-      <div class="label country-label" style:left="{country.x}px" style:top="{country.y}px">
-        {country.name}
-      </div>
-    {/if}
     {#if hot}
-      <div class="label event-label" style:left="{sx(hot)}px" style:top="{sy(hot)}px">
+      <div
+        class="label event-label"
+        style:left="{t.applyX(hot.x) + hotOff[0]}px"
+        style:top="{t.applyY(hot.y) + hotOff[1]}px"
+      >
         <b>{hot.e.name}</b>
-        <span
-          >{formatRange(hot.e.dates.start, hot.e.dates.end)}{hot.e.city
-            ? ' · ' + hot.e.city
-            : ''}</span
-        >
+        <span>{formatRange(hot.e.dates.start, hot.e.dates.end)} · {whereText(hot.e)}</span>
       </div>
     {/if}
 
@@ -287,7 +337,7 @@
             .call(zoomer.scaleBy, 1 / 1.8)}>−</button
       >
     </div>
-    <span class="credit">Borders: Natural Earth</span>
+    <span class="credit">Land: Natural Earth</span>
   </div>
   <span class="sr-only">{meta.types.length} event types.</span>
 </section>
@@ -312,40 +362,30 @@
     user-select: none;
     -webkit-user-select: none;
   }
+  .box {
+    background: var(--map-sea);
+  }
+  canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
   svg {
+    position: absolute;
+    inset: 0;
     display: block;
     cursor: grab;
   }
   .moving svg {
     cursor: grabbing;
   }
-  .land {
-    fill: var(--map-land);
+  .shift {
+    transition: transform 0.22s ease-out;
   }
-  .country {
-    fill: transparent;
-    transition: fill 0.15s;
-  }
-  .country.on {
-    fill: var(--map-land-hover);
-  }
-  .moving .country {
-    pointer-events: none;
-  }
-  .borders {
-    fill: none;
-    stroke: var(--map-border);
-    stroke-width: 0.8;
-    vector-effect: non-scaling-stroke;
-    pointer-events: none;
-  }
-  .coast {
-    fill: none;
-    stroke: var(--map-coast);
-    stroke-width: 1.2;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    pointer-events: none;
+  @media (prefers-reduced-motion: reduce) {
+    .shift {
+      transition: none;
+    }
   }
   .dot {
     cursor: pointer;
@@ -360,9 +400,12 @@
     stroke-width: 1.5;
   }
   .tether {
-    stroke: var(--map-coast);
-    stroke-width: 1;
-    opacity: 0.6;
+    stroke: var(--warn);
+    stroke-width: 1.2;
+    stroke-dasharray: 2 2;
+  }
+  .origin {
+    fill: var(--warn);
   }
   .ring {
     fill: none;
@@ -414,11 +457,6 @@
   .event-label span {
     color: var(--muted);
     font-size: 0.75rem;
-  }
-  .country-label {
-    font-weight: 600;
-    color: var(--muted);
-    transform: translate(-50%, calc(-100% - 8px));
   }
   .overlay {
     position: absolute;

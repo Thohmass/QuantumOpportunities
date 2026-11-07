@@ -1,20 +1,28 @@
 <script lang="ts">
-  // A collapsible filter group. Clicking the title folds it; `summary` (e.g. the active choices) stays visible.
+  // A collapsible filter group (folded by default unless `open`). Clicking the title folds or unfolds it; `summary` (e.g. the active choices) stays visible.
   import type { Snippet } from 'svelte';
   import { prefs } from '../lib/state.svelte';
 
   let {
     title,
     active = 0,
+    open = false,
     children,
     summary,
-  }: { title: string; active?: number; children: Snippet; summary?: Snippet } = $props();
+  }: {
+    title: string;
+    active?: number;
+    /** Open when the page loads (the top groups); the rest start folded. */
+    open?: boolean;
+    children: Snippet;
+    summary?: Snippet;
+  } = $props();
 
-  const collapsed = $derived(prefs.collapsed.includes(title));
+  const collapsed = $derived(prefs.toggled.includes(title) === open);
   const toggle = () =>
-    (prefs.collapsed = collapsed
-      ? prefs.collapsed.filter((t) => t !== title)
-      : [...prefs.collapsed, title]);
+    (prefs.toggled = prefs.toggled.includes(title)
+      ? prefs.toggled.filter((t) => t !== title)
+      : [...prefs.toggled, title]);
 </script>
 
 <section class="section" class:collapsed>

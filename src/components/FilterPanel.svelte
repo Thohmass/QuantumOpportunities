@@ -88,7 +88,7 @@
     <button class="btn ghost" type="button" onclick={resetFilters}>Clear all</button>
   </div>
 
-  <Section title="When" active={f.when === 'any' ? 0 : 1}>
+  <Section title="When" open active={f.when === 'any' ? 0 : 1}>
     <div class="pills">
       {#each presets as p (p.id)}
         <button
@@ -132,7 +132,7 @@
     {/if}
   </Section>
 
-  <Section title="Applications" active={f.deadline === 'any' ? 0 : 1}>
+  <Section title="Applications" open active={f.deadline === 'any' ? 0 : 1}>
     <div class="pills">
       {#each [['any', 'Any'], ['open', 'Open now'], ['2w', 'Closing within 2 weeks']] as [id, label] (id)}
         <button
@@ -145,7 +145,7 @@
     </div>
   </Section>
 
-  <Section title="Show" active={showCount}>
+  <Section title="Show" open active={showCount}>
     <label class="check"
       ><input type="checkbox" bind:checked={app.filters.showExpected} /> Expected (unconfirmed) editions</label
     >

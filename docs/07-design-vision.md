@@ -10,9 +10,15 @@ The point of the site is **connecting information in one picture**: where, when 
 - **Cross-highlighting.** Hovering (or focusing) an event anywhere — list card, timeline bar, map marker — highlights it **everywhere**, so you immediately see when and where it is.
 - **The map viewport is a lens.** Zooming and panning focuses a continent, region, country or city. Events outside the visible map area are **dimmed** in the timeline and list; *Only map area* hides them instead. Online events are never dimmed by the map.
 - **Time selection on the timeline.** Click a **month**, **week** or **day**, or **drag** across any period; the selection becomes the date filter, shades the timeline and clears in one click.
-- **Zooming is the most important map feature:** smooth zoom from world to city with clusters that split as you zoom in.
+- **Zooming is the most important map feature:** smooth zoom from world to city (clusters were dropped in v0.3; overlapping dots snap onto a hexagonal pattern since v0.4).
 
 **v0.2 additions:** colour = event type in every view; texture = status; deadlines joined to events by lines; file-manager style time selection with gaps; selected events unfold inline in the list and focus the map and timeline; a "Wide map" layout to compare with "Side by side".
+
+**v0.3–v0.4 additions:**
+- Our own minimal map: land and sea only, with no clusters. Dots that would overlap snap onto a hexagonal pattern, placed so that each dot moves as little as possible from its real location.
+- Hover only highlights; only clicking moves other views.
+- The timeline zooms continuously, and its height can be shared with the map.
+- **Gradients mean uncertainty.** They mark expected editions and unknown months. Decorative fades and gradient backgrounds are avoided, so the signal stays clear. Texture for the sea or land (pattern, noise) is welcome later.
 
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
