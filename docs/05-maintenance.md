@@ -40,4 +40,4 @@ Status: v0.1 · 6 Nov 2026
 
 ## 6. Licensing and attribution
 
-Code MIT; data CC BY 4.0 ("Quantum Opportunities contributors"). Descriptions are our own words; facts link to sources. Map © OpenStreetMap contributors, tiles © CARTO; city coordinates from GeoNames (CC BY).
+Code MIT; data CC BY 4.0 ("Quantum Opportunities contributors"). Descriptions are our own words; facts link to sources. Map data and tiles © OpenStreetMap contributors; city coordinates from GeoNames (CC BY).

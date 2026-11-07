@@ -22,8 +22,8 @@
   const located = $derived(events.filter((e) => e.lat !== undefined && e.lon !== undefined));
   const online = $derived(events.filter((e) => e.format === 'online').length);
 
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const TILES = `https://{s}.basemaps.cartocdn.com/${dark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`;
+  // OpenStreetMap's standard tiles: no API key. Dark mode darkens them with a CSS filter (see styles below).
+  const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
   function icon(e: Ev): L.DivIcon {
     const cls = ['qo-pin', e.status, e.isPast ? 'past' : ''].join(' ');
@@ -50,9 +50,8 @@
     }).setView([35, 10], 2);
     L.tileLayer(TILES, {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" rel="noopener">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 18,
+        '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors',
+      maxZoom: 19,
     }).addTo(map);
     cluster = L.markerClusterGroup({
       showCoverageOnHover: false,
@@ -253,6 +252,11 @@
   :global(.leaflet-container) {
     font: inherit;
     background: var(--surface-2);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(.leaflet-tile-pane) {
+      filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.85) saturate(0.6);
+    }
   }
   :global(.leaflet-tooltip) {
     font-size: 0.82rem;
