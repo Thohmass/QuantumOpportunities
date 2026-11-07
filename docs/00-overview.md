@@ -50,7 +50,7 @@ A fast static website that lists opportunities in quantum science and technology
 | Repo | Public, `Thohmass/QuantumOpportunities`. Code MIT, data CC BY 4.0 (`data/LICENSE`) |
 | MVP scope | Events and fixed-date programmes; jobs, PhD calls and grants later |
 | Data storage | One YAML file per event, compiled to one JSON at build; git history is the audit log |
-| Frontend | Svelte 5 + Vite + TypeScript; Leaflet (lazy-loaded) with CARTO/OSM tiles; MiniSearch |
+| Frontend | Svelte 5 + Vite + TypeScript; Leaflet (lazy-loaded) with OpenStreetMap tiles; MiniSearch |
 | Geocoding | Build-time lookup from city + country (GeoNames via `all-the-cities`), optional `latlon` override |
 | Where agents run | GitHub Actions + `claude-code-action`, as in Lynote, not claude.ai routines |
 | Agent credential | Subscription token (`CLAUDE_CODE_OAUTH_TOKEN`) for now |

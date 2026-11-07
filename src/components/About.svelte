@@ -116,7 +116,7 @@
         rel="noopener">CC BY 4.0</a
       >
       — please credit “Quantum Opportunities contributors”. Event descriptions are written by us; facts
-      come from the linked sources. Map data © OpenStreetMap contributors, map tiles © CARTO. City coordinates
+      come from the linked sources. Map data and tiles © OpenStreetMap contributors. City coordinates
       from GeoNames (CC BY).
     </p>
     <p class="muted">No cookies, no tracking.</p>
