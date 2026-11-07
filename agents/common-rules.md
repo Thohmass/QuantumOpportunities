@@ -9,6 +9,10 @@ one and copy its shape.
 
 - Only files under `data/` (never `data/taxonomy/`, never `data/LICENSE`). The workflow rejects anything else.
 - Use the Edit/Write tools. You have no git, no shell beyond the npm scripts listed below, and no secrets.
+- **Run each npm script as its own command, starting with `npm run`**, exactly as shown in these rules: one
+  command per call, from the repository root (you are already there). No `cd`, no loops, no `&&`/`;` chains, no
+  pipes, no `python`. Anything else is refused automatically; the run then can't check duplicates and creates
+  nothing.
 
 ## Facts and sources
 

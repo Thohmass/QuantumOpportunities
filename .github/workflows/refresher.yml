@@ -78,7 +78,7 @@ jobs:
           claude_args: >-
             --model claude-sonnet-5-5
             --max-turns 90
-            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run queue:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
       # Diagnostics: which tool calls were refused (tool name and the start of its input), so runs that stop early
       # can be understood without exposing the whole transcript in public logs.
