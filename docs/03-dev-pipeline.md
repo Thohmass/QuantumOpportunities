@@ -17,7 +17,7 @@ Status: v0.1 · 6 Nov 2026 · builds on the *Lynote Agentic Dev Pipeline — Des
 **Main new risk: prompt injection from web pages** read by data agents. Controls that hold even if an agent is fully hijacked:
 
 1. Claude's tool allowlist is Read/Write/Edit/Glob/Grep, WebSearch/WebFetch and a few `npm run` data scripts. **No git, no `gh`, no general shell.**
-2. A deterministic step after Claude rejects any change outside `data/` (and to `data/taxonomy/`, `data/LICENSE`), runs `npm run data:check`, then commits, pushes and opens the PR itself.
+2. A deterministic step after Claude rejects any change outside `data/` (and to `data/taxonomy/`, `data/LICENSE`), runs `npm run data:check`, then commits, pushes and opens the PR itself (with `DATA_PR_TOKEN`, §6).
 3. `pr-policy` (rules read from `main`) hard-fails agent PRs touching `.github/` and requires the owner for anything outside the auto-merge list.
 4. The only secret in the job is the Claude credential. Text from data is always rendered as text on the site; links must be `https://`.
 
@@ -67,8 +67,9 @@ docs/                 these docs
 ## 6. Setup steps only the owner can do
 
 1. **Ruleset on `main`** (Settings → Rules → Rulesets → New branch ruleset): target the default branch; no bypass; restrict deletions; block force pushes; require a pull request (0 approvals, squash only); require status checks: `policy`, `lint-types`, `test`, `data`, `build`, `secrets-scan`, `dependency-vulns`, `workflow-lint`, `pr-policy`. The build session could not create it (the session's GitHub access can't write repository settings).
-2. Secret `CLAUDE_CODE_OAUTH_TOKEN` (done 6 Nov 2026).
-3. Optionally run *Scout* and *Refresher* once by hand (Actions → workflow → Run workflow) after the MVP merges.
+2. Secret `CLAUDE_CODE_OAUTH_TOKEN` (done 6 Nov 2026; renewed 8 Nov 2026).
+3. Secret `DATA_PR_TOKEN`: a fine-grained personal access token for this repository only, with *Contents* and *Pull requests* read/write. The agent workflows use it after the agent has finished to push the data branch and open the PR (the Claude App token is revoked when the agent step ends, and PRs opened with `GITHUB_TOKEN` don't trigger CI). The agent never sees it. Renew it before it expires.
+4. Optionally run *Scout* and *Refresher* once by hand (Actions → workflow → Run workflow) after the MVP merges.
 
 ## 7. How the MVP was built
 
