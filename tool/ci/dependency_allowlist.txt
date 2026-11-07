@@ -3,15 +3,23 @@
 # Transitive packages are covered by the dependency-vulns gate (OSV-Scanner on package-lock.json).
 
 # runtime
-leaflet
-leaflet.markercluster
+d3-geo
+d3-selection
+d3-transition
+d3-zoom
 minisearch
+topojson-client
+world-atlas
 
 # build, test, tooling
 @playwright/test
 @sveltejs/vite-plugin-svelte
-@types/leaflet
-@types/leaflet.markercluster
+@types/d3-geo
+@types/d3-selection
+@types/d3-transition
+@types/d3-zoom
+@types/geojson
+@types/topojson-client
 @types/node
 ajv
 ajv-formats

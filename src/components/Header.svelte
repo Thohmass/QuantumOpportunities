@@ -269,11 +269,6 @@
       display: none;
     }
   }
-  @media (max-width: 1099px) {
-    .views a.wide {
-      display: none;
-    }
-  }
   @media (max-width: 640px) {
     .brand span {
       display: none;
@@ -302,12 +297,13 @@
       padding: 8px 10px;
     }
   }
-  @media (max-width: 430px) {
+  @media (max-width: 480px) {
     .views svg {
       display: none;
     }
     .views a {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
+      padding: 6px 2px;
     }
   }
 </style>

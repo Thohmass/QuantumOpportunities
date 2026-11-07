@@ -29,7 +29,7 @@
   let error = $state('');
 
   // ---- URL ⇄ state -------------------------------------------------------
-  const defaultView = () => (window.matchMedia('(min-width: 1100px)').matches ? 'explore' : 'list');
+  const defaultView = () => 'explore' as const;
   function readHash() {
     const r = fromHash(location.hash, defaultView());
     app.view = r.view;
@@ -114,7 +114,7 @@
   );
   const counts = $derived(ctx ? facetCounts(events, app.filters, ctx) : undefined);
   const universe = $derived(ctx ? facetUniverse(events, ctx) : undefined);
-  // Load the map code (Leaflet) only when a view with a map is first opened.
+  // Load the map code and world geometry only when a view with a map is first opened.
   let mapPromise: Promise<typeof import('./components/MapView.svelte')> | undefined;
   const mapModule = $derived.by(() => {
     if (app.view === 'explore' || app.view === 'map')
@@ -124,7 +124,15 @@
   const selected = $derived(app.eventId ? events.find((e) => e.id === app.eventId) : undefined);
 
   // Where details open: inside the list card when a list is on screen, else in the side panel.
-  const wideLayout = $derived(app.view === 'explore' && prefs.layout === 'wide');
+  // Phones and tablets always stack map, timeline and list.
+  const mq = matchMedia('(max-width: 1099px)');
+  let narrow = $state(mq.matches);
+  onMount(() => {
+    const on = () => (narrow = mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  });
+  const wideLayout = $derived(app.view === 'explore' && prefs.layout === 'wide' && !narrow);
   const listOnScreen = $derived(
     app.view === 'list' || (app.view === 'explore' && (!wideLayout || prefs.listOpen)),
   );
@@ -409,6 +417,29 @@
   .pane {
     min-height: 0;
     min-width: 0;
+  }
+  /* Phones and tablets: map, then timeline, then the list in the page flow (scrolling the list scrolls the page). */
+  @media (max-width: 1099px) {
+    .explore,
+    .explore.wide-layout,
+    .explore.wide-layout.list-open {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: 40dvh 44dvh auto;
+      grid-template-areas:
+        'map'
+        'timeline'
+        'list';
+      height: auto;
+      min-height: 0;
+    }
+    .list-pane {
+      overflow: visible;
+      padding-right: 0;
+    }
+    .seg,
+    .list-toggle {
+      display: none;
+    }
   }
   .map-pane {
     grid-area: map;

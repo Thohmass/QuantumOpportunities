@@ -23,7 +23,7 @@ Status: v0.1 · 6 Nov 2026 · builds on the *Lynote Agentic Dev Pipeline — Des
 
 ## 2. Stack
 
-Svelte 5, Vite 8, TypeScript (strict); Leaflet + markercluster (lazy chunk); MiniSearch. Data scripts in TypeScript (`tsx`), `ajv` (JSON Schema 2020-12), `yaml`, `all-the-cities` for geocoding. Vitest unit tests; Playwright smoke tests on desktop and mobile viewports. Prettier + `svelte-check` (no ESLint in v0.1).
+Svelte 5, Vite 8, TypeScript (strict); own SVG map with d3-geo, d3-zoom and topojson-client over world-atlas (Natural Earth 1:110m) in a lazy chunk; MiniSearch. Data scripts in TypeScript (`tsx`), `ajv` (JSON Schema 2020-12), `yaml`, `all-the-cities` for geocoding. Vitest unit tests; Playwright smoke tests on desktop and mobile viewports. Prettier + `svelte-check` (no ESLint in v0.1).
 
 ## 3. Repo layout
 

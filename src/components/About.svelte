@@ -29,7 +29,7 @@
       <dt><span class="badge expected">Expected · unconfirmed</span></dt>
       <dd>
         Not announced yet. We expect it because the series happens regularly; the dates are
-        estimates from past editions. Shown dashed or striped everywhere.
+        estimates from past editions. Shown as a soft fading gradient everywhere.
       </dd>
       <dt><span class="notfound">Not found yet</span></dt>
       <dd>
@@ -116,7 +116,7 @@
         rel="noopener">CC BY 4.0</a
       >
       — please credit “Quantum Opportunities contributors”. Event descriptions are written by us; facts
-      come from the linked sources. Map data and tiles © OpenStreetMap contributors. City coordinates
+      come from the linked sources. Country borders from Natural Earth (public domain). City coordinates
       from GeoNames (CC BY).
     </p>
     <p class="muted">No cookies, no tracking.</p>

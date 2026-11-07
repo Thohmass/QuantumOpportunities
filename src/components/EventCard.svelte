@@ -163,7 +163,13 @@
     border-left-color: transparent;
     background:
       linear-gradient(var(--surface), var(--surface)) padding-box,
-      repeating-linear-gradient(180deg, var(--tc) 0 5px, transparent 5px 9px) border-box;
+      linear-gradient(
+          180deg,
+          color-mix(in srgb, var(--tc) 15%, transparent),
+          var(--tc) 50%,
+          color-mix(in srgb, var(--tc) 15%, transparent)
+        )
+        border-box;
   }
   .card.past {
     opacity: 0.72;

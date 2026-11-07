@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { tick } from 'svelte';
+  import { tick, untrack } from 'svelte';
   import { bounds, formatRange, isoDay, monthName } from '../lib/dates';
   import { statusLabel } from '../lib/format';
   import type { Ev } from '../lib/model';
@@ -210,10 +210,13 @@
     await tick();
     scroller?.scrollTo({ left: Math.max(0, x(today) - 60), behavior: smooth ? 'smooth' : 'auto' });
   }
+  // Re-centre on today only when the zoom or the start of the axis actually changes — not when a selection
+  // changes the filtered events (the axis start is a number, so an unchanged value doesn't re-run this).
+  const axisStart = $derived(range[0]);
   $effect(() => {
     void zoom;
-    void range[0];
-    scrollToToday();
+    void axisStart;
+    untrack(() => scrollToToday());
   });
   function reveal(id: string, force: boolean) {
     if (!scroller || (!force && scroller.matches(':hover'))) return;
@@ -278,7 +281,13 @@
       onpointercancel={() => ((drag = undefined), (pending = undefined))}
       role="presentation"
     >
-      {#each months as m (m.key)}
+      {#each months as m, i (m.key)}
+        <div
+          class="month-bg"
+          class:alt={i % 2 === 1}
+          style:left="{m.x}px"
+          style:width="{m.w}px"
+        ></div>
         <div class="gridline" class:year={m.year} style:left="{m.x}px"></div>
       {/each}
       {#each selBands as b, i (i)}<div
@@ -376,8 +385,8 @@
   </div>
   {#if !compact}
     <p class="hint muted">
-      Colour = event type. Striped = expected, not announced. Dotted outline = month not known.
-      Diamonds = deadlines.
+      Colour = event type. Faded gradient = expected, not announced. Dotted outline = month not
+      known. Diamonds = deadlines.
     </p>
   {/if}
 </section>
@@ -449,13 +458,29 @@
     color: var(--accent);
     font-weight: 600;
   }
+  /* No frame: the axis fades out at the sides, so time reads as continuing beyond the screen. */
   .scroller {
     overflow: auto;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
     -webkit-overflow-scrolling: touch;
     min-height: 0;
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent
+    );
+  }
+  .month-bg {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--surface);
+    opacity: 0.55;
+  }
+  .month-bg.alt {
+    background: var(--surface-2);
+    opacity: 1;
   }
   .canvas {
     position: relative;
@@ -565,29 +590,35 @@
     background: transparent;
     white-space: nowrap;
     z-index: 3;
-    border-radius: 7px;
+    border-radius: 3px;
     transition: opacity 0.15s;
   }
   .bar {
     display: block;
     height: 14px;
-    border-radius: 7px;
+    border-radius: 2px;
     background: var(--tc);
     flex: none;
   }
   .item.expected .bar {
-    background: repeating-linear-gradient(
-      135deg,
-      var(--tc) 0 4px,
-      color-mix(in srgb, var(--tc) 22%, transparent) 4px 8px
+    /* Uncertain = soft gradient: solid in the middle, fading towards both ends. */
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--tc) 12%, transparent),
+      color-mix(in srgb, var(--tc) 75%, transparent) 35%,
+      color-mix(in srgb, var(--tc) 75%, transparent) 65%,
+      color-mix(in srgb, var(--tc) 12%, transparent)
     );
-    box-shadow: inset 0 0 0 1px var(--tc);
   }
   .item.approx .bar {
-    background: color-mix(in srgb, var(--tc) 18%, transparent);
-    box-shadow: none;
-    outline: 2px dotted var(--tc);
-    outline-offset: -2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--tc) 45%, transparent) 50%,
+      transparent
+    );
+    outline: 1px dotted var(--tc);
+    outline-offset: -1px;
   }
   .item.postponed .bar,
   .item.cancelled .bar {
