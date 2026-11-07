@@ -59,3 +59,49 @@ test('explore: hovering a list card highlights the event on the timeline', async
   await card.hover();
   await expect(page.locator('.timeline-pane button.item.hot')).toHaveCount(1);
 });
+
+test('a list card shows the essentials; "More details" opens everything in a pop-up', async ({
+  page,
+}) => {
+  await page.goto('/#/list?e=mit-iquhack-2027');
+  const card = page.locator('article.card.open');
+  await expect(card.getByText('Travel support')).toHaveCount(0);
+  await card.getByRole('button', { name: 'More details' }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByText('Travel support')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(page.locator('article.card.open')).toHaveCount(1);
+});
+
+test('explore: hovering an event does not scroll the timeline', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Explore side by side is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const scroller = page.locator('.timeline-pane .scroller');
+  await page.waitForTimeout(300);
+  const before = await scroller.evaluate((el) => [el.scrollLeft, el.scrollTop]);
+  await page.locator('.list-pane article.card').nth(8).hover();
+  await page.waitForTimeout(600);
+  expect(await scroller.evaluate((el) => [el.scrollLeft, el.scrollTop])).toEqual(before);
+});
+
+test('the timeline zooms step by step', async ({ page }) => {
+  await page.goto('/#/timeline');
+  const quarter = page.getByRole('button', { name: 'quarter' });
+  await expect(quarter).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Zoom in' }).last().click();
+  await expect(quarter).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Zoom out' }).last().click();
+  await expect(quarter).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('filter groups start folded, except the top ones', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The filter sidebar is the desktop layout');
+  await page.goto('/#/list');
+  await expect(page.getByRole('button', { name: 'When' })).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('button', { name: 'Topic' })).toHaveAttribute(
+    'aria-expanded',
+    'false',
+  );
+});

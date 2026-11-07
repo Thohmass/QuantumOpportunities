@@ -19,7 +19,20 @@
   import EventInfo from './EventInfo.svelte';
   import type { Meta } from '../lib/types';
 
-  let { e, meta, today }: { e: Ev; meta: Meta; today: number } = $props();
+  let {
+    e,
+    meta,
+    today,
+    popup = false,
+    onclose,
+  }: {
+    e: Ev;
+    meta: Meta;
+    today: number;
+    /** Centred pop-up (opened from a list card) instead of the side panel. */
+    popup?: boolean;
+    onclose: () => void;
+  } = $props();
 
   let closeBtn: HTMLButtonElement | undefined = $state();
   let copied = $state(false);
@@ -29,7 +42,7 @@
     copied = false;
   });
 
-  const close = () => (app.eventId = undefined);
+  const close = () => onclose();
   const statusClass = $derived(
     e.status === 'confirmed'
       ? e.isOngoing
@@ -81,7 +94,7 @@
 <svelte:window onkeydown={(ev) => ev.key === 'Escape' && close()} />
 
 <div class="backdrop" onclick={close} aria-hidden="true"></div>
-<div class="detail" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+<div class="detail" class:popup role="dialog" aria-modal="true" aria-labelledby="detail-title">
   <div class="top">
     <div class="badges">
       <span class="badge {statusClass}">{statusLabel(e)}</span>
@@ -149,6 +162,18 @@
       border-radius: 0;
       border-left: 1px solid var(--line);
       animation: none;
+    }
+  }
+  @media (min-width: 900px) {
+    .detail.popup {
+      top: 50%;
+      left: 50%;
+      bottom: auto;
+      transform: translate(-50%, -50%);
+      width: min(640px, 92vw);
+      max-height: 86dvh;
+      border: 1px solid var(--line);
+      border-radius: 14px;
     }
   }
   .top {

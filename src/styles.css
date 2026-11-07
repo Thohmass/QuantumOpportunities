@@ -23,11 +23,8 @@
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --header-h: 112px;
   color-scheme: light;
-  --map-sea-1: #e6f0f8;
-  --map-sea-2: #c9dbea;
+  --map-sea: #d6e5f2;
   --map-land: #fbfcfd;
-  --map-land-hover: #e9eef8;
-  --map-border: #c4ccd6;
   --map-coast: #8aa3bd;
   /* Event types: one colour each, used on cards, timeline bars, map pins and the filter list. */
   --t-conference: #2563eb;
@@ -62,11 +59,8 @@
   --past-soft: #222a34;
   --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
   color-scheme: dark;
-  --map-sea-1: #13324d;
-  --map-sea-2: #08121d;
+  --map-sea: #0f2235;
   --map-land: #262c34;
-  --map-land-hover: #323b47;
-  --map-border: #3f4a58;
   --map-coast: #9cc4ec;
   --t-conference: #60a5fa;
   --t-workshop: #22d3ee;
@@ -100,11 +94,8 @@
     --past-soft: #222a34;
     --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
     color-scheme: dark;
-    --map-sea-1: #13324d;
-    --map-sea-2: #08121d;
+    --map-sea: #0f2235;
     --map-land: #262c34;
-    --map-land-hover: #323b47;
-    --map-border: #3f4a58;
     --map-coast: #9cc4ec;
     --t-conference: #60a5fa;
     --t-workshop: #22d3ee;

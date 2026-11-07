@@ -18,16 +18,32 @@
     today,
     dimmed = new Set<string>(),
     compact = false,
-  }: { events: Ev[]; today: number; dimmed?: Set<string>; compact?: boolean } = $props();
+    fit = false,
+  }: {
+    events: Ev[];
+    today: number;
+    dimmed?: Set<string>;
+    compact?: boolean;
+    /** Grow to show every row (phones, where the page scrolls) instead of scrolling inside. */
+    fit?: boolean;
+  } = $props();
 
   const DAY = 86_400_000;
+  // Zoom is continuous (pixels per day): Ctrl/⌘ + wheel, trackpad or touch pinch, the − / + buttons, or a preset.
   const ZOOMS = { week: 30, month: 9, quarter: 3.2, year: 1.1 } as const;
   type Zoom = keyof typeof ZOOMS;
-  let zoom: Zoom = $state('quarter');
-  const ppd = $derived(ZOOMS[zoom]);
-  const ROW = 32;
+  const MIN_PPD = 0.45;
+  const MAX_PPD = 48;
+  let ppd = $state<number>(ZOOMS.quarter);
+  const preset = $derived(
+    (Object.keys(ZOOMS) as Zoom[]).find((z) => Math.abs(ZOOMS[z] / ppd - 1) < 0.04),
+  );
+  /** The visible part of the scroller, kept up to date (once per frame) while scrolling and resizing. */
+  let view = $state({ left: 0, width: 800, height: 0 });
   const HEAD = 46;
   const CHAR = 7;
+  /** Long names are cut short (full name on hover), so more events fit side by side on a row. */
+  const LABEL_MAX = 170;
 
   const range = $derived.by(() => {
     let lo = today - 21 * DAY;
@@ -57,6 +73,12 @@
     iv: Interval;
     year?: boolean;
   }
+  function monthLabel(m: number, y: number, first: boolean, w: number): string {
+    const year = m === 0 || first;
+    if (w >= 46) return `${monthName(m)}${year ? ' ' + y : ''}`;
+    if (w >= 20) return year ? String(y) : monthName(m).slice(0, 1);
+    return year ? String(y) : '';
+  }
   const months = $derived.by(() => {
     const out: Cell[] = [];
     const d = new Date(range[0]);
@@ -69,7 +91,7 @@
         key: isoDay(start),
         x: x(start),
         w: x(end + DAY) - x(start),
-        label: `${monthName(m)}${m === 0 || out.length === 0 ? ' ' + y : ''}`,
+        label: monthLabel(m, y, out.length === 0, x(end + DAY) - x(start)),
         aria: `${monthName(m, true)} ${y}`,
         iv: [start, end],
         year: m === 0,
@@ -78,10 +100,13 @@
     }
     return out;
   });
+  // Only the day/week cells near the visible part of the axis are drawn.
+  const subFrom = $derived(Math.max(range[0], dayAt(view.left - view.width)));
+  const subTo = $derived(Math.min(range[1], dayAt(view.left + 2 * view.width)));
   const sub = $derived.by(() => {
     const out: Cell[] = [];
     if (ppd >= 20) {
-      for (let t = range[0]; t <= range[1]; t += DAY) {
+      for (let t = subFrom; t <= subTo; t += DAY) {
         out.push({
           key: isoDay(t),
           x: x(t),
@@ -92,8 +117,8 @@
         });
       }
     } else if (ppd >= 3) {
-      const first = new Date(range[0]);
-      for (let t = range[0] - ((first.getUTCDay() + 6) % 7) * DAY; t <= range[1]; t += 7 * DAY) {
+      const first = new Date(subFrom);
+      for (let t = subFrom - ((first.getUTCDay() + 6) % 7) * DAY; t <= subTo; t += 7 * DAY) {
         const thursday = new Date(t + 3 * DAY);
         const week = Math.ceil(
           ((thursday.getTime() - Date.UTC(thursday.getUTCFullYear(), 0, 1)) / DAY + 1) / 7,
@@ -138,7 +163,7 @@
         : [];
       const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
       const label = e.name + (e.display.approx ? ' · month not known' : '');
-      const end = left + barW + 8 + label.length * CHAR;
+      const end = left + barW + 8 + Math.min(LABEL_MAX, label.length * CHAR);
       let lane = lanes.findIndex((r) => r + 12 < startX);
       if (lane === -1) lane = lanes.push(end) - 1;
       else lanes[lane] = end;
@@ -146,6 +171,15 @@
     }
     return { items: out, lanes: Math.max(lanes.length, 1) };
   });
+  // Rows shrink (down to a minimum) so that all of them fit the box; on phones the box grows instead.
+  const ROW_MAX = 32;
+  const ROW_MIN = 19;
+  const rowH = $derived(
+    fit || !view.height
+      ? ROW_MAX
+      : Math.max(ROW_MIN, Math.min(ROW_MAX, Math.floor((view.height - HEAD - 10) / placed.lanes))),
+  );
+  const itemH = $derived(rowH - 6);
 
   // ---- selection (= the date filter): file-manager clicks and drags ---------
   const sel = $derived(currentIntervals(today));
@@ -204,48 +238,134 @@
     setTimeout(() => (suppressClick = false), 0);
   }
 
-  // ---- scrolling -------------------------------------------------------------
+  // ---- scrolling and zooming ---------------------------------------------------
   let scroller: HTMLDivElement | undefined = $state();
+  let viewFrame = 0;
+  function readView() {
+    viewFrame = 0;
+    if (scroller)
+      view = {
+        left: scroller.scrollLeft,
+        width: scroller.clientWidth,
+        height: scroller.clientHeight,
+      };
+  }
+  const onScroll = () => (viewFrame ||= requestAnimationFrame(readView));
+  $effect(() => {
+    if (!scroller) return;
+    const ro = new ResizeObserver(onScroll);
+    ro.observe(scroller);
+    return () => ro.disconnect();
+  });
+
   async function scrollToToday(smooth = false) {
     await tick();
     scroller?.scrollTo({ left: Math.max(0, x(today) - 60), behavior: smooth ? 'smooth' : 'auto' });
   }
-  // Re-centre on today only when the zoom or the start of the axis actually changes — not when a selection
-  // changes the filtered events (the axis start is a number, so an unchanged value doesn't re-run this).
+  // Re-centre on today only when the start of the axis changes (first load, or new data far in the past) — not
+  // when a selection changes the filtered events (an unchanged number doesn't re-run this).
   const axisStart = $derived(range[0]);
   $effect(() => {
-    void zoom;
     void axisStart;
     untrack(() => scrollToToday());
   });
-  function reveal(id: string, force: boolean) {
-    if (!scroller || (!force && scroller.matches(':hover'))) return;
+
+  /** Zooms to `next` pixels per day, keeping the date under `at` (px from the scroller's left) in place. */
+  async function zoomTo(next: number, at?: number) {
+    if (!scroller) return;
+    const clamped = Math.min(MAX_PPD, Math.max(MIN_PPD, next));
+    if (clamped === ppd) return;
+    const ax = at ?? scroller.clientWidth / 2;
+    const day = (scroller.scrollLeft + ax) / ppd;
+    ppd = clamped;
+    await tick();
+    scroller.scrollLeft = day * ppd - ax;
+    readView();
+  }
+  // Wheel and pinch: collect the gesture and apply it once per frame.
+  let zoomFactor = 1;
+  let zoomAt = 0;
+  let zoomFrame = 0;
+  function queueZoom(factor: number, at: number) {
+    zoomFactor *= factor;
+    zoomAt = at;
+    zoomFrame ||= requestAnimationFrame(() => {
+      zoomFrame = 0;
+      const f = zoomFactor;
+      zoomFactor = 1;
+      void zoomTo(ppd * f, zoomAt);
+    });
+  }
+  $effect(() => {
+    const el = scroller;
+    if (!el) return;
+    const left = (clientX: number) => clientX - el.getBoundingClientRect().left;
+    // Ctrl/⌘ + wheel, and trackpad pinch (which browsers report as Ctrl + wheel).
+    const onWheel = (ev: WheelEvent) => {
+      if (!ev.ctrlKey && !ev.metaKey) return;
+      ev.preventDefault();
+      const dy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
+      queueZoom(Math.exp(-dy * 0.004), left(ev.clientX));
+    };
+    // Two-finger pinch on touch screens.
+    let pinch: { dist: number; ppd: number } | undefined;
+    const spread = (ev: TouchEvent) =>
+      Math.hypot(
+        ev.touches[0]!.clientX - ev.touches[1]!.clientX,
+        ev.touches[0]!.clientY - ev.touches[1]!.clientY,
+      );
+    const onTouchStart = (ev: TouchEvent) => {
+      if (ev.touches.length === 2) pinch = { dist: spread(ev), ppd };
+    };
+    const onTouchMove = (ev: TouchEvent) => {
+      if (!pinch || ev.touches.length !== 2) return;
+      ev.preventDefault();
+      const mid = (ev.touches[0]!.clientX + ev.touches[1]!.clientX) / 2;
+      const target = (pinch.ppd * spread(ev)) / pinch.dist;
+      queueZoom(target / (ppd * zoomFactor), left(mid));
+    };
+    const onTouchEnd = (ev: TouchEvent) => {
+      if (ev.touches.length < 2) pinch = undefined;
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  });
+
+  // An event selected (clicked) anywhere: bring it into sight. Hovering never scrolls.
+  function reveal(id: string) {
+    if (!scroller) return;
     const p = placed.items.find((i) => i.e.id === id);
     if (!p) return;
-    const top = HEAD + p.lane * ROW;
+    const top = HEAD + p.lane * rowH;
     const { scrollLeft, clientWidth, scrollTop, clientHeight } = scroller;
     const left =
-      force || p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
+      p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
         ? p.left - clientWidth / 3
         : scrollLeft;
     const vTop =
-      force || top < scrollTop + HEAD || top > scrollTop + clientHeight - ROW
+      top < scrollTop + HEAD || top > scrollTop + clientHeight - rowH
         ? top - clientHeight / 2
         : scrollTop;
     if (left !== scrollLeft || vTop !== scrollTop)
       scroller.scrollTo({ left, top: vTop, behavior: 'smooth' });
   }
-  // Bring an event hovered in another view into sight, and focus on a selected one.
-  $effect(() => {
-    if (app.hoverId) reveal(app.hoverId, false);
-  });
   $effect(() => {
     void app.focusTick;
-    if (app.eventId) reveal(app.eventId, true);
+    const id = app.eventId;
+    // After the layout settles (row heights depend on the box size).
+    if (id) setTimeout(() => untrack(() => reveal(id)), 80);
   });
 </script>
 
-<section class="timeline" class:compact aria-label="Timeline">
+<section class="timeline" class:compact class:fit aria-label="Timeline">
   <div class="toolbar">
     <p class="count"><b>{events.length - events.filter(outside).length}</b> in range</p>
     {#if sel.length}
@@ -256,25 +376,43 @@
       >
     {/if}
     <div class="zoom" role="group" aria-label="Zoom">
+      <button
+        type="button"
+        class="step"
+        aria-label="Zoom out"
+        title="Zoom out (or Ctrl + wheel, pinch)"
+        disabled={ppd <= MIN_PPD}
+        onclick={() => zoomTo(ppd / 1.5)}>−</button
+      >
       {#each Object.keys(ZOOMS) as z (z)}
         <button
           type="button"
-          class:on={zoom === z}
-          aria-pressed={zoom === z}
-          onclick={() => (zoom = z as Zoom)}>{z}</button
+          class:on={preset === z}
+          aria-pressed={preset === z}
+          onclick={() => zoomTo(ZOOMS[z as Zoom])}>{z}</button
         >
       {/each}
+      <button
+        type="button"
+        class="step"
+        aria-label="Zoom in"
+        title="Zoom in (or Ctrl + wheel, pinch)"
+        disabled={ppd >= MAX_PPD}
+        onclick={() => zoomTo(ppd * 1.5)}>+</button
+      >
       <button type="button" onclick={() => scrollToToday(true)}>Today</button>
     </div>
   </div>
 
-  <div class="scroller" bind:this={scroller}>
+  <div class="scroller" bind:this={scroller} onscroll={onScroll}>
     <div
       class="canvas"
       class:dragging={!!drag}
       bind:this={canvas}
       style:width="{width}px"
-      style:height="{HEAD + placed.lanes * ROW + 16}px"
+      style:height="{HEAD + placed.lanes * rowH + 10}px"
+      style:--item-h="{itemH}px"
+      class:dense={rowH < 26}
       onpointerdown={down}
       onpointermove={move}
       onpointerup={up}
@@ -334,7 +472,7 @@
         <p class="empty">No events match these filters.</p>
       {/if}
       {#each placed.items as p (p.e.id)}
-        {@const top = HEAD + p.lane * ROW}
+        {@const top = HEAD + p.lane * rowH}
         {@const hot = app.hoverId === p.e.id}
         {@const picked = app.eventId === p.e.id}
         {@const faded = !hot && !picked && (outside(p.e) || dimmed.has(p.e.id))}
@@ -344,13 +482,13 @@
               class="link"
               style:left="{d.x}px"
               style:width="{p.left - d.x}px"
-              style:top="{top + 12}px"
+              style:top="{top + itemH / 2}px"
               aria-hidden="true"
             ></span>
             <span
               class="diamond"
               style:left="{d.x - 5}px"
-              style:top="{top + 8}px"
+              style:top="{top + itemH / 2 - 4.5}px"
               title={d.label}
               aria-hidden="true"
             ></span>
@@ -363,6 +501,7 @@
             class:approx={p.e.display.approx}
             style:left="{p.left}px"
             style:top="{top}px"
+            title={p.e.name}
             onclick={() => !suppressClick && openEvent(p.e.id)}
             onmouseenter={() => hover(p.e.id)}
             onmouseleave={() => hover(undefined)}
@@ -453,23 +592,32 @@
   .zoom button:last-child {
     border-right: 0;
   }
+  .zoom .step {
+    min-width: 32px;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .zoom button:disabled {
+    opacity: 0.4;
+  }
   .zoom button.on {
     background: var(--accent-soft);
     color: var(--accent);
     font-weight: 600;
   }
-  /* No frame: the axis fades out at the sides, so time reads as continuing beyond the screen. */
+  /* No frame. (No fade at the edges either: gradients mean "uncertain" on this site.) */
   .scroller {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
     min-height: 0;
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      #000 28px,
-      #000 calc(100% - 28px),
-      transparent
-    );
+    /* Pinch zooms the timeline, not the page. */
+    touch-action: pan-x pan-y;
+  }
+  .timeline.fit {
+    height: auto;
+  }
+  .fit .scroller {
+    overflow-y: hidden;
   }
   .month-bg {
     position: absolute;
@@ -584,7 +732,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    height: 26px;
+    height: var(--item-h, 26px);
     padding: 0 4px 0 0;
     border: 0;
     background: transparent;
@@ -635,6 +783,15 @@
   .label {
     font-size: 0.8rem;
     color: var(--ink);
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dense .label {
+    font-size: 0.72rem;
+  }
+  .dense .bar {
+    height: 9px;
   }
   .item.expected .label {
     font-style: italic;

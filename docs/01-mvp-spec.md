@@ -69,3 +69,21 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **No clusters:** every event is its own dot. Events in exactly the same place are spread on a small ring with a thin tether (a better solution for dense areas is still to be designed).
 - **Timeline:** alternating month shading; no frame (the axis fades out at both sides); sharper bars; expected editions drawn as a soft gradient instead of stripes; picking a month or week no longer jumps back to today.
 - **Phones:** Explore is available and is the default: map, then timeline, then the list in the page flow.
+
+## 11. v0.4 changes (7 Nov 2026, third review)
+
+- **Map is land and sea only:** no country borders and no country hover. The sea is one flat colour, with no gradient. The land is painted on a canvas and redrawn sharply once per frame while you pan or zoom, so edges stay crisp and movement stays smooth. Hovering an event shows its dates, city and country.
+- **Dots never overlap:** dots that would overlap at the current zoom snap onto a small hexagonal pattern centred on their group. The pattern's position and each dot's place in it move every dot as little as possible from its real location; dots with room around them stay put. Hovering a moved dot draws a dotted line to its real location (`src/lib/pack.ts`).
+- **Fixed:** the first framing of the map and flying to a deep-linked event (`?e=`) didn't run. The visible map area could also wrap at the date line, which dimmed every event.
+- **Hover only highlights.** Only selecting (clicking) an event scrolls the list and timeline or moves the map.
+- **Timeline:**
+  - continuous zoom: Ctrl/⌘ + wheel, trackpad or touch pinch, − / + buttons, plus the presets
+  - no fade at the edges
+  - long names are shortened (full name on hover), so more events share a row
+  - rows shrink so all of them fit the box
+  - in Explore, a bar between the map and the timeline resizes them (remembered; double-click resets)
+  - on phones, the timeline grows to show every row
+- **Cards:** an unfolded card shows only the essentials (status note, short description, organisers, official page, registration, sources). *More details* opens everything in a pop-up.
+- **Filters:** only *When*, *Applications* and *Show* are open at first; the other groups start folded.
+- **Design rule:** gradients mean *uncertain* (expected editions, unknown months). They are not used for decoration.
+

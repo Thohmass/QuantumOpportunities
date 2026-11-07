@@ -17,7 +17,7 @@
   } from './lib/filters';
   import { enrich, localToday, type Ev } from './lib/model';
   import { buildIndex, search } from './lib/search';
-  import { app, prefs, setPref } from './lib/state.svelte';
+  import { SPLIT, app, prefs, setPref, setSplit } from './lib/state.svelte';
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
@@ -140,7 +140,37 @@
     // Wide layout: selecting an event opens the list drawer, where its details unfold.
     if (wideLayout && app.eventId) prefs.listOpen = true;
   });
-  const panelEvent = $derived(selected && !listOnScreen ? selected : undefined);
+  // The list card shows the essentials; "More details" opens everything in a pop-up.
+  const panelEvent = $derived(selected && (!listOnScreen || app.detailOpen) ? selected : undefined);
+  const popup = $derived(listOnScreen && app.detailOpen);
+  $effect(() => {
+    void app.eventId;
+    app.detailOpen = false;
+  });
+  function closeDetail() {
+    if (popup) app.detailOpen = false;
+    else app.eventId = undefined;
+  }
+
+  // Explore: drag the bar between the map and the timeline to share the height between them.
+  let exploreEl: HTMLDivElement | undefined = $state();
+  let splitting = $state(false);
+  function splitDown(ev: PointerEvent) {
+    (ev.currentTarget as HTMLElement).setPointerCapture(ev.pointerId);
+    splitting = true;
+  }
+  function splitMove(ev: PointerEvent) {
+    if (!splitting || !exploreEl) return;
+    const r = exploreEl.getBoundingClientRect();
+    setSplit((ev.clientY - r.top) / r.height);
+  }
+  function splitKey(ev: KeyboardEvent) {
+    const step = ev.key === 'ArrowUp' ? -0.05 : ev.key === 'ArrowDown' ? 0.05 : 0;
+    if (step) {
+      ev.preventDefault();
+      setSplit(prefs.split + step);
+    }
+  }
 
   // Theme: "system" follows the device; light/dark are fixed choices.
   $effect(() => {
@@ -233,6 +263,10 @@
           class="explore"
           class:wide-layout={wideLayout}
           class:list-open={wideLayout && prefs.listOpen}
+          class:splitting
+          bind:this={exploreEl}
+          style:--map-fr="{prefs.split}fr"
+          style:--tl-fr="{1 - prefs.split}fr"
         >
           <div class="pane map-pane">
             {#await mapModule}
@@ -243,8 +277,33 @@
               <p class="error">The map could not be loaded.</p>
             {/await}
           </div>
+          <!-- A focusable separator is the ARIA "window splitter" pattern; Svelte's check doesn't know it. -->
+          <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
+          <div
+            class="split"
+            role="separator"
+            aria-orientation="horizontal"
+            aria-label="Resize map and timeline"
+            aria-valuemin={SPLIT.min * 100}
+            aria-valuemax={SPLIT.max * 100}
+            aria-valuenow={Math.round(prefs.split * 100)}
+            tabindex="0"
+            title="Drag to resize · double-click to reset"
+            onpointerdown={splitDown}
+            onpointermove={splitMove}
+            onpointerup={() => (splitting = false)}
+            onpointercancel={() => (splitting = false)}
+            ondblclick={() => setSplit(SPLIT.initial)}
+            onkeydown={splitKey}
+          ></div>
           <div class="pane timeline-pane">
-            <TimelineView events={timelineEvents} {today} dimmed={outsideMap} compact />
+            <TimelineView
+              events={timelineEvents}
+              {today}
+              dimmed={outsideMap}
+              compact
+              fit={narrow}
+            />
           </div>
           {#if !wideLayout || prefs.listOpen}
             <div class="pane list-pane">
@@ -270,7 +329,7 @@
     </main>
   </div>
   {#if panelEvent}
-    <EventDetail e={panelEvent} {meta} {today} />
+    <EventDetail e={panelEvent} {meta} {today} {popup} onclose={closeDetail} />
   {/if}
 {/if}
 
@@ -391,25 +450,27 @@
   }
   .explore.wide-layout {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
     grid-template-areas:
       'map'
+      'split'
       'timeline';
   }
   .explore.wide-layout.list-open {
     grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
     grid-template-areas:
       'map list'
+      'split list'
       'timeline list';
   }
   .explore {
     display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
-    grid-template-rows: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, var(--map-fr)) 12px minmax(0, var(--tl-fr));
     grid-template-areas:
       'map list'
+      'split list'
       'timeline list';
-    gap: 12px;
+    gap: 0 12px;
     height: calc(100dvh - var(--header-h) - 64px);
     min-height: 560px;
     padding: 8px 0 12px;
@@ -424,13 +485,17 @@
     .explore.wide-layout,
     .explore.wide-layout.list-open {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: 40dvh 44dvh auto;
+      grid-template-rows: 40dvh auto auto;
       grid-template-areas:
         'map'
         'timeline'
         'list';
+      gap: 12px;
       height: auto;
       min-height: 0;
+    }
+    .split {
+      display: none;
     }
     .list-pane {
       overflow: visible;
@@ -443,6 +508,32 @@
   }
   .map-pane {
     grid-area: map;
+  }
+  .split {
+    grid-area: split;
+    cursor: row-resize;
+    touch-action: none;
+    position: relative;
+  }
+  .split::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 4px;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+    background: var(--line);
+  }
+  .split:hover::after,
+  .split:focus-visible::after,
+  .splitting .split::after {
+    background: var(--accent);
+  }
+  .splitting {
+    cursor: row-resize;
+    user-select: none;
   }
   .timeline-pane {
     grid-area: timeline;
