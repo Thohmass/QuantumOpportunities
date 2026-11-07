@@ -1,5 +1,6 @@
 // Filter state, matching and faceted counts. Pure functions: the UI and the URL both go through here.
 import { addDays, bounds } from './dates';
+import { overlapsAny, toIntervals, type Interval } from './ranges';
 import type { Ev } from './model';
 import type { Meta } from './types';
 
@@ -26,8 +27,8 @@ export interface Filters {
   showPast: boolean;
   showCancelled: boolean;
   when: DatePreset;
-  from: string; // YYYY-MM or YYYY-MM-DD, for custom
-  to: string; // YYYY-MM or YYYY-MM-DD, for custom
+  /** Selected periods for 'custom', e.g. ["2027-01-01~2027-01-31", "2027-03-01~2027-03-31"]. */
+  ranges: string[];
   byDeadline: boolean; // date filters also match deadlines
   deadline: DeadlineFilter;
   sort: SortKey;
@@ -51,8 +52,7 @@ export const DEFAULT_FILTERS: Filters = {
   showPast: false,
   showCancelled: false,
   when: 'any',
-  from: '',
-  to: '',
+  ranges: [],
   byDeadline: false,
   deadline: 'any',
   sort: 'date',
@@ -140,24 +140,23 @@ function matchesFacet(e: Ev, key: FacetKey, selected: string[], ctx: Ctx): boole
   return values.some((v) => selected.includes(v));
 }
 
-/** Calendar range [from, to] (UTC ms) for the date filter, or undefined for "any". */
-export function dateRange(f: Filters, today: number): [number, number] | undefined {
+/** The selected periods for the date filter (UTC-day intervals), or undefined for "any time". */
+export function dateRanges(f: Filters, today: number): Interval[] | undefined {
   const y = new Date(today).getUTCFullYear();
   switch (f.when) {
     case 'any':
       return undefined;
     case '30d':
-      return [today, addDays(today, 30)];
+      return [[today, addDays(today, 30)]];
     case '3m':
-      return [today, addDays(today, 91)];
+      return [[today, addDays(today, 91)]];
     case 'thisyear':
-      return [Date.UTC(y, 0, 1), Date.UTC(y, 11, 31)];
+      return [[Date.UTC(y, 0, 1), Date.UTC(y, 11, 31)]];
     case 'nextyear':
-      return [Date.UTC(y + 1, 0, 1), Date.UTC(y + 1, 11, 31)];
+      return [[Date.UTC(y + 1, 0, 1), Date.UTC(y + 1, 11, 31)]];
     case 'custom': {
-      const from = f.from ? bounds(f.from)[0] : -Infinity;
-      const to = f.to ? bounds(f.to)[1] : Infinity;
-      return [from, to];
+      const iv = toIntervals(f.ranges);
+      return iv.length ? iv : undefined;
     }
   }
 }
@@ -173,16 +172,15 @@ function matchesBase(e: Ev, f: Filters, ctx: Ctx): boolean {
   if (f.deadline === 'open' && !e.nextDeadline) return false;
   if (f.deadline === '2w' && !(e.nextDeadline && e.nextDeadline.day - ctx.today <= 14 * 86_400_000))
     return false;
-  const range = dateRange(f, ctx.today);
-  if (range) {
-    const inRange = (a: number, b: number) => a <= range[1] && range[0] <= b;
-    const eventHit = inRange(e.span[0], e.span[1]);
+  const ranges = dateRanges(f, ctx.today);
+  if (ranges) {
+    const eventHit = overlapsAny(ranges, e.span[0], e.span[1]);
     const deadlineHit =
       f.byDeadline &&
       Array.isArray(e.deadlines) &&
       e.deadlines.some((d) => {
         const [a, b] = bounds(d.date);
-        return inRange(a, b);
+        return overlapsAny(ranges, a, b);
       });
     if (!eventHit && !deadlineHit) return false;
   }
@@ -264,7 +262,7 @@ export function sortEvents(events: Ev[], key: SortKey): Ev[] {
 
 export function activeCount(f: Filters): number {
   let n = FACETS.reduce((s, k) => s + f[k].length, 0);
-  if (f.when !== 'any') n++;
+  if (f.when !== 'any' && !(f.when === 'custom' && !f.ranges.length)) n++;
   if (f.deadline !== 'any') n++;
   if (f.travel) n++;
   if (f.realQpu) n++;
@@ -272,4 +270,15 @@ export function activeCount(f: Filters): number {
   if (f.showPast) n++;
   if (f.showCancelled) n++;
   return n;
+}
+
+/** Every value each facet can take across the whole database: the fixed option lists of the filter panel. */
+export function facetUniverse(events: Ev[], ctx: Ctx): Record<FacetKey, Set<string>> {
+  const out = Object.fromEntries(FACETS.map((k) => [k, new Set<string>()])) as Record<
+    FacetKey,
+    Set<string>
+  >;
+  for (const e of events)
+    for (const k of FACETS) for (const v of facetValues(e, k, ctx)) out[k].add(v);
+  return out;
 }

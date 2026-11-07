@@ -1,59 +1,72 @@
 <script lang="ts">
   import Facet, { type Option } from './Facet.svelte';
+  import Section from './Section.svelte';
   import { bounds, isoDay } from '../lib/dates';
   import type { FacetKey } from '../lib/filters';
   import { FORMAT_LABEL, ORG_TYPE_LABEL } from '../lib/format';
   import { CONTINENT_NAMES, countryName, flag } from '../lib/geo';
-  import { app, resetFilters, toggleIn } from '../lib/state.svelte';
+  import { toIntervals } from '../lib/ranges';
+  import { app, resetFilters, setRanges, toggleIn } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
 
   let {
     meta,
     counts,
+    universe,
     shown,
-  }: { meta: Meta; counts: Record<FacetKey, Map<string, number>>; shown: number } = $props();
+  }: {
+    meta: Meta;
+    counts: Record<FacetKey, Map<string, number>>;
+    universe: Record<FacetKey, Set<string>>;
+    shown: number;
+  } = $props();
 
   const f = $derived(app.filters);
   const toggle = (key: FacetKey) => (v: string) =>
     (app.filters[key] = toggleIn(app.filters[key], v));
   const n = (key: FacetKey, v: string) => counts[key].get(v) ?? 0;
 
-  /** Options from a known list, plus any selected value so it can be unticked. */
-  function opts(
+  /** Options in a fixed order: every value that exists in the database, plus anything selected. */
+  function fixed(
     key: FacetKey,
-    list: { value: string; label: string; depth?: number }[],
-    hideZero = false,
+    order: { value: string; label: string; depth?: number; swatch?: string }[],
   ): Option[] {
-    return list
-      .map((o) => ({ ...o, count: n(key, o.value) }))
-      .filter((o) => !hideZero || o.count > 0 || f[key].includes(o.value));
+    const known = new Set([...universe[key], ...f[key]]);
+    return order.filter((o) => known.has(o.value)).map((o) => ({ ...o, count: n(key, o.value) }));
   }
-  /** Options from whatever values the counts contain, sorted by count. */
-  function dynamic(key: FacetKey, label: (v: string) => string): Option[] {
-    const values = new Set([...counts[key].keys(), ...f[key]]);
-    return [...values]
+  function alphabetical(key: FacetKey, label: (v: string) => string): Option[] {
+    return [...new Set([...universe[key], ...f[key]])]
       .map((v) => ({ value: v, label: label(v), count: n(key, v) }))
-      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  const topicOptions = $derived.by(() => {
+  const topicOrder = $derived.by(() => {
     const depth = (id: string): number => {
       const t = meta.topics.find((x) => x.id === id);
       return t?.parent ? 1 + depth(t.parent) : 0;
     };
-    return opts(
-      'topics',
-      meta.topics.map((t) => ({ value: t.id, label: t.name, depth: depth(t.id) })),
-      true,
-    );
+    // Topics count events tagged with any descendant, so keep a parent if any descendant is used.
+    const used = (id: string): boolean =>
+      universe.topics.has(id) || meta.topics.some((t) => t.parent === id && used(t.id));
+    return meta.topics
+      .filter((t) => used(t.id) || f.topics.includes(t.id))
+      .map((t) => ({ value: t.id, label: t.name, depth: depth(t.id), count: n('topics', t.id) }));
   });
 
-  /** Date inputs need full dates; a month from an old link becomes its first or last day. */
-  function full(d: string, edge: 'start' | 'end'): string {
-    if (!d) return '';
-    if (d.length === 10) return d;
-    const [a, b] = bounds(d);
-    return isoDay(edge === 'start' ? a : b);
+  const CONTINENT_ORDER = ['EU', 'NA', 'AS', 'OC', 'SA', 'AF', 'AN', 'online'];
+
+  // "Pick dates": edits a single period; several periods come from the timeline.
+  const intervals = $derived(toIntervals(f.ranges));
+  const span = $derived(
+    intervals.length
+      ? [isoDay(intervals[0]![0]), isoDay(intervals[intervals.length - 1]![1])]
+      : ['', ''],
+  );
+  function setSpan(from: string, to: string) {
+    if (!from && !to) return setRanges([]);
+    const a = from || to;
+    const b = to || from;
+    setRanges([[bounds(a)[0], bounds(b)[1]]]);
   }
 
   const presets: { id: typeof f.when; label: string }[] = [
@@ -64,6 +77,9 @@
     { id: 'nextyear', label: 'Next year' },
     { id: 'custom', label: 'Pick dates' },
   ];
+  const showCount = $derived(
+    Number(!f.showExpected) + Number(f.showPast) + Number(f.showCancelled),
+  );
 </script>
 
 <div class="panel" id="filters">
@@ -72,8 +88,7 @@
     <button class="btn ghost" type="button" onclick={resetFilters}>Clear all</button>
   </div>
 
-  <fieldset class="group">
-    <legend>When</legend>
+  <Section title="When" active={f.when === 'any' ? 0 : 1}>
     <div class="pills">
       {#each presets as p (p.id)}
         <button
@@ -89,18 +104,25 @@
         <label
           >From <input
             type="date"
-            value={full(f.from, 'start')}
-            onchange={(ev) => (app.filters.from = ev.currentTarget.value)}
+            value={span[0]}
+            onchange={(ev) => setSpan(ev.currentTarget.value, span[1]!)}
           /></label
         >
         <label
           >To <input
             type="date"
-            value={full(f.to, 'end')}
-            onchange={(ev) => (app.filters.to = ev.currentTarget.value)}
+            value={span[1]}
+            onchange={(ev) => setSpan(span[0]!, ev.currentTarget.value)}
           /></label
         >
       </div>
+      {#if intervals.length > 1}<p class="note">
+          {intervals.length} separate periods selected on the timeline.
+        </p>{/if}
+      <p class="note">
+        Tip: click months or weeks on the timeline; Shift-click selects a range, Ctrl/Cmd-click adds
+        one.
+      </p>
     {/if}
     {#if f.when !== 'any'}
       <label class="check"
@@ -108,10 +130,9 @@
         period</label
       >
     {/if}
-  </fieldset>
+  </Section>
 
-  <fieldset class="group">
-    <legend>Applications</legend>
+  <Section title="Applications" active={f.deadline === 'any' ? 0 : 1}>
     <div class="pills">
       {#each [['any', 'Any'], ['open', 'Open now'], ['2w', 'Closing within 2 weeks']] as [id, label] (id)}
         <button
@@ -122,10 +143,9 @@
         >
       {/each}
     </div>
-  </fieldset>
+  </Section>
 
-  <fieldset class="group">
-    <legend>Show</legend>
+  <Section title="Show" active={showCount}>
     <label class="check"
       ><input type="checkbox" bind:checked={app.filters.showExpected} /> Expected (unconfirmed) editions</label
     >
@@ -135,28 +155,28 @@
     <label class="check"
       ><input type="checkbox" bind:checked={app.filters.showCancelled} /> Cancelled events</label
     >
-  </fieldset>
+  </Section>
 
   <Facet
     title="Event type"
-    options={opts(
+    options={fixed(
       'types',
-      meta.types.map((t) => ({ value: t.id, label: t.name })),
-      true,
+      meta.types.map((t) => ({ value: t.id, label: t.name, swatch: `t-${t.id}` })),
     )}
     selected={f.types}
     onToggle={toggle('types')}
+    limit={12}
   />
   <Facet
     title="Topic"
-    options={topicOptions}
+    options={topicOrder}
     selected={f.topics}
     onToggle={toggle('topics')}
     limit={12}
   />
   <Facet
     title="Format"
-    options={opts(
+    options={fixed(
       'formats',
       Object.entries(FORMAT_LABEL).map(([value, label]) => ({ value, label })),
     )}
@@ -165,22 +185,26 @@
   />
   <Facet
     title="Continent"
-    options={dynamic('continents', (v) =>
-      v === 'online' ? 'Online only' : (CONTINENT_NAMES[v as keyof typeof CONTINENT_NAMES] ?? v),
+    options={fixed(
+      'continents',
+      CONTINENT_ORDER.map((c) => ({
+        value: c,
+        label: c === 'online' ? 'Online only' : CONTINENT_NAMES[c as keyof typeof CONTINENT_NAMES],
+      })),
     )}
     selected={f.continents}
     onToggle={toggle('continents')}
   />
   <Facet
     title="Country"
-    options={dynamic('countries', (v) => `${flag(v)} ${countryName(v)}`)}
+    options={alphabetical('countries', (v) => `${flag(v)} ${countryName(v)}`)}
     selected={f.countries}
     onToggle={toggle('countries')}
     searchable
   />
   <Facet
     title="City"
-    options={dynamic('cities', (v) => {
+    options={alphabetical('cities', (v) => {
       const [city, cc] = v.split('|');
       return `${city}, ${cc}`;
     })}
@@ -191,23 +215,25 @@
   />
   <Facet
     title="Organiser type"
-    options={dynamic('orgTypes', (v) => ORG_TYPE_LABEL[v] ?? v)}
+    options={fixed(
+      'orgTypes',
+      Object.entries(ORG_TYPE_LABEL).map(([value, label]) => ({ value, label })),
+    )}
     selected={f.orgTypes}
     onToggle={toggle('orgTypes')}
   />
   <Facet
     title="Organiser"
-    options={dynamic('orgs', (v) => meta.orgs[v]?.name ?? v)}
+    options={alphabetical('orgs', (v) => meta.orgs[v]?.name ?? v)}
     selected={f.orgs}
     onToggle={toggle('orgs')}
     searchable
     limit={6}
   />
 
-  <fieldset class="group">
-    <legend>Cost & support</legend>
+  <Section title="Cost & support" active={f.cost.length + Number(f.travel) + Number(f.realQpu)}>
     {#each [['free', 'Free'], ['paid', 'Paid'], ['unknown', 'Not found yet']] as [v, label] (v)}
-      <label class="check">
+      <label class="check" class:zero={n('cost', v!) === 0 && !f.cost.includes(v!)}>
         <input type="checkbox" checked={f.cost.includes(v!)} onchange={() => toggle('cost')(v!)} />
         <span class="grow">{label}</span><span class="n">{n('cost', v!)}</span>
       </label>
@@ -218,11 +244,11 @@
     <label class="check"
       ><input type="checkbox" bind:checked={app.filters.realQpu} /> Access to real quantum hardware</label
     >
-  </fieldset>
+  </Section>
 
   <Facet
     title="Audience"
-    options={opts('audience', [
+    options={fixed('audience', [
       ...meta.audiences.map((a) => ({ value: a.id, label: a.name })),
       { value: 'unknown', label: 'Not found yet' },
     ])}
@@ -240,7 +266,7 @@
 <style>
   .panel {
     display: grid;
-    gap: 22px;
+    gap: 18px;
     padding: 16px 16px 24px;
   }
   .head {
@@ -250,22 +276,6 @@
   }
   h2 {
     font-size: 1.05rem;
-  }
-  .group {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 6px;
-  }
-  legend {
-    font-weight: 700;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-    margin-bottom: 4px;
-    padding: 0;
   }
   .pills {
     display: flex;
@@ -303,6 +313,11 @@
     padding: 5px 8px;
     font-size: 16px;
   }
+  .note {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
   .check {
     display: flex;
     align-items: center;
@@ -311,6 +326,9 @@
     padding: 2px 6px;
     font-size: 0.92rem;
     cursor: pointer;
+  }
+  .check.zero {
+    opacity: 0.42;
   }
   .check input {
     width: 17px;

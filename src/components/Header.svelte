@@ -1,6 +1,6 @@
 <script lang="ts">
   import { activeCount, type View } from '../lib/filters';
-  import { app } from '../lib/state.svelte';
+  import { app, prefs, setPref, type Theme } from '../lib/state.svelte';
 
   let { shown, total }: { shown: number; total: number } = $props();
 
@@ -16,6 +16,18 @@
   ];
   const nActive = $derived(activeCount(app.filters));
   let searchEl: HTMLInputElement | undefined = $state();
+  const NEXT: Record<Theme, Theme> = { system: 'light', light: 'dark', dark: 'system' };
+  const THEME_LABEL: Record<Theme, string> = {
+    system: 'Theme: system',
+    light: 'Theme: light',
+    dark: 'Theme: dark',
+  };
+  const THEME_ICON: Record<Theme, string> = {
+    system: 'M4 5h16v11H4zM9 20h6M12 16v4',
+    light:
+      'M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10',
+    dark: 'M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5',
+  };
 
   function onKey(e: KeyboardEvent) {
     const t = e.target as HTMLElement;
@@ -66,6 +78,24 @@
         </a>
       {/each}
     </nav>
+    <button
+      class="theme"
+      type="button"
+      onclick={() => setPref('theme', NEXT[prefs.theme])}
+      title="{THEME_LABEL[prefs.theme]} (click to change)"
+      aria-label="{THEME_LABEL[prefs.theme]}. Change theme"
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+        ><path
+          d={THEME_ICON[prefs.theme]}
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        /></svg
+      >
+    </button>
     <a
       class="about"
       href="#/about"
@@ -173,6 +203,20 @@
   }
   .about.active {
     color: var(--accent);
+  }
+  .theme {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    flex: none;
+  }
+  .theme:hover {
+    color: var(--ink);
   }
   .bar {
     display: flex;

@@ -3,7 +3,9 @@
   import { DEFAULT_FILTERS, FACETS, type FacetKey } from '../lib/filters';
   import { FORMAT_LABEL, ORG_TYPE_LABEL } from '../lib/format';
   import { CONTINENT_NAMES, countryName } from '../lib/geo';
-  import { app, resetFilters } from '../lib/state.svelte';
+  import { app, resetFilters, setRanges } from '../lib/state.svelte';
+  import { toIntervals, type Interval } from '../lib/ranges';
+  import { isoDay, monthName } from '../lib/dates';
   import type { Meta } from '../lib/types';
 
   let { meta }: { meta: Meta } = $props();
@@ -44,6 +46,23 @@
     nextyear: 'Next year',
   };
 
+  /** "March 2027", "W12 2027"-style labels where the period is a whole month, else "2 Jan → 12 Mar 2027". */
+  function periodLabel([a, b]: Interval): string {
+    const A = new Date(a);
+    const B = new Date(b);
+    const wholeMonths = A.getUTCDate() === 1 && new Date(b + 86_400_000).getUTCDate() === 1;
+    if (wholeMonths) {
+      const m1 = `${monthName(A.getUTCMonth())} ${A.getUTCFullYear()}`;
+      const m2 = `${monthName(B.getUTCMonth())} ${B.getUTCFullYear()}`;
+      return m1 === m2
+        ? `${monthName(A.getUTCMonth(), true)} ${A.getUTCFullYear()}`
+        : `${m1} – ${m2}`;
+    }
+    return a === b
+      ? formatPartial(isoDay(a))
+      : `${formatPartial(isoDay(a))} → ${formatPartial(isoDay(b))}`;
+  }
+
   interface Chip {
     text: string;
     clear: () => void;
@@ -58,16 +77,12 @@
           text: label(k, v),
           clear: () => (app.filters[k] = app.filters[k].filter((x) => x !== v)),
         });
-    if (f.when !== 'any')
-      out.push({
-        text:
-          f.when === 'custom'
-            ? f.from && f.from === f.to
-              ? formatPartial(f.from)
-              : `${f.from ? formatPartial(f.from) : '…'} → ${f.to ? formatPartial(f.to) : '…'}`
-            : WHEN[f.when]!,
-        clear: () => (app.filters.when = 'any'),
-      });
+    if (f.when === 'custom') {
+      const ivs = toIntervals(f.ranges);
+      for (const iv of ivs)
+        out.push({ text: periodLabel(iv), clear: () => setRanges(ivs.filter((x) => x !== iv)) });
+    } else if (f.when !== 'any')
+      out.push({ text: WHEN[f.when]!, clear: () => (app.filters.when = 'any') });
     if (f.deadline !== 'any')
       out.push({
         text: f.deadline === 'open' ? 'Applications open' : 'Closing within 2 weeks',

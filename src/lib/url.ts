@@ -19,6 +19,7 @@ const LISTS: [keyof Filters, string][] = [
   ['orgs', 'org'],
   ['cost', 'cost'],
   ['audience', 'aud'],
+  ['ranges', 'dates'],
 ];
 const FLAGS: [keyof Filters, string][] = [
   ['travel', 'travel'],
@@ -31,8 +32,6 @@ const FLAGS: [keyof Filters, string][] = [
 const STRINGS: [keyof Filters, string][] = [
   ['q', 'q'],
   ['when', 'when'],
-  ['from', 'from'],
-  ['to', 'to'],
   ['deadline', 'dl'],
   ['sort', 'sort'],
 ];
@@ -49,7 +48,7 @@ export function toHash(r: Route): string {
   }
   for (const [k, name] of FLAGS) if (f[k] !== d[k]) p.set(name, f[k] ? '1' : '0');
   if (r.event) p.set('e', r.event);
-  const qs = p.toString().replace(/%2C/g, ',').replace(/%7C/g, '|');
+  const qs = p.toString().replace(/%2C/g, ',').replace(/%7C/g, '|').replace(/%7E/g, '~');
   return `#/${r.view}${qs ? '?' + qs : ''}`;
 }
 
@@ -71,6 +70,9 @@ export function fromHash(hash: string, fallbackView: View = 'list'): Route {
     const v = p.get(name);
     if (v !== null) f[k] = v === '1';
   }
+  // Links from v0.1 used from= and to=.
+  const from = p.get('from');
+  if (from && !filters.ranges.length) filters.ranges = [`${from}~${p.get('to') || from}`];
   // Guard against hand-edited URLs with unknown enum values.
   if (!['any', '30d', '3m', 'thisyear', 'nextyear', 'custom'].includes(filters.when))
     filters.when = 'any';

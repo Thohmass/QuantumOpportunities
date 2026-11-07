@@ -12,6 +12,8 @@ The point of the site is **connecting information in one picture**: where, when 
 - **Time selection on the timeline.** Click a **month**, **week** or **day**, or **drag** across any period; the selection becomes the date filter, shades the timeline and clears in one click.
 - **Zooming is the most important map feature:** smooth zoom from world to city with clusters that split as you zoom in.
 
+**v0.2 additions:** colour = event type in every view; texture = status; deadlines joined to events by lines; file-manager style time selection with gaps; selected events unfold inline in the list and focus the map and timeline; a "Wide map" layout to compare with "Side by side".
+
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
 - A real-proportions map, but with curves, lines, colours and shapes from the project's own identity rather than a stock basemap.

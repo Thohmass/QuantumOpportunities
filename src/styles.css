@@ -23,9 +23,52 @@
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --header-h: 112px;
   color-scheme: light;
+  /* Event types: one colour each, used on cards, timeline bars, map pins and the filter list. */
+  --t-conference: #2563eb;
+  --t-workshop: #0e7490;
+  --t-hackathon: #7c3aed;
+  --t-summer_school: #059669;
+  --t-winter_school: #0284c7;
+  --t-challenge: #db2777;
+  --t-programme: #4d7c0f;
+  --t-meetup: #a16207;
+  --t-career_fair: #475569;
+  --t-other: #6b7280;
+}
+/* Dark theme: chosen in the header, or the system is dark and nothing else is chosen. */
+:root[data-theme='dark'] {
+  --bg: #0d1117;
+  --surface: #151b23;
+  --surface-2: #1b222c;
+  --ink: #e6eaf0;
+  --muted: #94a0b0;
+  --line: #283240;
+  --accent: #7e9cff;
+  --accent-ink: #0d1117;
+  --accent-soft: #1c2644;
+  --open: #4bc893;
+  --open-soft: #11301f;
+  --expected: #e6a64a;
+  --expected-soft: #33240c;
+  --warn: #f28a55;
+  --warn-soft: #3a1e10;
+  --past: #8e97a5;
+  --past-soft: #222a34;
+  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
+  color-scheme: dark;
+  --t-conference: #60a5fa;
+  --t-workshop: #22d3ee;
+  --t-hackathon: #a78bfa;
+  --t-summer_school: #34d399;
+  --t-winter_school: #7dd3fc;
+  --t-challenge: #f472b6;
+  --t-programme: #a3e635;
+  --t-meetup: #facc15;
+  --t-career_fair: #94a3b8;
+  --t-other: #9ca3af;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg: #0d1117;
     --surface: #151b23;
     --surface-2: #1b222c;
@@ -45,6 +88,16 @@
     --past-soft: #222a34;
     --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
     color-scheme: dark;
+    --t-conference: #60a5fa;
+    --t-workshop: #22d3ee;
+    --t-hackathon: #a78bfa;
+    --t-summer_school: #34d399;
+    --t-winter_school: #7dd3fc;
+    --t-challenge: #f472b6;
+    --t-programme: #a3e635;
+    --t-meetup: #facc15;
+    --t-career_fair: #94a3b8;
+    --t-other: #9ca3af;
   }
 }
 
@@ -198,4 +251,59 @@ h3 {
     animation: none !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Type colour helpers: elements with class t-<type> get --tc. */
+.t-conference {
+  --tc: var(--t-conference);
+}
+.t-workshop {
+  --tc: var(--t-workshop);
+}
+.t-hackathon {
+  --tc: var(--t-hackathon);
+}
+.t-summer_school {
+  --tc: var(--t-summer_school);
+}
+.t-winter_school {
+  --tc: var(--t-winter_school);
+}
+.t-challenge {
+  --tc: var(--t-challenge);
+}
+.t-programme {
+  --tc: var(--t-programme);
+}
+.t-meetup {
+  --tc: var(--t-meetup);
+}
+.t-career_fair {
+  --tc: var(--t-career_fair);
+}
+.t-other {
+  --tc: var(--t-other);
+}
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+  color: var(--tc, var(--muted));
+  background: color-mix(in srgb, var(--tc, var(--muted)) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc, var(--muted)) 45%, transparent);
+}
+.type-chip::before,
+.swatch {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tc, var(--muted));
+  flex: none;
 }

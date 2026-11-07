@@ -113,7 +113,14 @@ export function buildMeta(ds: Dataset, events: EventOut[], now: Date, todayIso: 
       ]),
     ),
     series: Object.fromEntries(
-      ds.series.map(({ doc: s }) => [s.id, { name: s.name, ...(s.url ? { url: s.url } : {}) }]),
+      ds.series.map(({ doc: s }) => [
+        s.id,
+        {
+          name: s.name,
+          ...(s.url ? { url: s.url } : {}),
+          ...(s.typical_month ? { typicalMonth: s.typical_month } : {}),
+        },
+      ]),
     ),
     redirects: ds.redirects,
     health: { total: events.length, byStatus, filled, lastRuns },
