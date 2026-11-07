@@ -55,10 +55,17 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 
 ## 9. v0.2 changes (7 Nov 2026, from Tomáš's first review)
 
-- **Colour = event type** everywhere (cards' left edge and type chip, timeline bars, map pins, the Event type filter as legend). Status is texture: striped = expected, grey = past, dashed red outline = postponed/cancelled. Orange is reserved for "hovered".
+- **Colour = event type** everywhere (cards' left edge and type chip, timeline bars, map pins, the Event type filter as legend). Status is texture: soft gradient = expected (v0.3; stripes in v0.2), grey = past, dashed red outline = postponed/cancelled. Orange is reserved for "hovered".
 - **Map:** one bounded world (no wrapping, no panning past the poles or the date line); the hover marker is a small dot that grows with zoom; the hover tooltip closes when the pointer leaves the event in any view; selecting an event flies the map to it and rings its pin.
 - **Timeline:** deadlines are joined to their event by a dotted line in the event's colour. File-manager selection on month/week/day cells (click = select only / unselect if selected, Shift = range from the last click, Ctrl/Cmd = add or remove one), dragging across cells selects several, dragging in the body selects days; selections can have gaps (`dates=` in the URL holds a list of periods). The timeline always fills its box. Year-only dates are drawn as one likely month (series' usual month, or the season for schools) with a dotted outline and "month not known".
 - **Filters:** every group collapses (selected options stay visible); options keep a fixed order and never disappear (zero-count options are dimmed); the sidebar can be hidden.
 - **List:** name first; date smaller; larger flag. Selecting an event unfolds its details inside the card (with a collapse button) and focuses the map and timeline on it. The standalone Timeline and Map views keep the side panel.
 - **Layouts:** Explore has "Side by side" and "Wide map" (map across the screen, timeline below, list as a drawer that opens on demand or when an event is selected). The choice is remembered in the browser.
 - **Theme:** System / Light / Dark switch in the header, remembered in the browser.
+
+## 10. v0.3 changes (7 Nov 2026, second review)
+
+- **Own minimal map** instead of map tiles: land, sea and simplified country borders only (Natural Earth 1:110m), no labels, roads or rivers. Hovering a country lightens it and shows its name (tap on phones). Pan and zoom move a single SVG layer while event dots stay a constant size, which keeps it smooth on phones. Bounded to one world; zoom 1–60×.
+- **No clusters:** every event is its own dot. Events in exactly the same place are spread on a small ring with a thin tether (a better solution for dense areas is still to be designed).
+- **Timeline:** alternating month shading; no frame (the axis fades out at both sides); sharper bars; expected editions drawn as a soft gradient instead of stripes; picking a month or week no longer jumps back to today.
+- **Phones:** Explore is available and is the default: map, then timeline, then the list in the page flow.
