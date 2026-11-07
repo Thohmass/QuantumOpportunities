@@ -36,6 +36,10 @@
   url: https://www.houches-school-physics.com/
   kind: organiser
   covers: [schools]
+  last_scanned: 2026-11-07
+  scans: 1
+  yield: 5
+  zero_yield_streak: 0
 - id: ihp-paris
   name: Institut Henri Poincaré – programmes
   url: https://www.ihp.fr/en

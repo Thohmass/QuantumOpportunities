@@ -32,12 +32,6 @@
   found: 2026-11-06
   hint: Listed on quantum.info/conf/2027
   url: https://quantum.info/conf/2027.html
-- title: Winter School on Physics with Trapped Charged Particles, Les Houches (11–22 Jan 2027)
-  found: 2026-11-06
-  hint: Confirmed on the official Les Houches 2027 programme. Not created, find-similar could not run
-  url: https://www.houches-school-physics.com/program/program-2027/
-  tries: 1
-  last_tried: 2026-11-07
 - title: Introductory School to Advances in Quantum Cryptography, IHP Paris (13–17 Sep 2027)
   found: 2026-11-06
   hint: Part of the IHP quantum cryptography trimester (13 Sep – 10 Dec 2027); not found on ihp.fr home page
@@ -64,9 +58,9 @@
   url: https://www.usherbrooke.ca/iq/fr/actualites/evenements/details/59308
   tries: 1
   last_tried: 2026-11-07
-- title: Les Houches 2027 quantum schools (Fault-Tolerant Quantum Computing 25–30 Apr; Quantum NEST 6–11 Jun; Adaptive Measurements and Dissipation Engineering Aug; Cold-Atoms School 18–29 Oct)
+- title: Further Les Houches 2027 schools with quantum content (Non-linear, Imaging and Quantum Optics 18–23 Apr; Out of Equilibrium Physics in Low Dimensional Quantum Fluids 14–19 Mar; School on Low-Dimensional Quantum Matter 4–15 Oct)
   found: 2026-11-07
-  hint: All on the official Les Houches 2027 programme; create once find-similar can run
+  hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
   url: https://www.houches-school-physics.com/program/program-2027/
 - title: Benasque 2027 Quantum Nanophotonics (28 Mar – 2 Apr) and Winter School on Ultracold Quantum Many-Body Systems (24–30 Jan)
   found: 2026-11-07

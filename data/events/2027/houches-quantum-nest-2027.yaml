@@ -1,0 +1,30 @@
+id: houches-quantum-nest-2027
+name: "Les Houches: Quantum NEST – Quantum Information and Dynamics 2027"
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-06-06"
+  end: "2027-06-11"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [computing, qit]
+audience: [msc, phd]
+url: https://www.houches-school-physics.com/program/program-2027/quantum-nest-quantum-information-and-dynamics-1735463.kjsp
+description: School giving Master's and PhD students an overview of recent quantum science and technology, with lecturers from academia and industry.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-07
+  - url: https://www.houches-school-physics.com/program/program-2027/quantum-nest-quantum-information-and-dynamics-1735463.kjsp
+    kind: official
+    accessed: 2026-11-07
+checks:
+  last_checked: 2026-11-07
+  unchanged_streak: 0
+added:
+  date: 2026-11-07
+  by: scout-2026-11-07
