@@ -11,6 +11,7 @@ Status: v0.1 · 6 Nov 2026
 ## 2. Monitoring
 
 - Each data PR's body is the agent's report (checked, changed, created, uncertain, suspicious).
+- `data/logs/<date>-<job>.md` is each run's research log: every search, every page read, every candidate and what was decided about it (created, updated, already known, lead, skipped and why).
 - `data/runs.yaml` logs every run; the About page shows the last runs and how complete the data is.
 - GitHub emails on failed workflows.
 
