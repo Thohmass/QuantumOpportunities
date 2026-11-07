@@ -73,7 +73,16 @@ jobs:
           claude_args: >-
             --model claude-sonnet-5-5
             --max-turns 110
-            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run find-similar:*),Bash(npm run index),Bash(npm run queue:*)"
+            --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run queue:*)"
+
+      # Diagnostics: which tool calls were refused (tool name and the start of its input), so runs that stop early
+      # can be understood without exposing the whole transcript in public logs.
+      - name: Refused tool calls
+        if: always() && steps.claude.outputs.execution_file != ''
+        env:
+          EXEC: ${{ steps.claude.outputs.execution_file }}
+        run: |
+          jq -r '.[] | select(.type == "result") | .permission_denials[]? | "\(.tool_name): \(.tool_input | tostring | .[0:240])"' "$EXEC" || true
 
       - name: Only data/ changed, and the data is valid
         if: steps.claude.outcome == 'success'
@@ -89,13 +98,17 @@ jobs:
           npm run data:check
           echo "changed=$(git status --porcelain --untracked-files=all -- data | wc -l)" >> "$GITHUB_OUTPUT"
 
-      - name: Open the data PR as the Claude App
+      # The Claude App token is revoked when the agent step ends, so the PR is opened with DATA_PR_TOKEN: a
+      # fine-grained token limited to this repository (contents + pull requests). The agent never sees it, and PRs
+      # opened with it trigger CI (GITHUB_TOKEN PRs would not). pr-policy still decides on auto-merge.
+      - name: Open the data PR
         if: steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
         env:
-          GH_TOKEN: ${{ steps.claude.outputs.github_token }}
+          GH_TOKEN: ${{ secrets.DATA_PR_TOKEN }}
           REPO: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          [ -n "$GH_TOKEN" ] || { echo "::error::Secret DATA_PR_TOKEN is missing (docs/03-dev-pipeline.md §6)."; exit 1; }
           branch="data/scout/$(date -u +%F)-${GITHUB_RUN_ID}"
           git config user.name "claude[bot]"
           git config user.email "41898282+claude[bot]@users.noreply.github.com"
