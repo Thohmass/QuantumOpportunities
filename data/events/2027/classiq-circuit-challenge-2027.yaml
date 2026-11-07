@@ -1,0 +1,33 @@
+id: classiq-circuit-challenge-2027
+series: classiq-circuit-challenge
+name: Classiq Quantum Circuit Challenge 2027
+type: challenge
+status: expected
+format: online
+dates:
+  start: 2027-08
+  end: 2027-09
+organizers: [classiq]
+topics: [computing, qc-software]
+audience: [anyone]
+hardware:
+  real_qpu: false
+  note: Circuit-depth optimisation
+prizes: "2026: $2,000 per winner"
+cost:
+  kind: free
+url: https://www.classiq.io/insights/wrapping-up-the-classiq-quantum-circuit-challenge
+description: Online challenge to build the most efficient quantum circuits on the Classiq platform. The 2026 edition drew 387 entrants from 40 countries; the next one may focus on applications.
+expected:
+  basis: Last edition 28 Aug – 30 Sep 2026
+  confidence: medium
+sources:
+  - url: https://www.classiq.io/insights/wrapping-up-the-classiq-quantum-circuit-challenge
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

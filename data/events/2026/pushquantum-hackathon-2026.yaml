@@ -1,0 +1,46 @@
+id: pushquantum-hackathon-2026
+series: pushquantum-hackathon
+name: PushQuantum Conference + Hackathon 2026
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-20
+  end: 2026-11-22
+  note: Conference 20 Nov, hackathon 20–22 Nov
+deadlines:
+  - kind: early_bird
+    date: 2026-10-09
+location:
+  city: Garching
+  country: DE
+  venue: Research Campus Garching
+organizers: [pushquantum]
+partners: [tum, iqm]
+topics: [computing, qc-algorithms, qc-software]
+audience: [msc, phd, researcher]
+eligibility: Master’s and PhD students, researchers and tech enthusiasts
+team:
+  note: Interdisciplinary teams; size not stated
+hardware:
+  real_qpu: true
+  note: Access to partner quantum hardware (platforms not named)
+prizes: Awards ceremony; prizes not specified
+cost:
+  kind: paid
+  min: 5
+  max: 15
+  currency: EUR
+  note: Hackathon €10, conference €5, both €15
+url: https://www.pushquantum.tech/hackathon
+description: A one-day conference followed by a 24-hour team hackathon near Munich, run by the TUM student club PushQuantum with Munich Quantum Valley partners.
+sources:
+  - url: https://www.pushquantum.tech/hackathon
+    kind: official
+    accessed: 2026-11-04
+checks:
+  last_checked: 2026-11-04
+  unchanged_streak: 0
+added:
+  date: 2026-11-04
+  by: radar-import

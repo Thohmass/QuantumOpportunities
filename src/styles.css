@@ -1,11 +1,201 @@
+/* Design tokens and base styles. Light and dark follow the system setting. */
 :root {
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  --bg: #f3f5f8;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --ink: #111720;
+  --muted: #5a6575;
+  --line: #d9dee5;
+  --accent: #2a4fd4;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3e9fb;
+  --open: #0f7f57;
+  --open-soft: #dbf2e8;
+  --expected: #9a5800;
+  --expected-soft: #faead2;
+  --warn: #be3d0a;
+  --warn-soft: #fce6db;
+  --past: #6b7480;
+  --past-soft: #e8ebef;
+  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 4px 16px rgb(16 24 40 / 6%);
+  --radius: 10px;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --header-h: 112px;
+  color-scheme: light;
 }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --surface: #151b23;
+    --surface-2: #1b222c;
+    --ink: #e6eaf0;
+    --muted: #94a0b0;
+    --line: #283240;
+    --accent: #7e9cff;
+    --accent-ink: #0d1117;
+    --accent-soft: #1c2644;
+    --open: #4bc893;
+    --open-soft: #11301f;
+    --expected: #e6a64a;
+    --expected-soft: #33240c;
+    --warn: #f28a55;
+    --warn-soft: #3a1e10;
+    --past: #8e97a5;
+    --past-soft: #222a34;
+    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
+    color-scheme: dark;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
 body {
   margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 var(--font);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  margin: 0;
+  text-wrap: balance;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.muted {
+  color: var(--muted);
+}
+.mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shared small components */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.badge.confirmed {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.badge.expected {
+  background: transparent;
+  color: var(--expected);
+  border: 1.5px dashed var(--expected);
+}
+.badge.postponed,
+.badge.cancelled {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+.badge.past {
+  background: var(--past-soft);
+  color: var(--past);
+}
+.badge.ongoing {
+  background: var(--open-soft);
+  color: var(--open);
+}
+.badge.free {
+  background: var(--open-soft);
+  color: var(--open);
+}
+.badge.paid {
+  background: var(--surface-2);
+  color: var(--ink);
+  border-color: var(--line);
+}
+.badge.unknown {
+  background: transparent;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+}
+.chip {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+.btn:hover {
+  border-color: var(--accent);
+}
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.btn.ghost {
+  border-color: transparent;
+  background: transparent;
+}
+.notfound {
+  color: var(--muted);
+  font-style: italic;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
 }

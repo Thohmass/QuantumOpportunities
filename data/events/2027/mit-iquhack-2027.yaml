@@ -1,0 +1,45 @@
+id: mit-iquhack-2027
+series: mit-iquhack
+name: MIT iQuHACK 2027
+type: hackathon
+status: confirmed
+format: hybrid
+dates:
+  start: 2027-01-29
+  end: 2027-01-31
+deadlines:
+  - kind: application
+    date: 2026-11-18
+location:
+  city: Cambridge
+  country: US
+  venue: MIT
+organizers: [mit-iquise]
+topics: [computing, qc-algorithms, qc-software]
+audience: [highschool, bsc, msc, phd, postdoc, industry]
+eligibility: 18+; students, postdocs and professionals
+team:
+  min: 5
+  max: 5
+  note: Pre-formed teams allowed, but every member applies individually
+hardware:
+  real_qpu: true
+  note: In-person track gets priority access to sponsor QPUs; remote track uses simulators
+prizes: Swag; sponsor prizes not stated
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: Limited case-by-case scholarships; housing help possible
+url: https://iquhack.mit.edu/
+description: The eighth edition of MIT’s flagship student quantum hackathon, with an in-person track at MIT using sponsor quantum hardware and a remote track on simulators.
+sources:
+  - url: https://iquhack.mit.edu/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

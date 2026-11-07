@@ -1,0 +1,14 @@
+name: Bug or idea
+description: Something on the site doesn't work, or could be better.
+labels: [feedback]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, or what would you like?
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Page link and device/browser (for bugs)

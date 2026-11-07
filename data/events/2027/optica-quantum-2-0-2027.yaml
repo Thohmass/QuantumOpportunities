@@ -1,0 +1,36 @@
+id: optica-quantum-2-0-2027
+series: optica-quantum-2-0
+name: Optica Quantum 2.0 Conference and Exhibition 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-07
+  end: 2027-06-10
+deadlines:
+  - kind: abstract
+    date: 2027-02-09
+    note: Paper submission, 13:30 (US Eastern)
+location:
+  city: Copenhagen
+  country: DK
+  venue: Bella Center
+organizers: [optica]
+topics: [computing, networks, sensing, hw-photonics, optics]
+audience: [phd, postdoc, researcher, industry]
+url: https://www.optica.org/events/topical_meetings/quantum/about/
+description: "Four days of talks, posters and an exhibition on large engineered quantum systems: computers, simulators, networks and sensors. Co-located with the Optica Quantum Executive Forum, in Copenhagen."
+sources:
+  - url: https://www.optica.org/events/topical_meetings/quantum/about/
+    kind: official
+    accessed: 2026-11-06
+  - url: https://www.optica.org/quantum
+    kind: official
+    accessed: 2026-11-06
+    note: call for papers
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

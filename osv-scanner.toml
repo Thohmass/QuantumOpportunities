@@ -1,0 +1,5 @@
+# Known vulnerabilities accepted with a reason. Protected file: changes need the owner.
+
+[[IgnoredVulns]]
+id = "GHSA-gcqx-w48m-w2h4"
+reason = "deepmerge prototype poisoning (low). Only reachable through @sveltejs/vite-plugin-svelte at build time, which merges our own config; no fix released yet. Re-check when a fix ships."

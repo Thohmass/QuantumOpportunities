@@ -1,0 +1,34 @@
+id: national-quantum-fest-2026
+series: national-quantum-fest
+name: National Quantum Fest 2026 – Quantum Hackathon
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-12-03
+  end: 2026-12-04
+location:
+  city: Tumakuru
+  country: IN
+  venue: SSIT, Maralur
+organizers: [sit-tumakuru]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc]
+eligibility: College students in India (undergraduate or postgraduate)
+team:
+  min: 3
+  max: 4
+  note: From one or several colleges
+prizes: To be announced with partners
+url: https://nationalquantumfest.com/
+description: Quantum hackathon at the Sri Siddhartha Institute of Technology for college students across India, with a GPU track mentioned.
+sources:
+  - url: https://nationalquantumfest.com/
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-10-28
+  unchanged_streak: 0
+added:
+  date: 2026-10-28
+  by: radar-import

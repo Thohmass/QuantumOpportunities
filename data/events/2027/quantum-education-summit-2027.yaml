@@ -1,0 +1,27 @@
+id: quantum-education-summit-2027
+series: quantum-education-summit
+name: Quantum Education Summit 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-25
+  end: 2027-08-27
+location:
+  city: Copenhagen
+  country: DK
+organizers: [nqcp]
+topics: [education]
+audience: [anyone]
+url: https://nqcp.ku.dk/quantum-education-summit-2027
+description: Second edition of the European summit on quantum education, bringing together quantum experts, science-education researchers and teachers. Registration opens in autumn 2026.
+sources:
+  - url: https://nqcp.ku.dk/quantum-education-summit-2027
+    kind: official
+    accessed: 2026-11-06
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

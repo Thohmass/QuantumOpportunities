@@ -1,0 +1,32 @@
+id: tqc-2027
+series: tqc
+name: TQC 2027
+type: conference
+status: expected
+format: in_person
+dates:
+  start: "2027"
+location:
+  city: Grenoble
+  country: FR
+topics: [qit, qc-algorithms, qkd, qec]
+audience: [phd, postdoc, researcher]
+url: https://tqc-conference.org/
+description: Leading annual conference on the theory of quantum computation, communication and cryptography. Listed for Grenoble in 2027; dates not announced yet.
+expected:
+  basis: Annual; TQC 2026 ran 31 Aug – 4 Sep 2026 in Sherbrooke. quantum.info lists TQC 2027 in Grenoble, dates TBA
+  confidence: medium
+sources:
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-06
+  - url: https://tqc-conference.org/2026/
+    kind: official
+    accessed: 2026-11-06
+    note: TQC 2026
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

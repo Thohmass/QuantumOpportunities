@@ -1,0 +1,2 @@
+# Pairs of event ids that look alike but are different events. CI does not flag them as duplicates.
+[]

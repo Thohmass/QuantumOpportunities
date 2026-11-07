@@ -1,0 +1,49 @@
+{
+  "_comment": "Quantum Opportunities CI policy, ported from Lynote. This file is a protected path: changes need the owner's approval. See docs/03-dev-pipeline.md.",
+
+  "agent_logins": ["claude[bot]", "claude-code[bot]", "github-actions[bot]"],
+  "agent_branch_prefixes": ["claude/", "data/"],
+
+  "protected_paths": [
+    ".github/",
+    ".claude/",
+    "CLAUDE.md",
+    "LICENSE",
+    "data/LICENSE",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    "vite.config.ts",
+    "svelte.config.js",
+    "playwright.config.ts",
+    "osv-scanner.toml",
+    "tool/ci/",
+    "schema/",
+    "data/taxonomy/",
+    "agents/",
+    "scripts/size-budget.ts",
+    "docs/decisions/"
+  ],
+
+  "test_patterns": ["\\.test\\.ts$", "^e2e/"],
+
+  "auto_merge": {
+    "_comment": "Agent PRs merge without the owner only if EVERY changed file matches one of these rules. Data paths are here because data PRs pass schema, source and duplicate gates and are reverted in one click.",
+    "path_prefixes": [
+      "docs/",
+      "data/events/",
+      "data/series/",
+      "data/orgs/",
+      "data/leads.yaml",
+      "data/sources.yaml",
+      "data/queries.yaml",
+      "data/runs.yaml",
+      "data/not-duplicates.yaml",
+      "data/redirects.yaml"
+    ],
+    "exclude_prefixes": ["docs/decisions/"],
+    "allow_added_tests": true
+  },
+
+  "dependency_allowlist_file": "tool/ci/dependency_allowlist.txt"
+}

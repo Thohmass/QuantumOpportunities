@@ -1,0 +1,32 @@
+id: qip-2027
+series: qip
+name: QIP 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-20
+  end: 2027-02-26
+location:
+  city: Singapore
+  country: SG
+  venue: University Cultural Centre, NUS
+organizers: [centre-for-quantum-technologies]
+topics: [qit, qc-algorithms, qec, qkd]
+audience: [phd, postdoc, researcher, msc]
+url: https://qipconference.org/2027/
+description: "The 30th edition of QIP, the largest annual conference on quantum information processing theory: algorithms, complexity, cryptography, error correction and information theory. Hosted by the Centre for Quantum Technologies."
+sources:
+  - url: https://qipconference.org/2027/
+    kind: official
+    accessed: 2026-11-06
+  - url: https://www.nanowerk.com/eventpage.php?id=6078
+    kind: aggregator
+    accessed: 2026-11-06
+    note: venue
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

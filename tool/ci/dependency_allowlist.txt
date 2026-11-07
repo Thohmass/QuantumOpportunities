@@ -1,0 +1,27 @@
+# Direct dependencies allowed in package.json (runtime and dev).
+# Adding one needs an approved issue and the owner's approval (this file is protected).
+# Transitive packages are covered by the dependency-vulns gate (OSV-Scanner on package-lock.json).
+
+# runtime
+leaflet
+leaflet.markercluster
+minisearch
+
+# build, test, tooling
+@playwright/test
+@sveltejs/vite-plugin-svelte
+@types/leaflet
+@types/leaflet.markercluster
+@types/node
+ajv
+ajv-formats
+all-the-cities
+prettier
+prettier-plugin-svelte
+svelte
+svelte-check
+tsx
+typescript
+vite
+vitest
+yaml

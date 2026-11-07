@@ -1,0 +1,35 @@
+id: epfl-quantum-hackathon-2027
+series: epfl-quantum-hackathon
+name: EPFL Quantum Hackathon 2027
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-12
+  end: 2027-03-14
+location:
+  city: Lausanne
+  country: CH
+  venue: EPFL
+organizers: [epfl]
+topics: [computing, qec, hw-photonics, qc-algorithms]
+audience: [anyone]
+eligibility: All backgrounds welcome
+team:
+  note: Teams formed on day 1; size not stated
+hardware:
+  real_qpu: false
+  note: "2026 challenges: QEC with Alice & Bob, photonics with Quandela"
+prizes: Prizes announced, not specified
+url: https://qpflhackathon.github.io/
+description: "Second edition of the student-run EPFL quantum hackathon: an overnight weekend with challenges from quantum hardware companies, meals and coordinated shared housing. Registration opens in December 2026."
+sources:
+  - url: https://qpflhackathon.github.io/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

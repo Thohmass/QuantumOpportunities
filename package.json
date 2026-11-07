@@ -23,7 +23,8 @@
     "find-similar": "tsx scripts/find-similar.ts",
     "queue": "tsx scripts/queue.ts",
     "stubs": "tsx scripts/stubs.ts",
-    "linkcheck": "tsx scripts/linkcheck.ts"
+    "linkcheck": "tsx scripts/linkcheck.ts",
+    "scout-prep": "tsx scripts/scout-prep.ts"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

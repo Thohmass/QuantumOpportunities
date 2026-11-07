@@ -1,0 +1,73 @@
+# Discovery source registry (docs/04-data-pipeline.md §6). The Scout scans the K sources with the
+# oldest last_scanned each run and updates last_scanned, scans, yield and zero_yield_streak.
+- id: quantum-info-conf
+  name: quantum.info conference list
+  url: https://quantum.info/conf/2027.html
+  kind: aggregator
+  covers: [conferences, workshops, schools]
+  note: One page per year (/conf/<year>.html). Dates there are hints; confirm on official pages.
+- id: nordita-nordic-quantum-events
+  name: Nordita – Nordic quantum events
+  url: https://nordita.org/nordic-quantum/nordic-quantum-events
+  kind: aggregator
+  covers: [Nordic conferences, workshops, schools]
+- id: qureca-calendar
+  name: QURECA quantum events calendar
+  url: https://www.qureca.com/calendar/
+  kind: aggregator
+  covers: [conferences, industry events]
+- id: qt-eu-events
+  name: Quantum Flagship (qt.eu) events
+  url: https://qt.eu/events
+  kind: aggregator
+  covers: [European conferences, schools]
+- id: nanowerk-quantum-events
+  name: Nanowerk event calendar (quantum)
+  url: https://www.nanowerk.com/events.php
+  kind: aggregator
+  covers: [conferences]
+- id: benasque-center
+  name: Centro de Ciencias de Benasque – programme
+  url: https://www.benasque.org/
+  kind: organiser
+  covers: [workshops, schools]
+- id: les-houches-school
+  name: École de Physique des Houches – schools
+  url: https://www.houches-school-physics.com/
+  kind: organiser
+  covers: [schools]
+- id: ihp-paris
+  name: Institut Henri Poincaré – programmes
+  url: https://www.ihp.fr/en
+  kind: organiser
+  covers: [trimesters, schools, workshops]
+- id: qiskit-events
+  name: Qiskit events
+  url: https://www.ibm.com/quantum/events
+  kind: company
+  covers: [hackathons, fall fests, summer schools]
+- id: unitary-foundation-events
+  name: Unitary Foundation – community events
+  url: https://unitary.foundation/
+  kind: community
+  covers: [hackathons, challenges]
+- id: qworld-events
+  name: QWorld events
+  url: https://qworld.net/
+  kind: community
+  covers: [workshops, schools, hackathons]
+- id: devpost-quantum
+  name: Devpost – quantum hackathons
+  url: https://devpost.com/hackathons?search=quantum
+  kind: aggregator
+  covers: [hackathons, challenges]
+- id: nbi-events
+  name: Niels Bohr Institute events
+  url: https://nbi.ku.dk/english/news-events/
+  kind: university
+  covers: [Copenhagen talks, workshops, schools]
+- id: dtu-physics-events
+  name: DTU Physics events
+  url: https://physics.dtu.dk/
+  kind: university
+  covers: [Copenhagen-area events, hackathons]

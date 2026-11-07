@@ -1,0 +1,38 @@
+id: chalmers-wacqt-ibm-hackathon-2027
+series: chalmers-wacqt-ibm-hackathon
+name: Chalmers/WACQT × IBM Quantum Hackathon 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-01
+location:
+  city: Gothenburg
+  country: SE
+organizers: [wacqt, chalmers, ibm-quantum]
+topics: [computing, qc-algorithms, qc-software]
+audience: [bsc, msc, phd]
+eligibility: Students with Python and quantum-gate basics; a preparation lecture is mandatory
+team:
+  note: 2026 had close to 40 participants
+hardware:
+  real_qpu: true
+  note: IBM Quantum via WACQT
+support:
+  travel_grants: false
+  note: No travel, accommodation or visa funding
+url: https://www.chalmers.se/en/centres/wacqt/wacqt-quantum-technology-testbed/quantum-hackathon/
+description: Weekend hackathon at Chalmers in Gothenburg with WACQT and IBM Quantum, running circuits on IBM hardware. Small and student-focused.
+expected:
+  basis: Annual; last edition 24–25 Jan 2026
+  confidence: medium
+sources:
+  - url: https://www.chalmers.se/en/centres/wacqt/wacqt-quantum-technology-testbed/quantum-hackathon/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

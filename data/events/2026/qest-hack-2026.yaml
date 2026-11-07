@@ -1,0 +1,43 @@
+id: qest-hack-2026
+series: qest-hack
+name: QEst Hack 2026
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-11
+  end: 2026-11-13
+  note: Online kick-off 22 Oct
+deadlines:
+  - kind: application
+    date: 2026-10-18
+    note: Company applications; the page says applications are closed
+location:
+  city: Tallinn
+  country: EE
+organizers: [metrosert, institut-quantique]
+topics: [computing, qc-algorithms, qc-software]
+audience: [industry, msc, phd, researcher]
+eligibility: Five company teams; students and researchers from the Nordic and Baltic countries join them. Python required
+team:
+  note: Five company teams with a shared optimisation challenge
+hardware:
+  real_qpu: false
+  note: Not specified (Python/Qiskit)
+cost:
+  kind: free
+  note: Meals provided
+support:
+  travel_grants: false
+url: https://kvant.ee/en/qest-hack-2026/
+description: "Company-centred quantum hackathon in Tallinn: five company teams, joined by students and researchers from the Nordic and Baltic countries, work on a shared optimisation challenge."
+sources:
+  - url: https://kvant.ee/en/qest-hack-2026/
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-10-28
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

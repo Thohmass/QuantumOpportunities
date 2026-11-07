@@ -6,6 +6,12 @@ marked that way.
 
 **Site:** https://thohmass.github.io/QuantumOpportunities/
 
+## What you get
+
+- **Explore** (on a PC): map, timeline and list side by side. Hover an event anywhere and it lights up everywhere; zoom the map to a region and everything else outside it fades; click a month or drag across the timeline to pick dates.
+- **Filters** for type, topic, place, organiser, cost, dates, deadlines and more. Every view is a shareable link.
+- **Details** for each event with sources, deadlines, and an “add to calendar” button.
+
 ## How the data works
 
 - One YAML file per event in [`data/events/`](data/events). The git history of a file is its audit log.
@@ -15,8 +21,9 @@ marked that way.
 - Every event links to the sources that support it, with the date they were checked.
 
 Data agents run on a schedule (see [`docs/04-data-pipeline.md`](docs/04-data-pipeline.md)): a
-**Scout** looks for new events and a **Refresher** re-checks events with missing or stale data.
-Their changes go through the same automatic checks as everything else.
+**Scout** looks for new events every Wednesday and a **Refresher** re-checks events with missing or
+stale data every Monday and Thursday. They can only change files in `data/`, and their pull requests
+go through the same automatic checks as everything else before merging.
 
 ## Contributing
 

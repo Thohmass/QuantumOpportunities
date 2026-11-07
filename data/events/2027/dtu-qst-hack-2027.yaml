@@ -1,0 +1,34 @@
+id: dtu-qst-hack-2027
+series: dtu-qst-hack
+name: DTU QST-Hack 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-01
+location:
+  city: Lyngby
+  country: DK
+  venue: DTU
+organizers: [dtu]
+topics: [computing, qc-algorithms, qc-software]
+audience: [msc]
+eligibility: "2026: DigiQ students and UCPH–DTU QIS master’s students"
+team:
+  note: Small teams; size not stated
+url: https://physics.dtu.dk/research/sections/qpit/events/qst-hack-2026
+description: "Week-long quantum hackathon at DTU for the DigiQ and UCPH–DTU QIS master’s programmes, with industry cases (2025: Kvantify, KPMG, Qpurpose). Usually the same week as MIT iQuHACK."
+expected:
+  basis: Annual; past editions 28–31 Jan 2025 and 26–30 Jan 2026
+  confidence: high
+sources:
+  - url: https://physics.dtu.dk/research/sections/qpit/events/qst-hack-2026
+    kind: official
+    accessed: 2026-10-23
+    note: 2026 edition page
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

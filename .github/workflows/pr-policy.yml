@@ -1,0 +1,71 @@
+# Decides whether a PR may merge without the owner, needs the owner's approval, or is not allowed.
+# The rules and the script are loaded from the BASE branch, so a PR cannot loosen the policy
+# that judges it. Rules: tool/ci/policy.json. Explanation: docs/03-dev-pipeline.md §4.
+name: PR policy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions: {}
+
+concurrency:
+  group: pr-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  pr-policy:
+    name: pr-policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read # list the PR's changed files and its reviews
+    outputs:
+      auto_merge_eligible: ${{ steps.policy.outputs.auto_merge_eligible }}
+    steps:
+      - name: Check out the base branch, not the PR
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+      - name: Evaluate the PR against the policy
+        id: policy
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          OWNER_LOGIN: ${{ github.repository_owner }}
+        run: |
+          if [ ! -f tool/ci/qo_ci.py ]; then
+            echo "Bootstrap: the policy is not on the base branch yet (this is the PR that adds it)."
+            exit 0
+          fi
+          python3 tool/ci/qo_ci.py pr-policy
+
+  # Agent data PRs that the policy marks eligible get GitHub auto-merge: they merge only after every required
+  # check passes (branch ruleset on main). Decided by the script above, never by an agent.
+  enable-auto-merge:
+    name: enable-auto-merge
+    needs: pr-policy
+    if: >-
+      needs.pr-policy.outputs.auto_merge_eligible == 'true' &&
+      github.event_name == 'pull_request' &&
+      startsWith(github.event.pull_request.head.ref, 'data/')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Enable squash auto-merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: gh pr merge -R "$REPO" "$PR_NUMBER" --auto --squash || echo "::warning::Auto-merge not enabled (is the main ruleset with required checks in place?)"

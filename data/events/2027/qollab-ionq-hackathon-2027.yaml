@@ -1,0 +1,24 @@
+id: qollab-ionq-hackathon-2027
+series: qollab-ionq-hackathon
+name: Qollab × IonQ Global Quantum Hackathon 2027
+type: hackathon
+status: expected
+format: online
+dates:
+  start: 2027-10
+organizers: [qollab, ionq]
+topics: [computing, qc-algorithms, qc-software]
+url: https://qollab.xyz/programs/hackathon
+expected:
+  basis: Annual series; previous edition October 2026
+  confidence: medium
+sources:
+  - url: https://qollab.xyz/programs/hackathon
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: expected-stub

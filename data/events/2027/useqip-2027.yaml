@@ -1,0 +1,42 @@
+id: useqip-2027
+series: useqip
+name: USEQIP 2027
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-31
+  end: 2027-06-11
+deadlines:
+  - kind: application
+    date: 2027-01-03
+    note: References due 6 Jan 2027
+location:
+  city: Waterloo
+  country: CA
+  venue: Institute for Quantum Computing
+organizers: [iqc-waterloo]
+topics: [computing, qc-hardware, qec, qkd, hw-photonics]
+audience: [bsc]
+eligibility: Undergraduates worldwide, mainly one year from finishing; 30 places
+team: n/a
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: Travel bursaries available; paid summer research awards possible
+url: https://uwaterloo.ca/institute-for-quantum-computing/programs/useqip
+description: Two-week undergraduate school at Waterloo’s IQC with lectures and 30+ hours of hands-on labs on photonic, superconducting, trapped-ion and NMR qubits.
+sources:
+  - url: https://uwaterloo.ca/institute-for-quantum-computing/programs/useqip
+    kind: official
+    accessed: 2026-11-06
+  - url: https://uwaterloo.ca/institute-for-quantum-computing/events/undergraduate-school-experimental-quantum-information-0
+    kind: official
+    accessed: 2026-11-06
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research
