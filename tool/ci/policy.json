@@ -39,7 +39,8 @@
       "data/queries.yaml",
       "data/runs.yaml",
       "data/not-duplicates.yaml",
-      "data/redirects.yaml"
+      "data/redirects.yaml",
+      "data/logs/"
     ],
     "exclude_prefixes": ["docs/decisions/"],
     "allow_added_tests": true

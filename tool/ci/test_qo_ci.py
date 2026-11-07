@@ -27,6 +27,10 @@ class DataPrs(unittest.TestCase):
         d = decide([F("data/events/2027/new-hack-2027.yaml", "added"), F("data/orgs/new-org.yaml", "added")])
         self.assertTrue(d.auto_merge_eligible)
 
+    def test_agent_research_log_auto_merges(self):
+        d = decide([F("data/logs/2026-11-12-scout.md", "added"), F("data/runs.yaml", "modified")])
+        self.assertTrue(d.auto_merge_eligible)
+
     def test_agent_taxonomy_change_needs_owner(self):
         d = decide([F("data/taxonomy/topics.yaml", "modified")])
         self.assertFalse(d.passed)
