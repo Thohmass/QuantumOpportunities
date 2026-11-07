@@ -7,10 +7,17 @@
   import Header from './components/Header.svelte';
   import ListView from './components/ListView.svelte';
   import TimelineView from './components/TimelineView.svelte';
-  import { applyFilters, facetCounts, sortEvents, topicTree, type Ctx } from './lib/filters';
+  import {
+    applyFilters,
+    facetCounts,
+    facetUniverse,
+    sortEvents,
+    topicTree,
+    type Ctx,
+  } from './lib/filters';
   import { enrich, localToday, type Ev } from './lib/model';
   import { buildIndex, search } from './lib/search';
-  import { app } from './lib/state.svelte';
+  import { app, prefs, setPref } from './lib/state.svelte';
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
@@ -106,6 +113,7 @@
     app.mapOnly && usesMap ? noDates.filter((e) => !outsideMap.has(e.id)) : noDates,
   );
   const counts = $derived(ctx ? facetCounts(events, app.filters, ctx) : undefined);
+  const universe = $derived(ctx ? facetUniverse(events, ctx) : undefined);
   // Load the map code (Leaflet) only when a view with a map is first opened.
   let mapPromise: Promise<typeof import('./components/MapView.svelte')> | undefined;
   const mapModule = $derived.by(() => {
@@ -114,6 +122,24 @@
     return mapPromise;
   });
   const selected = $derived(app.eventId ? events.find((e) => e.id === app.eventId) : undefined);
+
+  // Where details open: inside the list card when a list is on screen, else in the side panel.
+  const wideLayout = $derived(app.view === 'explore' && prefs.layout === 'wide');
+  const listOnScreen = $derived(
+    app.view === 'list' || (app.view === 'explore' && (!wideLayout || prefs.listOpen)),
+  );
+  $effect(() => {
+    // Wide layout: selecting an event opens the list drawer, where its details unfold.
+    if (wideLayout && app.eventId) prefs.listOpen = true;
+  });
+  const panelEvent = $derived(selected && !listOnScreen ? selected : undefined);
+
+  // Theme: "system" follows the device; light/dark are fixed choices.
+  $effect(() => {
+    if (prefs.theme === 'system') delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = prefs.theme;
+  });
+  const sidebarHidden = $derived(prefs.sidebar === 'hidden');
 
   // Lock page scroll behind the mobile filter drawer.
   $effect(() => {
@@ -125,17 +151,18 @@
 
 {#if error}
   <p class="error" role="alert">{error}</p>
-{:else if !meta || !counts}
+{:else if !meta || !counts || !universe}
   <p class="loading" aria-busy="true">Loading events…</p>
 {:else}
   <div
     class="layout"
     class:wide={app.view === 'timeline' || app.view === 'map' || app.view === 'explore'}
     class:single={app.view === 'about'}
+    class:nosidebar={sidebarHidden}
   >
     {#if app.view !== 'about'}
       <aside class="sidebar" class:open={app.filtersOpen} aria-label="Filters">
-        <FilterPanel {meta} {counts} shown={filtered.length} />
+        <FilterPanel {meta} {counts} {universe} shown={filtered.length} />
       </aside>
       {#if app.filtersOpen}<div
           class="scrim"
@@ -144,9 +171,61 @@
         ></div>{/if}
     {/if}
     <main id="main">
-      {#if app.view !== 'about'}<Chips {meta} />{/if}
+      {#if app.view !== 'about'}
+        <div class="bar">
+          <button
+            class="btn ghost side-toggle"
+            type="button"
+            onclick={() => setPref('sidebar', sidebarHidden ? 'shown' : 'hidden')}
+            aria-pressed={!sidebarHidden}
+            title={sidebarHidden ? 'Show filters' : 'Hide filters'}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+              ><path
+                d="M4 5h16v14H4zM9 5v14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              /></svg
+            >
+            {sidebarHidden ? 'Filters' : 'Hide filters'}
+          </button>
+          <div class="chips"><Chips {meta} /></div>
+          {#if app.view === 'explore'}
+            <div class="seg" role="group" aria-label="Layout">
+              <button
+                type="button"
+                class:on={prefs.layout === 'grid'}
+                aria-pressed={prefs.layout === 'grid'}
+                onclick={() => setPref('layout', 'grid')}>Side by side</button
+              >
+              <button
+                type="button"
+                class:on={prefs.layout === 'wide'}
+                aria-pressed={prefs.layout === 'wide'}
+                onclick={() => setPref('layout', 'wide')}>Wide map</button
+              >
+            </div>
+            {#if wideLayout}
+              <button
+                class="btn list-toggle"
+                type="button"
+                aria-pressed={prefs.listOpen}
+                onclick={() => (prefs.listOpen = !prefs.listOpen)}
+              >
+                {prefs.listOpen ? 'Hide list' : `List (${filtered.length})`}
+              </button>
+            {/if}
+          {/if}
+        </div>
+      {/if}
       {#if app.view === 'explore'}
-        <div class="explore">
+        <div
+          class="explore"
+          class:wide-layout={wideLayout}
+          class:list-open={wideLayout && prefs.listOpen}
+        >
           <div class="pane map-pane">
             {#await mapModule}
               <p class="loading">Loading map…</p>
@@ -159,9 +238,11 @@
           <div class="pane timeline-pane">
             <TimelineView events={timelineEvents} {today} dimmed={outsideMap} compact />
           </div>
-          <div class="pane list-pane">
-            <ListView events={filtered} {meta} {today} dimmed={outsideMap} compact />
-          </div>
+          {#if !wideLayout || prefs.listOpen}
+            <div class="pane list-pane">
+              <ListView events={filtered} {meta} {today} dimmed={outsideMap} compact />
+            </div>
+          {/if}
         </div>
       {:else if app.view === 'list'}
         <ListView events={filtered} {meta} {today} />
@@ -180,8 +261,8 @@
       {/if}
     </main>
   </div>
-  {#if selected}
-    <EventDetail e={selected} {meta} {today} />
+  {#if panelEvent}
+    <EventDetail e={panelEvent} {meta} {today} />
   {/if}
 {/if}
 
@@ -244,9 +325,74 @@
     main {
       padding: 0 20px;
     }
-    .layout.single {
+    .layout.single,
+    .layout.nosidebar {
       grid-template-columns: minmax(0, 1fr);
     }
+    .layout.nosidebar .sidebar {
+      display: none;
+    }
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 8px 10px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+  }
+  .chips {
+    flex: 1;
+    min-width: 0;
+  }
+  .side-toggle {
+    min-height: 34px;
+    padding: 4px 10px;
+    font-size: 0.85rem;
+  }
+  @media (max-width: 959px) {
+    .side-toggle {
+      display: none;
+    }
+  }
+  .seg {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .seg button {
+    border: 0;
+    background: transparent;
+    padding: 5px 10px;
+    font-size: 0.82rem;
+    min-height: 32px;
+  }
+  .seg button + button {
+    border-left: 1px solid var(--line);
+  }
+  .seg button.on {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .list-toggle {
+    min-height: 34px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+  }
+  .explore.wide-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-areas:
+      'map'
+      'timeline';
+  }
+  .explore.wide-layout.list-open {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    grid-template-areas:
+      'map list'
+      'timeline list';
   }
   .explore {
     display: grid;
@@ -256,7 +402,7 @@
       'map list'
       'timeline list';
     gap: 12px;
-    height: calc(100dvh - var(--header-h) - 58px);
+    height: calc(100dvh - var(--header-h) - 64px);
     min-height: 560px;
     padding: 8px 0 12px;
   }

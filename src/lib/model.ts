@@ -1,5 +1,5 @@
 // Client-side view of an event: the built JSON plus fields that depend on today's date.
-import { bounds, eventSpan, isoDay } from './dates';
+import { bounds, eventSpan, isoDay, precisionOf } from './dates';
 import type { Deadline, EventOut, Meta } from './types';
 
 export type RegState = 'open' | 'closing' | 'closed' | 'none' | 'unknown';
@@ -14,8 +14,24 @@ export interface Ev extends EventOut {
   /** The date that matters next: the next open deadline, else the start. */
   keyDay: number;
   reg: RegState;
-  /** Lower-case haystack of organiser names, for search. */
+  /** Organiser and partner names, for search. */
   orgNames: string[];
+  /**
+   * What the timeline draws. Year-only dates would span a whole year, so they are drawn as one likely month
+   * (the series' usual month, or the season for schools), marked approximate.
+   */
+  display: { span: [number, number]; approx: boolean };
+}
+
+const SEASON: Record<string, number> = { summer_school: 7, winter_school: 1 };
+
+function displaySpan(e: EventOut, meta: Meta, span: [number, number]): Ev['display'] {
+  const yearOnly =
+    precisionOf(e.dates.start) === 'year' && (!e.dates.end || precisionOf(e.dates.end) === 'year');
+  if (!yearOnly) return { span, approx: false };
+  const y = Number(e.dates.start.slice(0, 4));
+  const m = (e.series && meta.series[e.series]?.typicalMonth) || SEASON[e.type] || 7;
+  return { span: [Date.UTC(y, m - 1, 1), Date.UTC(y, m, 0)], approx: true };
 }
 
 const CLOSING_DAYS = 14;
@@ -43,6 +59,7 @@ export function enrich(e: EventOut, meta: Meta, today: number): Ev {
     orgNames: [...(e.organizers ?? []), ...(e.partners ?? [])].map(
       (id) => meta.orgs[id]?.name ?? id,
     ),
+    display: displaySpan(e, meta, span),
   };
 }
 

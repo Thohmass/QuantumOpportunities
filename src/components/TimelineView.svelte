@@ -1,10 +1,17 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import { bounds, formatRange, isoDay, monthName, precisionOf } from '../lib/dates';
-  import { dateRange } from '../lib/filters';
+  import { bounds, formatRange, isoDay, monthName } from '../lib/dates';
   import { statusLabel } from '../lib/format';
   import type { Ev } from '../lib/model';
-  import { app, hover, openEvent, selectRange } from '../lib/state.svelte';
+  import {
+    clickSelect,
+    covers,
+    overlapsAny,
+    union,
+    type ClickMode,
+    type Interval,
+  } from '../lib/ranges';
+  import { app, currentIntervals, hover, openEvent, setRanges } from '../lib/state.svelte';
 
   let {
     events,
@@ -26,8 +33,8 @@
     let lo = today - 21 * DAY;
     let hi = today + 120 * DAY;
     for (const e of events) {
-      lo = Math.min(lo, e.span[0]);
-      hi = Math.max(hi, e.span[1]);
+      lo = Math.min(lo, e.display.span[0]);
+      hi = Math.max(hi, e.display.span[1]);
     }
     const a = new Date(lo);
     const b = new Date(hi);
@@ -41,16 +48,17 @@
   const width = $derived(x(range[1]) + 40);
 
   // ---- header cells: months, then weeks or days ----------------------------
+  interface Cell {
+    key: string;
+    x: number;
+    w: number;
+    label: string;
+    aria: string;
+    iv: Interval;
+    year?: boolean;
+  }
   const months = $derived.by(() => {
-    const out: {
-      x: number;
-      w: number;
-      label: string;
-      aria: string;
-      from: string;
-      to: string;
-      year: boolean;
-    }[] = [];
+    const out: Cell[] = [];
     const d = new Date(range[0]);
     while (d.getTime() <= range[1]) {
       const y = d.getUTCFullYear();
@@ -58,12 +66,12 @@
       const start = Date.UTC(y, m, 1);
       const end = Date.UTC(y, m + 1, 0);
       out.push({
+        key: isoDay(start),
         x: x(start),
         w: x(end + DAY) - x(start),
         label: `${monthName(m)}${m === 0 || out.length === 0 ? ' ' + y : ''}`,
-        aria: `Select ${monthName(m, true)} ${y}`,
-        from: isoDay(start),
-        to: isoDay(end),
+        aria: `${monthName(m, true)} ${y}`,
+        iv: [start, end],
         year: m === 0,
       });
       d.setUTCMonth(m + 1);
@@ -71,35 +79,32 @@
     return out;
   });
   const sub = $derived.by(() => {
-    const out: { x: number; w: number; label: string; from: string; to: string; title: string }[] =
-      [];
+    const out: Cell[] = [];
     if (ppd >= 20) {
       for (let t = range[0]; t <= range[1]; t += DAY) {
-        const d = new Date(t);
         out.push({
+          key: isoDay(t),
           x: x(t),
           w: ppd,
-          label: String(d.getUTCDate()),
-          from: isoDay(t),
-          to: isoDay(t),
-          title: isoDay(t),
+          label: String(new Date(t).getUTCDate()),
+          aria: isoDay(t),
+          iv: [t, t],
         });
       }
     } else if (ppd >= 3) {
-      // ISO weeks, Monday to Sunday
       const first = new Date(range[0]);
-      let t = range[0] - ((first.getUTCDay() + 6) % 7) * DAY;
-      for (; t <= range[1]; t += 7 * DAY) {
+      for (let t = range[0] - ((first.getUTCDay() + 6) % 7) * DAY; t <= range[1]; t += 7 * DAY) {
         const thursday = new Date(t + 3 * DAY);
-        const yearStart = Date.UTC(thursday.getUTCFullYear(), 0, 1);
-        const week = Math.ceil(((thursday.getTime() - yearStart) / DAY + 1) / 7);
+        const week = Math.ceil(
+          ((thursday.getTime() - Date.UTC(thursday.getUTCFullYear(), 0, 1)) / DAY + 1) / 7,
+        );
         out.push({
+          key: isoDay(t),
           x: x(t),
           w: 7 * ppd,
           label: 7 * ppd >= 26 ? `W${week}` : '',
-          from: isoDay(t),
-          to: isoDay(t + 6 * DAY),
-          title: `Week ${week}`,
+          aria: `week ${week} (${isoDay(t)})`,
+          iv: [t, t + 6 * DAY],
         });
       }
     }
@@ -112,19 +117,17 @@
     left: number;
     barW: number;
     lane: number;
-    fuzzyStart: boolean;
-    fuzzyEnd: boolean;
     deadlines: { x: number; label: string }[];
   }
   const placed = $derived.by(() => {
     const lanes: number[] = [];
     const out: Placed[] = [];
     const sorted = [...events].sort(
-      (a, b) => a.span[0] - b.span[0] || a.name.localeCompare(b.name),
+      (a, b) => a.display.span[0] - b.display.span[0] || a.name.localeCompare(b.name),
     );
     for (const e of sorted) {
-      const left = x(e.span[0]);
-      const barW = Math.max(8, x(e.span[1] + DAY) - left);
+      const left = x(e.display.span[0]);
+      const barW = Math.max(10, x(e.display.span[1] + DAY) - left);
       const deadlines = Array.isArray(e.deadlines)
         ? e.deadlines
             .map((d) => ({
@@ -134,62 +137,72 @@
             .filter((d) => d.x >= 0 && d.x < left)
         : [];
       const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
-      const end = left + barW + 8 + e.name.length * CHAR;
+      const label = e.name + (e.display.approx ? ' · month not known' : '');
+      const end = left + barW + 8 + label.length * CHAR;
       let lane = lanes.findIndex((r) => r + 12 < startX);
       if (lane === -1) lane = lanes.push(end) - 1;
       else lanes[lane] = end;
-      out.push({
-        e,
-        left,
-        barW,
-        lane,
-        fuzzyStart: precisionOf(e.dates.start) !== 'day',
-        fuzzyEnd: precisionOf(e.dates.end ?? e.dates.start) !== 'day',
-        deadlines,
-      });
+      out.push({ e, left, barW, lane, deadlines });
     }
     return { items: out, lanes: Math.max(lanes.length, 1) };
   });
 
-  // ---- selection (= the date filter) ---------------------------------------
-  const sel = $derived(dateRange(app.filters, today));
-  const selBand = $derived.by(() => {
-    if (!sel) return undefined;
-    const a = Math.max(sel[0], range[0]);
-    const b = Math.min(sel[1], range[1]);
-    return b < a ? undefined : { left: x(a), w: x(b + DAY) - x(a) };
-  });
-  const outside = (e: Ev) => !!sel && !(e.span[0] <= sel[1] && sel[0] <= e.span[1]);
+  // ---- selection (= the date filter): file-manager clicks and drags ---------
+  const sel = $derived(currentIntervals(today));
+  const selBands = $derived(
+    sel
+      .map(([a, b]) => [Math.max(a, range[0]), Math.min(b, range[1])] as const)
+      .filter(([a, b]) => b >= a)
+      .map(([a, b]) => ({ left: x(a), w: x(b + DAY) - x(a) })),
+  );
+  const outside = (e: Ev) => sel.length > 0 && !overlapsAny(sel, e.span[0], e.span[1]);
+  let anchor: Interval | undefined;
 
-  // Mouse drag anywhere below the header selects a range. Capture starts only after the pointer moves, so a
-  // plain click on a bar still opens the event. Touch keeps native scrolling; header cells select on tap.
-  let drag: { x0: number; x1: number } | undefined = $state();
-  let pending: { x: number; id: number } | undefined;
+  const modeOf = (ev: MouseEvent): ClickMode =>
+    ev.shiftKey ? 'extend' : ev.ctrlKey || ev.metaKey ? 'toggle' : 'plain';
+  function pickCell(cell: Cell, ev: MouseEvent) {
+    const mode = modeOf(ev);
+    setRanges(clickSelect(sel, cell.iv, mode, anchor));
+    if (mode !== 'extend') anchor = cell.iv;
+  }
+
+  // Dragging across header cells selects every cell between; dragging in the body selects days.
+  // Pointer capture starts only after the mouse moves, so plain clicks on bars and cells still work.
+  let drag: { x0: number; x1: number; head: boolean; add: boolean } | undefined = $state();
+  let pending: { x: number; id: number; head: boolean; add: boolean } | undefined;
   let canvas: HTMLDivElement | undefined = $state();
+  let suppressClick = false;
   const localX = (ev: PointerEvent) => ev.clientX - canvas!.getBoundingClientRect().left;
   function down(ev: PointerEvent) {
     if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
-    if ((ev.target as HTMLElement).closest('.head')) return;
-    pending = { x: localX(ev), id: ev.pointerId };
+    const head = !!(ev.target as HTMLElement).closest('.head');
+    pending = { x: localX(ev), id: ev.pointerId, head, add: ev.ctrlKey || ev.metaKey };
   }
   function move(ev: PointerEvent) {
-    if (drag) {
-      drag.x1 = localX(ev);
-    } else if (pending && Math.abs(localX(ev) - pending.x) > 6) {
-      drag = { x0: pending.x, x1: localX(ev) };
+    if (drag) drag.x1 = localX(ev);
+    else if (pending && Math.abs(localX(ev) - pending.x) > 6) {
+      drag = { x0: pending.x, x1: localX(ev), head: pending.head, add: pending.add };
       canvas!.setPointerCapture(pending.id);
     }
   }
-  function up() {
+  function cellsBetween(cells: Cell[], a: number, b: number): Interval | undefined {
+    const hit = cells.filter((c) => c.x + c.w > a && c.x < b);
+    return hit.length ? [hit[0]!.iv[0], hit[hit.length - 1]!.iv[1]] : undefined;
+  }
+  function up(ev: PointerEvent) {
     pending = undefined;
     if (!drag) return;
     const [a, b] = [Math.min(drag.x0, drag.x1), Math.max(drag.x0, drag.x1)];
-    selectRange(isoDay(dayAt(a)), isoDay(dayAt(b)));
+    let iv: Interval | undefined;
+    if (drag.head) {
+      const subRow = ev.clientY - canvas!.getBoundingClientRect().top > 22 && sub.length;
+      iv = cellsBetween(subRow ? sub : months, a, b);
+    } else iv = [dayAt(a), dayAt(b)];
+    if (iv) setRanges(drag.add ? union(sel, iv) : [iv]);
     drag = undefined;
     suppressClick = true;
     setTimeout(() => (suppressClick = false), 0);
   }
-  let suppressClick = false;
 
   // ---- scrolling -------------------------------------------------------------
   let scroller: HTMLDivElement | undefined = $state();
@@ -202,32 +215,42 @@
     void range[0];
     scrollToToday();
   });
-  // Bring an event hovered in another view into sight.
-  $effect(() => {
-    const id = app.hoverId;
-    if (!id || !scroller || scroller.matches(':hover')) return;
+  function reveal(id: string, force: boolean) {
+    if (!scroller || (!force && scroller.matches(':hover'))) return;
     const p = placed.items.find((i) => i.e.id === id);
     if (!p) return;
     const top = HEAD + p.lane * ROW;
     const { scrollLeft, clientWidth, scrollTop, clientHeight } = scroller;
     const left =
-      p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
+      force || p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
         ? p.left - clientWidth / 3
         : scrollLeft;
     const vTop =
-      top < scrollTop || top > scrollTop + clientHeight - ROW ? top - clientHeight / 2 : scrollTop;
+      force || top < scrollTop + HEAD || top > scrollTop + clientHeight - ROW
+        ? top - clientHeight / 2
+        : scrollTop;
     if (left !== scrollLeft || vTop !== scrollTop)
       scroller.scrollTo({ left, top: vTop, behavior: 'smooth' });
+  }
+  // Bring an event hovered in another view into sight, and focus on a selected one.
+  $effect(() => {
+    if (app.hoverId) reveal(app.hoverId, false);
+  });
+  $effect(() => {
+    void app.focusTick;
+    if (app.eventId) reveal(app.eventId, true);
   });
 </script>
 
 <section class="timeline" class:compact aria-label="Timeline">
   <div class="toolbar">
     <p class="count"><b>{events.length - events.filter(outside).length}</b> in range</p>
-    {#if sel}
-      <button class="clear" type="button" onclick={() => selectRange()}>Clear dates ×</button>
+    {#if sel.length}
+      <button class="clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
     {:else}
-      <span class="hint muted">Click a month or week, or drag, to pick dates</span>
+      <span class="hint muted"
+        >Click months or weeks (Shift / Ctrl to add), or drag, to pick dates</span
+      >
     {/if}
     <div class="zoom" role="group" aria-label="Zoom">
       {#each Object.keys(ZOOMS) as z (z)}
@@ -242,69 +265,81 @@
     </div>
   </div>
 
-  {#if !events.length}
-    <p class="empty">No events match these filters.</p>
-  {:else}
-    <div class="scroller" bind:this={scroller}>
-      <div
-        class="canvas"
-        class:dragging={!!drag}
-        bind:this={canvas}
-        style:width="{width}px"
-        style:height="{HEAD + placed.lanes * ROW + 16}px"
-        onpointerdown={down}
-        onpointermove={move}
-        onpointerup={up}
-        onpointercancel={() => ((drag = undefined), (pending = undefined))}
-        role="presentation"
-      >
-        {#each months as m (m.from)}
-          <div class="gridline" class:year={m.year} style:left="{m.x}px"></div>
+  <div class="scroller" bind:this={scroller}>
+    <div
+      class="canvas"
+      class:dragging={!!drag}
+      bind:this={canvas}
+      style:width="{width}px"
+      style:height="{HEAD + placed.lanes * ROW + 16}px"
+      onpointerdown={down}
+      onpointermove={move}
+      onpointerup={up}
+      onpointercancel={() => ((drag = undefined), (pending = undefined))}
+      role="presentation"
+    >
+      {#each months as m (m.key)}
+        <div class="gridline" class:year={m.year} style:left="{m.x}px"></div>
+      {/each}
+      {#each selBands as b, i (i)}<div
+          class="band"
+          style:left="{b.left}px"
+          style:width="{b.w}px"
+        ></div>{/each}
+      {#if drag && !drag.head}
+        <div
+          class="band drag"
+          style:left="{Math.min(drag.x0, drag.x1)}px"
+          style:width="{Math.abs(drag.x1 - drag.x0)}px"
+        ></div>
+      {/if}
+      <div class="head">
+        {#each months as m (m.key)}
+          <button
+            type="button"
+            class="cell month"
+            class:on={covers(sel, m.iv)}
+            style:left="{m.x}px"
+            style:width="{m.w}px"
+            onclick={(ev) => !suppressClick && pickCell(m, ev)}
+            aria-label="Select {m.aria}"
+            aria-pressed={covers(sel, m.iv)}><span>{m.label}</span></button
+          >
         {/each}
-        {#if selBand}<div
-            class="band"
-            style:left="{selBand.left}px"
-            style:width="{selBand.w}px"
-          ></div>{/if}
-        {#if drag}
-          <div
-            class="band drag"
-            style:left="{Math.min(drag.x0, drag.x1)}px"
-            style:width="{Math.abs(drag.x1 - drag.x0)}px"
-          ></div>
-        {/if}
-        <div class="head">
-          {#each months as m (m.from)}
-            <button
-              type="button"
-              class="cell month"
-              style:left="{m.x}px"
-              style:width="{m.w}px"
-              onclick={() => selectRange(m.from, m.to)}
-              aria-label={m.aria}><span>{m.label}</span></button
-            >
-          {/each}
-          {#each sub as s (s.from)}
-            <button
-              type="button"
-              class="cell sub"
-              style:left="{s.x}px"
-              style:width="{s.w}px"
-              onclick={() => selectRange(s.from, s.to)}
-              aria-label="Select {s.title}"
-              title={s.title}>{s.label}</button
-            >
-          {/each}
-        </div>
-        <div class="today" style:left="{x(today)}px"><span>Today</span></div>
-        {#each placed.items as p (p.e.id)}
-          {@const top = HEAD + p.lane * ROW}
-          {@const hot = app.hoverId === p.e.id}
-          {@const faded = !hot && (outside(p.e) || dimmed.has(p.e.id))}
+        {#each sub as s (s.key)}
+          <button
+            type="button"
+            class="cell sub"
+            class:on={covers(sel, s.iv)}
+            style:left="{s.x}px"
+            style:width="{s.w}px"
+            onclick={(ev) => !suppressClick && pickCell(s, ev)}
+            aria-label="Select {s.aria}"
+            aria-pressed={covers(sel, s.iv)}
+            title={s.aria}>{s.label}</button
+          >
+        {/each}
+      </div>
+      <div class="today" style:left="{x(today)}px"><span>Today</span></div>
+      {#if !events.length}
+        <p class="empty">No events match these filters.</p>
+      {/if}
+      {#each placed.items as p (p.e.id)}
+        {@const top = HEAD + p.lane * ROW}
+        {@const hot = app.hoverId === p.e.id}
+        {@const picked = app.eventId === p.e.id}
+        {@const faded = !hot && !picked && (outside(p.e) || dimmed.has(p.e.id))}
+        <div class="t-{p.e.type}" class:faded class:past={p.e.isPast}>
           {#each p.deadlines as d (d.x)}
             <span
+              class="link"
+              style:left="{d.x}px"
+              style:width="{p.left - d.x}px"
+              style:top="{top + 12}px"
+              aria-hidden="true"
+            ></span>
+            <span
               class="diamond"
-              class:faded
               style:left="{d.x - 5}px"
               style:top="{top + 8}px"
               title={d.label}
@@ -314,9 +349,9 @@
           <button
             type="button"
             class="item {p.e.status}"
-            class:past={p.e.isPast}
             class:hot
-            class:faded
+            class:picked
+            class:approx={p.e.display.approx}
             style:left="{p.left}px"
             style:top="{top}px"
             onclick={() => !suppressClick && openEvent(p.e.id)}
@@ -328,19 +363,22 @@
               p.e,
             )}"
           >
-            <span class="bar" class:fs={p.fuzzyStart} class:fe={p.fuzzyEnd} style:width="{p.barW}px"
-            ></span>
-            <span class="label">{p.e.name}</span>
+            <span class="bar" style:width="{p.barW}px"></span>
+            <span class="label"
+              >{p.e.name}{#if p.e.display.approx}<span class="approx-note">
+                  · month not known</span
+                >{/if}</span
+            >
           </button>
-        {/each}
-      </div>
+        </div>
+      {/each}
     </div>
-    {#if !compact}
-      <p class="hint muted">
-        Faded ends: exact days not known yet. Striped bars: expected editions, not announced yet.
-        Diamonds: deadlines.
-      </p>
-    {/if}
+  </div>
+  {#if !compact}
+    <p class="hint muted">
+      Colour = event type. Striped = expected, not announced. Dotted outline = month not known.
+      Diamonds = deadlines.
+    </p>
   {/if}
 </section>
 
@@ -348,11 +386,14 @@
   .timeline {
     display: grid;
     gap: 8px;
-    padding-bottom: 30px;
+    padding-bottom: 20px;
     grid-template-rows: auto minmax(0, 1fr) auto;
+    height: calc(100dvh - var(--header-h) - 70px);
+    min-height: 360px;
   }
   .timeline.compact {
     height: 100%;
+    min-height: 0;
     padding: 0;
   }
   .toolbar {
@@ -414,13 +455,11 @@
     border: 1px solid var(--line);
     border-radius: var(--radius);
     -webkit-overflow-scrolling: touch;
-  }
-  .timeline:not(.compact) .scroller {
-    max-height: calc(100dvh - var(--header-h) - 130px);
+    min-height: 0;
   }
   .canvas {
     position: relative;
-    min-height: 120px;
+    min-height: 100%;
     user-select: none;
   }
   .canvas.dragging {
@@ -450,7 +489,7 @@
     position: sticky;
     top: 0;
     height: 42px;
-    z-index: 4;
+    z-index: 7;
     background: color-mix(in srgb, var(--surface) 92%, transparent);
     border-bottom: 1px solid var(--line);
   }
@@ -468,6 +507,11 @@
   .cell:hover {
     background: var(--accent-soft);
     color: var(--accent);
+  }
+  .cell.on {
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    color: var(--accent);
+    font-weight: 700;
   }
   .cell.month {
     top: 0;
@@ -503,6 +547,13 @@
     color: var(--warn);
     font-weight: 700;
   }
+  .empty {
+    position: absolute;
+    top: 60px;
+    left: 16px;
+    margin: 0;
+    color: var(--muted);
+  }
   .item {
     position: absolute;
     display: flex;
@@ -514,50 +565,60 @@
     background: transparent;
     white-space: nowrap;
     z-index: 3;
-    border-radius: 6px;
+    border-radius: 7px;
     transition: opacity 0.15s;
   }
   .bar {
     display: block;
     height: 14px;
     border-radius: 7px;
-    background: var(--accent);
+    background: var(--tc);
     flex: none;
-  }
-  .bar.fs {
-    mask-image: linear-gradient(to right, transparent, #000 40%);
-  }
-  .bar.fe {
-    mask-image: linear-gradient(to right, #000 60%, transparent);
-  }
-  .bar.fs.fe {
-    mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
   }
   .item.expected .bar {
     background: repeating-linear-gradient(
       135deg,
-      var(--expected) 0 4px,
-      color-mix(in srgb, var(--expected) 25%, transparent) 4px 8px
+      var(--tc) 0 4px,
+      color-mix(in srgb, var(--tc) 22%, transparent) 4px 8px
     );
+    box-shadow: inset 0 0 0 1px var(--tc);
+  }
+  .item.approx .bar {
+    background: color-mix(in srgb, var(--tc) 18%, transparent);
+    box-shadow: none;
+    outline: 2px dotted var(--tc);
+    outline-offset: -2px;
   }
   .item.postponed .bar,
   .item.cancelled .bar {
-    background: var(--warn);
-    opacity: 0.6;
+    background: transparent;
+    outline: 2px dashed var(--warn);
+    outline-offset: -2px;
   }
-  .item.past .bar {
-    background: var(--past);
+  .past .bar,
+  .past .diamond,
+  .past .link {
+    filter: grayscale(0.85);
+    opacity: 0.6;
   }
   .label {
     font-size: 0.8rem;
     color: var(--ink);
   }
   .item.expected .label {
+    font-style: italic;
+  }
+  .approx-note {
     color: var(--muted);
     font-style: italic;
   }
-  .item.faded {
-    opacity: 0.28;
+  .faded {
+    opacity: 0.25;
+  }
+  .item.picked {
+    z-index: 6;
+    background: var(--surface);
+    box-shadow: 0 0 0 2px var(--tc);
   }
   .item.hot {
     z-index: 6;
@@ -572,19 +633,15 @@
     position: absolute;
     width: 9px;
     height: 9px;
-    background: var(--warn);
+    background: var(--tc);
     transform: rotate(45deg);
     border-radius: 1px;
     z-index: 3;
   }
-  .diamond.faded {
-    opacity: 0.28;
-  }
-  .empty {
-    text-align: center;
-    padding: 40px;
-    color: var(--muted);
-    border: 1px dashed var(--line);
-    border-radius: var(--radius);
+  .link {
+    position: absolute;
+    height: 0;
+    border-top: 1.5px dotted var(--tc);
+    z-index: 2;
   }
 </style>

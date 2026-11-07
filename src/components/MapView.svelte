@@ -25,8 +25,31 @@
   // OpenStreetMap's standard tiles: no API key. Dark mode darkens them with a CSS filter (see styles below).
   const TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
+  // The selected event's marker is ringed in its type colour.
+  let picked: string | undefined;
+  $effect(() => {
+    const id = app.eventId;
+    const prev = picked;
+    picked = id;
+    for (const pid of [prev, id]) {
+      const e = pid ? located.find((x) => x.id === pid) : undefined;
+      if (e) markers.get(e.id)?.setIcon(icon(e));
+    }
+  });
+
+  // One world, no wrapping: you can't pan past the poles or the date line.
+  const WORLD = L.latLngBounds([-75, -180], [85, 180]);
+  /** The hover dot grows as you zoom in, so it never covers a whole region when zoomed out. */
+  const dotRadius = (z: number) => Math.max(4, Math.min(14, 2 + z * 1.6));
+
   function icon(e: Ev): L.DivIcon {
-    const cls = ['qo-pin', e.status, e.isPast ? 'past' : ''].join(' ');
+    const cls = [
+      'qo-pin',
+      `t-${e.type}`,
+      e.status,
+      e.isPast ? 'past' : '',
+      picked === e.id ? 'picked' : '',
+    ].join(' ');
     return L.divIcon({
       className: cls,
       html: '<span></span>',
@@ -44,11 +67,19 @@
   onMount(() => {
     map = L.map(el, {
       zoomControl: true,
-      worldCopyJump: true,
-      minZoom: 2,
+      minZoom: 1,
+      maxBounds: WORLD,
+      maxBoundsViscosity: 1,
       attributionControl: true,
     }).setView([35, 10], 2);
+    // Never zoom out further than the world fills the map.
+    const fitMin = () => map && map.setMinZoom(Math.max(1, map.getBoundsZoom(WORLD, true)));
+    fitMin();
+    map.on('resize', fitMin);
+    map.on('zoomend', () => halo?.setRadius(dotRadius(map!.getZoom())));
     L.tileLayer(TILES, {
+      noWrap: true,
+      bounds: WORLD,
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a> contributors',
       maxZoom: 19,
@@ -93,7 +124,7 @@
           offset: [0, -8],
         },
       );
-      m.on('click', () => openEvent(e.id));
+      m.on('click', () => openEvent(e.id, true));
       m.on('mouseover', () => hover(e.id));
       m.on('mouseout', () => hover(undefined));
       markers.set(e.id, m);
@@ -106,22 +137,38 @@
     publishBounds();
   });
 
-  // Highlight the hovered event, even when it sits inside a cluster.
+  // Highlight the hovered event (even inside a cluster) with a small dot and its tooltip; both go away when
+  // the pointer leaves it, wherever the hover came from.
+  let openTip: L.Marker | undefined;
   $effect(() => {
     const id = app.hoverId;
     if (!map) return;
     halo?.remove();
     halo = undefined;
+    openTip?.closeTooltip();
+    openTip = undefined;
     const e = id ? located.find((x) => x.id === id) : undefined;
     if (!e) return;
     halo = L.circleMarker([e.lat!, e.lon!], {
-      radius: 16,
+      radius: dotRadius(map.getZoom()),
       className: 'qo-halo',
       interactive: false,
     }).addTo(map);
     const m = markers.get(e.id);
-    const visible = m && cluster?.getVisibleParent(m) === m;
-    if (visible) m!.openTooltip();
+    if (m && cluster?.getVisibleParent(m) === m) {
+      m.openTooltip();
+      openTip = m;
+    }
+  });
+
+  // An event selected in the list or timeline: fly there and show it.
+  $effect(() => {
+    void app.focusTick;
+    const id = app.eventId;
+    if (!map || !id) return;
+    const e = located.find((x) => x.id === id);
+    if (!e) return;
+    map.flyTo([e.lat!, e.lon!], Math.max(map.getZoom(), 5), { duration: 0.8 });
   });
 
   function fitToResults() {
@@ -208,26 +255,32 @@
     height: 14px;
     margin: 2px;
     border-radius: 50%;
-    background: var(--accent);
+    background: var(--tc);
     border: 2px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--accent);
+    box-shadow: 0 0 0 1px var(--tc);
   }
   :global(.qo-pin.expected span) {
-    background: var(--surface);
-    border: 2.5px dashed var(--expected);
+    background: repeating-linear-gradient(135deg, var(--tc) 0 3px, var(--surface) 3px 6px);
+    border-color: var(--tc);
     box-shadow: none;
   }
   :global(.qo-pin.postponed span),
   :global(.qo-pin.cancelled span) {
-    background: var(--warn);
-    box-shadow: 0 0 0 1px var(--warn);
+    background: var(--surface);
+    border: 2px dashed var(--warn);
+    box-shadow: none;
   }
   :global(.qo-pin.past span) {
-    background: var(--past);
-    box-shadow: 0 0 0 1px var(--past);
+    filter: grayscale(0.85);
+    opacity: 0.6;
+  }
+  :global(.qo-pin.picked span) {
+    box-shadow:
+      0 0 0 3px var(--surface),
+      0 0 0 5px var(--tc);
   }
   :global(.qo-cluster) {
-    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    background: color-mix(in srgb, var(--ink) 18%, transparent);
     border-radius: 50%;
     display: grid;
     place-items: center;
@@ -238,23 +291,26 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-ink);
+    background: var(--ink);
+    color: var(--bg);
     font-weight: 700;
     font-size: 0.8rem;
   }
   :global(.qo-halo) {
     fill: var(--warn);
-    fill-opacity: 0.18;
+    fill-opacity: 0.35;
     stroke: var(--warn);
-    stroke-width: 2.5;
+    stroke-width: 2;
   }
   :global(.leaflet-container) {
     font: inherit;
     background: var(--surface-2);
   }
+  :global(:root[data-theme='dark'] .leaflet-tile-pane) {
+    filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.85) saturate(0.6);
+  }
   @media (prefers-color-scheme: dark) {
-    :global(.leaflet-tile-pane) {
+    :global(:root:not([data-theme='light']) .leaflet-tile-pane) {
       filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.85) saturate(0.6);
     }
   }

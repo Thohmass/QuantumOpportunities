@@ -14,8 +14,17 @@ test('search filters the list and is kept in the URL', async ({ page }) => {
   await expect(page).toHaveURL(/q=singapore/);
 });
 
-test('a deep link opens the event details', async ({ page }) => {
+test('in the list, a selected event unfolds in place', async ({ page }) => {
   await page.goto('/#/list?e=mit-iquhack-2027');
+  const card = page.locator('article.card.open');
+  await expect(card).toHaveCount(1);
+  await expect(card.getByText('Sources')).toBeVisible();
+  await card.getByRole('button', { name: 'Collapse details' }).click();
+  await expect(page.locator('article.card.open')).toHaveCount(0);
+});
+
+test('on the timeline, a deep link opens the details panel', async ({ page }) => {
+  await page.goto('/#/timeline?e=mit-iquhack-2027');
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('heading', { name: 'MIT iQuHACK 2027' })).toBeVisible();
@@ -25,7 +34,7 @@ test('a deep link opens the event details', async ({ page }) => {
 });
 
 test('unknown values say "Not found yet"', async ({ page }) => {
-  await page.goto('/#/list?e=sesame-quantum-hackathon-2026');
+  await page.goto('/#/timeline?e=sesame-quantum-hackathon-2026');
   await expect(page.getByRole('dialog').getByText('Not found yet').first()).toBeVisible();
 });
 

@@ -136,7 +136,7 @@ export interface Meta {
   topics: TaxonomyItem[];
   audiences: TaxonomyItem[];
   orgs: Record<string, { name: string; type: OrgType; country?: string }>;
-  series: Record<string, { name: string; url?: string }>;
+  series: Record<string, { name: string; url?: string; typicalMonth?: number }>;
   redirects: Record<string, string>;
   health: {
     total: number;

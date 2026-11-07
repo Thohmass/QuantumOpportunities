@@ -131,8 +131,13 @@ describe('filters', () => {
   it('filters by date, optionally matching deadlines', () => {
     expect(run({ when: '30d' })).toEqual([]);
     expect(run({ when: '30d', byDeadline: true })).toEqual(['iquhack']);
-    expect(run({ when: 'custom', from: '2027-08', to: '2027-12' }).sort()).toEqual([
+    expect(run({ when: 'custom', ranges: ['2027-08~2027-12'] }).sort()).toEqual([
       'qcrypt',
+      'qhack',
+    ]);
+    // separate periods: January and October 2027
+    expect(run({ when: 'custom', ranges: ['2027-01-01~2027-01-31', '2027-10'] }).sort()).toEqual([
+      'iquhack',
       'qhack',
     ]);
     expect(run({ deadline: '2w' })).toEqual(['iquhack']);
@@ -172,11 +177,16 @@ describe('url', () => {
       cities: ['Copenhagen|DK'],
       showExpected: false,
       when: 'custom',
-      from: '2027-01',
+      ranges: ['2027-01-01~2027-01-31', '2027-03-01~2027-03-31'],
     };
     const hash = toHash({ view: 'map', filters: f, event: 'qip-2027' });
     expect(hash).toContain('type=hackathon,conference');
     expect(fromHash(hash)).toEqual({ view: 'map', filters: f, event: 'qip-2027' });
+  });
+  it('reads v0.1 links with from/to', () => {
+    expect(fromHash('#/list?when=custom&from=2027-01&to=2027-02').filters.ranges).toEqual([
+      '2027-01~2027-02',
+    ]);
   });
   it('survives junk', () => {
     expect(fromHash('#/nope?when=never&sort=x').filters).toEqual(DEFAULT_FILTERS);

@@ -12,12 +12,14 @@
     today,
     dimmed = new Set<string>(),
     compact = false,
+    expandable = true,
   }: {
     events: Ev[];
     meta: Meta;
     today: number;
     dimmed?: Set<string>;
     compact?: boolean;
+    expandable?: boolean;
   } = $props();
 
   const PAGE = 60;
@@ -25,6 +27,12 @@
   $effect(() => {
     void events;
     limit = PAGE; // new results start from the top
+  });
+
+  // A selected event further down the list is always rendered (so its card can unfold).
+  $effect(() => {
+    const i = app.eventId ? events.findIndex((e) => e.id === app.eventId) : -1;
+    if (i >= limit) limit = i + 10;
   });
 
   const groups = $derived.by(() => {
@@ -74,7 +82,7 @@
     {#if g.title}<h2 class="group">{g.title}</h2>{/if}
     <div class="cards">
       {#each g.items as e (e.id)}
-        <EventCard {e} {meta} {today} dim={dimmed.has(e.id)} {compact} />
+        <EventCard {e} {meta} {today} dim={dimmed.has(e.id)} {compact} {expandable} />
       {/each}
     </div>
   {/each}
