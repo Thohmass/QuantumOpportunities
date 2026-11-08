@@ -14,7 +14,7 @@
   yield: 0
 - q: quantum challenge competition prize {year}
   last_used: 2026-11-08
-  uses: 1
+  uses: 2
   yield: 0
 - q: quantum summer school {year} application
   last_used: 2026-11-08
@@ -29,6 +29,9 @@
   uses: 1
   yield: 0
 - q: quantum information conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum error correction conference workshop {year}
   last_used: 2026-11-08
   uses: 1
@@ -39,7 +42,7 @@
   yield: 2
 - q: quantum communication networks conference {year}
   last_used: 2026-11-08
-  uses: 1
+  uses: 2
   yield: 0
 - q: quantum machine learning workshop school {year}
   last_used: 2026-11-08
@@ -58,7 +61,13 @@
   uses: 1
   yield: 2
 - q: quantum computing conference North America {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum education outreach conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: student quantum hackathon university {year}
   last_used: 2026-11-08
   uses: 1
@@ -69,5 +78,5 @@
   yield: 2
 - q: post-quantum cryptography conference {year}
   last_used: 2026-11-08
-  uses: 1
+  uses: 2
   yield: 1
