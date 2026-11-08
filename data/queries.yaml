@@ -9,6 +9,9 @@
   uses: 1
   yield: 0
 - q: quantum hackathon Nordic Denmark Sweden Finland Norway {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum challenge competition prize {year}
   last_used: 2026-11-08
   uses: 1
@@ -26,6 +29,9 @@
   yield: 1
 - q: quantum sensing metrology conference {year}
 - q: quantum communication networks conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum machine learning workshop school {year}
 - q: quantum technology conference Europe {year}
 - q: quantum industry conference {year}

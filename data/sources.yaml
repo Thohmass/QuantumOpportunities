@@ -80,6 +80,10 @@
   url: https://unitary.foundation/
   kind: community
   covers: [hackathons, challenges]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
 - id: qworld-events
   name: QWorld events
   url: https://qworld.net/
