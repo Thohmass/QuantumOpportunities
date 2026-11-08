@@ -23,3 +23,6 @@
 - q: student quantum hackathon university {year}
 - q: quantum photonics conference school {year}
 - q: post-quantum cryptography conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 1

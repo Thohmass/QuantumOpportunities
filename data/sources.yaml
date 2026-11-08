@@ -21,6 +21,10 @@
   url: https://qt.eu/events
   kind: aggregator
   covers: [European conferences, schools]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 2
+  zero_yield_streak: 0
 - id: nanowerk-quantum-events
   name: Nanowerk event calendar (quantum)
   url: https://www.nanowerk.com/events.php
@@ -73,6 +77,11 @@
   url: https://devpost.com/hackathons?search=quantum
   kind: aggregator
   covers: [hackathons, challenges]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: Fetch returned HTTP 403 on 2026-11-08.
 - id: nbi-events
   name: Niels Bohr Institute events
   url: https://nbi.ku.dk/english/news-events/

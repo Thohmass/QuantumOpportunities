@@ -1,0 +1,28 @@
+id: world-quantum-cannes-festival-2026
+name: World Quantum Cannes Festival 2026
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-17
+  end: 2026-11-18
+location:
+  city: Cannes
+  country: FR
+  venue: Palais des Festivals et des Congrès
+organizers: [valuexchange]
+topics: [computing, business]
+audience: [industry, anyone]
+url: https://www.worldquantumcannesfestival.com/
+description: A two-day quantum technology festival at the Cannes congress centre, aimed at business and industry. Registration through the event website closes on 30 October 2026.
+sources:
+  - url: https://qt.eu/events/world-quantum-cannes-festival
+    kind: official
+    accessed: 2026-11-08
+    note: Quantum Flagship listing; the organiser site itself was not read
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
