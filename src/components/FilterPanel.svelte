@@ -29,7 +29,7 @@
   /** Options in a fixed order: every value that exists in the database, plus anything selected. */
   function fixed(
     key: FacetKey,
-    order: { value: string; label: string; depth?: number; swatch?: string }[],
+    order: { value: string; label: string; depth?: number; swatch?: string; icon?: string }[],
   ): Option[] {
     const known = new Set([...universe[key], ...f[key]]);
     return order.filter((o) => known.has(o.value)).map((o) => ({ ...o, count: n(key, o.value) }));
@@ -161,7 +161,7 @@
     title="Event type"
     options={fixed(
       'types',
-      meta.types.map((t) => ({ value: t.id, label: t.name, swatch: `t-${t.id}` })),
+      meta.types.map((t) => ({ value: t.id, label: t.name, icon: t.id })),
     )}
     selected={f.types}
     onToggle={toggle('types')}

@@ -113,3 +113,33 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - Each colour has a darker edge (`--tc-edge`), so white and yellow stay visible.
 - **Timeline selection:** weeks are reference labels only. Select months or days (when zoomed in), or drag. A selected month is lit to its exact first and last day in both header rows, including weeks that run across two months.
 - **Desktop Explore** fills the window exactly to its bottom edge: no leftover strip and no page scroll.
+
+## 13. v0.6 changes (8 Nov 2026, fifth review)
+
+- **Panels instead of view tabs.**
+  - The header no longer lists views. Map, timeline and list each have an expand/shrink button in their corner. An expanded panel covers the workspace, and the same button puts it back.
+  - Expanded panels keep their URLs (`#/map`, `#/timeline`, `#/list`), so old links still work.
+  - The logo goes back to Explore.
+- **List drawer.** When the map or timeline is expanded, and on phones and narrow windows (< 1100 px), the list is a drawer from the right. It opens from *List (n)* in the header, or by itself when an event is selected, with that card unfolded. On phones the map is therefore never far away.
+- **Expanded list on desktop:** 2–3 columns of cards, depending on the width.
+- **Details** always open as the centred pop-up (a bottom sheet on phones), through *More details*. With the list hidden on desktop Explore, selecting an event opens it directly.
+- **Search:**
+  - Typing filters live.
+  - Matching filter options are suggested below the box (e.g. "Ger" → Germany). Arrows or Tab move through them; Enter picks one and sets that filter exactly.
+  - Enter on the text itself keeps it as a search chip (`k=` in the URL) and clears the box for the next term. An event must match all terms; Backspace in an empty box removes the last one.
+  - On phones the search is a magnifier button. Tapping it opens the box across the header.
+- **Map bubbles:** from about country zoom (×3.5), every dot grows into a bubble with its event-type icon. The hexagonal no-overlap grid grows with it, so spacing stays proportional to size.
+- **Type icons:** each event type has an icon. It replaces the coloured dot on type labels, in the Event type filter and in search suggestions:
+  - conference: speech bubbles
+  - workshop: wrench
+  - hackathon: code brackets
+  - challenge: trophy
+  - summer school: sun
+  - winter school: snowflake
+  - programme: book
+  - meetup: people
+  - career fair: briefcase
+  - other: sparkle
+- **Dimmed = uncertain.** Events outside the map area are no longer dimmed; *Only map area* still hides them. Expected editions are dimmed instead, in every view. On the map they are plain faint dots with no ring.
+- **Removed:** the dotted "month not known" outline. Year-only events keep only the faint gradient.
+- **Dark theme grain:** light-coloured grain on the dark background.

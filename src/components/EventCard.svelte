@@ -6,6 +6,7 @@
   import type { Ev } from '../lib/model';
   import { app, hover, openEvent } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
+  import TypeIcon from './TypeIcon.svelte';
 
   let {
     e,
@@ -30,7 +31,18 @@
   $effect(() => {
     void app.focusTick;
     if (open && el)
-      setTimeout(() => el?.scrollIntoView({ block: 'start', behavior: 'smooth' }), 50);
+      setTimeout(() => {
+        if (!el) return;
+        // Inside a panel or drawer, scroll only that box (scrollIntoView would also move the page).
+        const box = el.closest<HTMLElement>('.list-drawer, .list-pane');
+        if (box && getComputedStyle(box).overflowY !== 'visible')
+          box.scrollTo({
+            top:
+              el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 8,
+            behavior: 'smooth',
+          });
+        else el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }, 50);
   });
 
   const typeName = $derived(meta.types.find((t) => t.id === e.type)?.name ?? e.type);
@@ -95,7 +107,7 @@
     {/if}
   </div>
   <div class="meta">
-    <span class="type-chip">{typeName}</span>
+    <span class="type-chip"><TypeIcon type={e.type} />{typeName}</span>
     {#if statusClass !== 'confirmed'}<span class="badge {statusClass}">{statusLabel(e)}</span>{/if}
     <span class="badge {cb}">{cb === 'unknown' ? 'Cost not found yet' : costText(e)}</span>
   </div>
@@ -185,8 +197,9 @@
       0 0 0 2px color-mix(in srgb, var(--hot) 55%, transparent),
       var(--shadow);
   }
+  /* Dimmed = uncertain (expected editions). */
   .card.dim {
-    opacity: 0.38;
+    opacity: 0.6;
   }
   .head {
     display: flex;

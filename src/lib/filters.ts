@@ -10,7 +10,10 @@ export type SortKey = 'date' | 'start' | 'added' | 'updated';
 export type View = 'explore' | 'list' | 'timeline' | 'map' | 'about';
 
 export interface Filters {
+  /** The text being typed in the search box (matches live). */
   q: string;
+  /** Search terms confirmed with Enter, shown as chips; an event must match all of them. */
+  terms: string[];
   types: string[];
   topics: string[];
   formats: string[];
@@ -36,6 +39,7 @@ export interface Filters {
 
 export const DEFAULT_FILTERS: Filters = {
   q: '',
+  terms: [],
   types: [],
   topics: [],
   formats: [],

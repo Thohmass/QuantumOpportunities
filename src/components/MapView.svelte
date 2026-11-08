@@ -10,6 +10,8 @@
   import { formatRange } from '../lib/dates';
   import { whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
+  import ExpandButton from './ExpandButton.svelte';
+  import { typeIcon } from '../lib/icons';
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
@@ -17,8 +19,11 @@
 
   let { events, meta, compact = false }: { events: Ev[]; meta: Meta; compact?: boolean } = $props();
 
-  /** Closest two dots may come, centre to centre (px). */
+  /** Closest two dots may come, centre to centre (px): small dots, and the large bubbles shown from BIG_AT. */
   const SPACING = 15;
+  const SPACING_BIG = 27;
+  /** Zoom level (about country scale) from which every dot grows into a bubble with its type icon. */
+  const BIG_AT = 3.5;
   const land = loadLand();
   let box: HTMLDivElement;
   let svg: SVGSVGElement;
@@ -100,6 +105,8 @@
   // Overlaps depend only on the zoom level (not on panning). The level is rounded to small steps and each step's
   // layout is kept, so zooming doesn't recompute it every frame; dots glide to their new spots.
   const kStep = $derived(2 ** (Math.round(Math.log2(t.k) * 8) / 8));
+  const big = $derived(kStep >= BIG_AT);
+  const spacing = $derived(big ? SPACING_BIG : SPACING);
   let packCache = new Map<number, [number, number][]>();
   let packFor: Dot[] | undefined;
   const offsets = $derived.by(() => {
@@ -111,7 +118,7 @@
     if (!o) {
       o = hexPack(
         dots.map((d) => ({ x: d.x * kStep, y: d.y * kStep })),
-        SPACING,
+        spacing,
       );
       packCache.set(kStep, o);
     }
@@ -302,9 +309,17 @@
                   <line class="tether" x1="0" y1="0" x2={-o[0]} y2={-o[1]} />
                   <circle class="origin" cx={-o[0]} cy={-o[1]} r="2.2" />
                 {/if}
-                <circle class="hit" r={SPACING / 2 + 1} />
-                <circle class="ring" r="8.5" />
-                <circle class="pin" r="5.5" />
+                <circle class="hit" r={spacing / 2 + 1} />
+                <circle class="ring" r={big ? 14.5 : 8.5} />
+                <!-- One bubble, drawn at full size and scaled down to a dot below BIG_AT. -->
+                <g class="bubble" class:big>
+                  <circle class="pin" r="11" />
+                  <path
+                    class="icon"
+                    d={typeIcon(d.e.type)}
+                    transform="translate(-6.6 -6.6) scale(0.55)"
+                  />
+                </g>
               </g>
             </g>
           {/if}
@@ -337,10 +352,10 @@
           title={onlineOnly ? 'Show all events again' : 'Show only online events'}
           onclick={() => {
             app.filters = { ...app.filters, continents: onlineOnly ? [] : ['online'] };
-            if (!onlineOnly && !compact) app.view = 'list';
           }}>🌐 {online} online</button
         >
       {/if}
+      <ExpandButton panel="map" label="map" />
     </div>
     <div class="zoom-btns">
       <button
@@ -417,10 +432,36 @@
   .hit {
     fill: transparent;
   }
+  .bubble {
+    transform: scale(0.5);
+    transition: transform 0.25s ease-out;
+  }
+  .bubble.big {
+    transform: scale(1);
+  }
   .pin {
     fill: var(--tc);
     stroke: var(--tc-edge);
     stroke-width: 1.3;
+    vector-effect: non-scaling-stroke;
+  }
+  .icon {
+    fill: none;
+    stroke: var(--tc-on);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .bubble.big .icon {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bubble,
+    .icon {
+      transition: none;
+    }
   }
   .tether {
     stroke: var(--hot);
@@ -435,10 +476,11 @@
     stroke: transparent;
     stroke-width: 2;
   }
+  /* Dimmed = uncertain: an expected edition is a plain, faint dot (no edge). */
   .dot.expected .pin {
-    fill: color-mix(in srgb, var(--tc) 40%, transparent);
-    stroke: var(--tc);
-    stroke-width: 1.5;
+    fill: var(--tc);
+    stroke: none;
+    opacity: 0.45;
   }
   .dot.postponed .pin,
   .dot.cancelled .pin {
@@ -457,8 +499,11 @@
   .dot:focus-visible .ring {
     stroke: var(--hot);
   }
-  .dot.hot .pin {
-    r: 6.5;
+  .dot.hot .bubble {
+    transform: scale(0.6);
+  }
+  .dot.hot .bubble.big {
+    transform: scale(1.12);
   }
   .label {
     position: absolute;

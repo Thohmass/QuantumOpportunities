@@ -18,6 +18,7 @@
   import { app } from '../lib/state.svelte';
   import EventInfo from './EventInfo.svelte';
   import type { Meta } from '../lib/types';
+  import TypeIcon from './TypeIcon.svelte';
 
   let {
     e,
@@ -98,7 +99,7 @@
   <div class="top">
     <div class="badges">
       <span class="badge {statusClass}">{statusLabel(e)}</span>
-      <span class="type-chip t-{e.type}">{typeName}</span>
+      <span class="type-chip t-{e.type}"><TypeIcon type={e.type} />{typeName}</span>
     </div>
     <button
       bind:this={closeBtn}
