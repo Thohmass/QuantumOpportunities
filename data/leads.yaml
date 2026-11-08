@@ -2,13 +2,13 @@
 # The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
 - title: AQIS 2027, Tsukuba (23–27 Aug 2027)
   found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027 with link aqis-conf.org/2027, but that URL shows AQIS 2026 (KAIST, Daejeon, 24-28 Aug 2026); no 2027 page yet
+  hint: Listed on quantum.info/conf/2027 with link aqis-conf.org/2027, but that URL shows AQIS 2026 (KAIST, Daejeon, 24-28 Aug 2026); no 2027 page yet If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://quantum.info/conf/2027.html
   tries: 3
   last_tried: 2026-11-08
 - title: Quantum.Tech World 2027, Boston (25–26 May 2027)
   found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027 and showsbee (organiser Alpha Events); no official 2027 page read (alphaevents.com fetch refused)
+  hint: Listed on quantum.info/conf/2027 and showsbee (organiser Alpha Events); no official 2027 page read (alphaevents.com fetch refused) If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://quantum.info/conf/2027.html
   tries: 1
   last_tried: 2026-11-08
@@ -67,17 +67,17 @@
   hint: Listed on quantum.info/conf/2027 without a link; search for the official page
 - title: unitaryHACK 2027 (Unitary Foundation, online open-source quantum hackathon)
   found: 2026-11-08
-  hint: Recurring every year (usually late May – June); unitary.foundation shows no 2027 dates, try unitaryhack.dev
+  hint: Recurring every year (usually late May – June); unitary.foundation shows no 2027 dates, try unitaryhack.dev If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://unitaryhack.dev
   tries: 3
   last_tried: 2026-11-08
 - title: Qiskit Global Summer School 2027 (IBM, online)
   found: 2026-11-08
-  hint: Recurring every summer (usually July); check IBM Quantum events / Qiskit for the 2027 edition
+  hint: Recurring every summer (usually July); check IBM Quantum events / Qiskit for the 2027 edition If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://www.ibm.com/quantum/events
 - title: IBM Quantum Challenge 2027 (online)
   found: 2026-11-08
-  hint: Recurring online challenge in some years; check IBM Quantum events
+  hint: Recurring online challenge in some years; check IBM Quantum events If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://www.ibm.com/quantum/events
 - title: QOSF Quantum Computing Mentorship Programme (next cohort)
   found: 2026-11-08
@@ -85,31 +85,31 @@
   url: https://qosf.org/
 - title: Los Alamos Quantum Computing Summer School 2027
   found: 2026-11-08
-  hint: Recurring summer school for students at LANL (usually June – August, applications early in the year)
+  hint: Recurring summer school for students at LANL (usually June – August, applications early in the year) If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://www.lanl.gov/
 - title: Quantum Korea 2027, Seoul
   found: 2026-11-08
-  hint: Annual Korean quantum conference and expo (usually late June/July; 2026 was 2–4 Jul at DDP); no 2027 announcement found
+  hint: Annual Korean quantum conference and expo (usually late June/July; 2026 was 2–4 Jul at DDP); no 2027 announcement found If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   tries: 1
   last_tried: 2026-11-08
 - title: Quantum World Congress 2027 (USA)
   found: 2026-11-08
-  hint: Annual conference near Washington DC (usually September; 2026 was 23–25 Sep, College Park); no 2027 dates found
+  hint: Annual conference near Washington DC (usually September; 2026 was 23–25 Sep, College Park); no 2027 dates found If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   tries: 1
   last_tried: 2026-11-08
 - title: Q2B Tokyo 2027 and Q2B Paris 2027
   found: 2026-11-08
-  hint: QC Ware's Q2B runs regional editions besides Silicon Valley/Chicago (Tokyo usually July, Paris usually September); series q2b already exists
+  hint: QC Ware's Q2B runs regional editions besides Silicon Valley/Chicago (Tokyo usually July, Paris usually September); series q2b already exists If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
   url: https://q2b.qcware.com/
 - title: Commercialising Quantum Global 2027 (Economist Impact), London
   found: 2026-11-08
-  hint: Annual business conference (usually May); search for the official page
+  hint: Annual business conference (usually May); search for the official page If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
 - title: Quantum India Bengaluru Summit 2027
   found: 2026-11-08
-  hint: Annual summit by the Government of Karnataka (usually July/August); search for the official site
+  hint: Annual summit by the Government of Karnataka (usually July/August); search for the official site If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
 - title: QTML 2027 – Quantum Techniques in Machine Learning
   found: 2026-11-08
-  hint: Annual conference (usually November – December, location changes); search for the official site
+  hint: Annual conference (usually November – December, location changes); search for the official site If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
 - title: Quantum hackathons and schools in Africa and Latin America (e.g. QWorld QSchool/QIntro events, Quantum Africa conference series)
   found: 2026-11-08
   hint: Regions with no events in the database yet; QWorld and community sites list workshops in many countries
