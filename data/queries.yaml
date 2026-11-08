@@ -17,6 +17,9 @@
   uses: 1
   yield: 0
 - q: quantum summer school {year} application
+  last_used: 2026-11-08
+  uses: 1
+  yield: 2
 - q: quantum winter school {year}
 - q: quantum computing summer school PhD master's {year}
   last_used: 2026-11-08
