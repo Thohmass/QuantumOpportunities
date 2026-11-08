@@ -746,7 +746,12 @@
     height: 14px;
     border-radius: 2px;
     background: var(--tc);
+    box-shadow: inset 0 0 0 1px var(--tc-edge);
     flex: none;
+  }
+  .item.expected .bar,
+  .item.approx .bar {
+    box-shadow: none;
   }
   .item.expected .bar {
     /* Uncertain = soft gradient: solid in the middle, fading towards both ends. */
@@ -811,10 +816,10 @@
   .item.hot {
     z-index: 6;
     background: var(--surface);
-    box-shadow: 0 0 0 2px var(--warn);
+    box-shadow: 0 0 0 2px var(--hot);
   }
   .item.hot .label {
-    color: var(--warn);
+    color: var(--hot);
     font-weight: 700;
   }
   .diamond {

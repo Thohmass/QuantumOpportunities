@@ -16,6 +16,17 @@
   ];
   const nActive = $derived(activeCount(app.filters));
   let searchEl: HTMLInputElement | undefined = $state();
+  // The header's height (one row on desktop, two on phones) is shared with sticky elements below it.
+  let headerEl: HTMLElement | undefined = $state();
+  $effect(() => {
+    if (!headerEl) return;
+    const el = headerEl;
+    const ro = new ResizeObserver(() =>
+      document.documentElement.style.setProperty('--header-h', `${el.offsetHeight}px`),
+    );
+    ro.observe(el);
+    return () => ro.disconnect();
+  });
   const NEXT: Record<Theme, Theme> = { system: 'light', light: 'dark', dark: 'system' };
   const THEME_LABEL: Record<Theme, string> = {
     system: 'Theme: system',
@@ -40,7 +51,7 @@
 
 <svelte:window onkeydown={onKey} />
 
-<header class="header">
+<header class="header" bind:this={headerEl}>
   <div class="top">
     <a class="brand" href="#/list" aria-label="Quantum Opportunities, home">
       <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
@@ -53,6 +64,43 @@
       </svg>
       <span>Quantum <b>Opportunities</b></span>
     </a>
+    <label class="search">
+      <span class="sr-only">Search events</span>
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+        ><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" /><path
+          d="m20 20-3.5-3.5"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        /></svg
+      >
+      <input
+        bind:this={searchEl}
+        type="search"
+        placeholder="Search events…"
+        title="Search events, places, organisers (press / to focus)"
+        autocomplete="off"
+        bind:value={app.filters.q}
+      />
+    </label>
+    <button
+      class="btn filters-btn"
+      aria-expanded={app.filtersOpen}
+      aria-controls="filters"
+      onclick={() => (app.filtersOpen = !app.filtersOpen)}
+    >
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+        ><path
+          d="M4 6h16M7 12h10M10 18h4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        /></svg
+      >
+      Filters{#if nActive}<span class="count">{nActive}</span>{/if}
+    </button>
+    <p class="shown" aria-live="polite"><b>{shown}</b> of {total}</p>
     <nav class="views" aria-label="View">
       {#each views as v (v.id)}
         <a
@@ -106,44 +154,6 @@
       }}>About</a
     >
   </div>
-  <div class="bar">
-    <label class="search">
-      <span class="sr-only">Search events</span>
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
-        ><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" /><path
-          d="m20 20-3.5-3.5"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        /></svg
-      >
-      <input
-        bind:this={searchEl}
-        type="search"
-        placeholder="Search events, places, organisers…"
-        autocomplete="off"
-        bind:value={app.filters.q}
-      />
-    </label>
-    <button
-      class="btn filters-btn"
-      aria-expanded={app.filtersOpen}
-      aria-controls="filters"
-      onclick={() => (app.filtersOpen = !app.filtersOpen)}
-    >
-      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
-        ><path
-          d="M4 6h16M7 12h10M10 18h4"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-        /></svg
-      >
-      Filters{#if nActive}<span class="count">{nActive}</span>{/if}
-    </button>
-    <p class="shown" aria-live="polite"><b>{shown}</b> of {total}</p>
-  </div>
 </header>
 
 <style>
@@ -154,15 +164,59 @@
     background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
-    padding: 10px max(14px, env(safe-area-inset-left)) 10px max(14px, env(safe-area-inset-right));
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 10px;
+    padding: 8px max(14px, env(safe-area-inset-left)) 8px max(14px, env(safe-area-inset-right));
   }
+  /* One row on desktop: brand · search · count · views · theme · About. On narrower screens the search,
+     the Filters button and the count wrap onto a second row. */
   .top {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 12px;
+    gap: 8px 12px;
+  }
+  .brand {
+    order: 0;
+  }
+  .views {
+    order: 1;
+  }
+  .theme {
+    order: 2;
+  }
+  .about {
+    order: 3;
+  }
+  .search {
+    order: 10;
+    flex: 1 1 60%;
+  }
+  .filters-btn {
+    order: 11;
+  }
+  .shown {
+    order: 12;
+  }
+  @media (min-width: 960px) {
+    .top {
+      flex-wrap: nowrap;
+    }
+    .search {
+      order: 0;
+      flex: 0 1 300px;
+      min-height: 36px;
+    }
+    .shown {
+      order: 0;
+    }
+  }
+  /* Small desktops: the logo alone (no name) and a shorter search box keep everything on one row. */
+  @media (min-width: 960px) and (max-width: 1239px) {
+    .brand span {
+      display: none;
+    }
+    .search {
+      flex-basis: 220px;
+    }
   }
   .brand {
     display: flex;
@@ -218,13 +272,7 @@
   .theme:hover {
     color: var(--ink);
   }
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
   .search {
-    flex: 1;
     min-width: 0;
     display: flex;
     align-items: center;
@@ -245,7 +293,7 @@
     border: 0;
     background: transparent;
     outline: none;
-    padding: 9px 0;
+    padding: 7px 0;
     font-size: 16px; /* no zoom on iOS */
   }
   .count {

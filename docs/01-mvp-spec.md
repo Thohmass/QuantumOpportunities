@@ -87,3 +87,27 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **Filters:** only *When*, *Applications* and *Show* are open at first; the other groups start folded.
 - **Design rule:** gradients mean *uncertain* (expected editions, unknown months). They are not used for decoration.
 
+
+## 12. v0.5 changes (8 Nov 2026, fourth review)
+
+- **Two layouts, one rule:**
+  - **Desktop (≥ 1100 px):** a workspace that fills the window. Filters, then map + timeline, then the list. Every border can be dragged and is remembered (double-click resets; arrow keys work too). Filters and list can be hidden and stay hidden.
+  - **Narrower screens:** one scrolling page (map, timeline, list).
+  - The *Side by side* / *Wide map* switch is gone.
+- **Fixed: list scrolling on narrow windows.** Scrolling over the list scrolled nothing: the list was still its own scroll box, which also blocked the page. It is now part of the page.
+- **Details on Explore:** with the list hidden, clicking an event opens the centred pop-up (with a backdrop) instead of the side panel, and the list stays hidden.
+- **The map keeps its place:** when its panel is resized or a panel is hidden, the same spot stays in the middle at the same scale.
+- **Search** is compact, in the header between the logo and the view switch.
+- **Online button** on the map is an on/off switch for the "online only" filter.
+- **Warm colours:**
+  - **Light theme:** "old paper" cream with a faint grain (one generated noise tile, no image).
+  - **Dark theme:** near-black purple with orange and yellow highlights.
+  - **Hover highlight:** its own `--hot` token in every view.
+- **Type colours:**
+  - hackathons and challenges: pink
+  - summer schools: sun yellow
+  - workshops: green
+  - conferences: blue
+  - winter schools: snow white
+  - programmes and others: grey
+  - Each colour has a darker edge (`--tc-edge`), so white and yellow stay visible.

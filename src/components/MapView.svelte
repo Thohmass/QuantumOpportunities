@@ -118,6 +118,10 @@
     return o;
   });
   const online = $derived(events.filter((e) => e.format === 'online').length);
+  // The online button is an on/off switch for the "online only" filter.
+  const onlineOnly = $derived(
+    app.filters.continents.length === 1 && app.filters.continents[0] === 'online',
+  );
 
   // ---- zoom & pan: at most one update per frame ----------------------------------
   let next: ZoomTransform | undefined;
@@ -185,12 +189,28 @@
     };
   });
 
-  // Re-create the zoom behaviour for the box size; keep the view's centre and zoom.
+  // Re-create the zoom behaviour for the box size. The land is re-fitted to the new size, so keep the same
+  // place in the middle at the same geographic scale (panels being resized or hidden don't move the view).
+  let last: { projection: GeoProjection; w: number; h: number } | undefined;
   $effect(() => {
-    if (!w || !h || !svg) return;
+    if (!w || !h || !svg || !projection) return;
+    const p = projection;
     untrack(() => {
+      let next = t;
+      if (last && (last.w !== w || last.h !== h)) {
+        const centre = last.projection.invert?.(t.invert([last.w / 2, last.h / 2]));
+        const at = centre && p(centre);
+        if (at) {
+          const k = Math.max(1, (t.k * last.projection.scale()) / p.scale());
+          next = zoomIdentity
+            .translate(w / 2, h / 2)
+            .scale(k)
+            .translate(-at[0], -at[1]);
+        }
+      }
+      last = { projection: p, w, h };
       setupZoom();
-      select(svg).call(zoomer!.transform, t);
+      select(svg).call(zoomer!.transform, next);
       publishBounds();
     });
   });
@@ -308,13 +328,16 @@
       <label class="btn toggle" title="Hide events outside the visible map area in the other views">
         <input type="checkbox" bind:checked={app.mapOnly} /> Only map area
       </label>
-      {#if online}
+      {#if online || onlineOnly}
         <button
           class="btn"
+          class:on={onlineOnly}
           type="button"
+          aria-pressed={onlineOnly}
+          title={onlineOnly ? 'Show all events again' : 'Show only online events'}
           onclick={() => {
-            app.filters.continents = ['online'];
-            if (!compact) app.view = 'list';
+            app.filters = { ...app.filters, continents: onlineOnly ? [] : ['online'] };
+            if (!onlineOnly && !compact) app.view = 'list';
           }}>🌐 {online} online</button
         >
       {/if}
@@ -396,16 +419,16 @@
   }
   .pin {
     fill: var(--tc);
-    stroke: var(--map-land);
-    stroke-width: 1.5;
+    stroke: var(--tc-edge);
+    stroke-width: 1.3;
   }
   .tether {
-    stroke: var(--warn);
+    stroke: var(--hot);
     stroke-width: 1.2;
     stroke-dasharray: 2 2;
   }
   .origin {
-    fill: var(--warn);
+    fill: var(--hot);
   }
   .ring {
     fill: none;
@@ -432,7 +455,7 @@
   }
   .dot.hot .ring,
   .dot:focus-visible .ring {
-    stroke: var(--warn);
+    stroke: var(--hot);
   }
   .dot.hot .pin {
     r: 6.5;
@@ -477,6 +500,11 @@
   }
   .toggle input {
     accent-color: var(--accent);
+  }
+  .overlay .btn.on {
+    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: var(--accent);
   }
   .zoom-btns {
     position: absolute;

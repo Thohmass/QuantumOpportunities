@@ -21,7 +21,6 @@ export const app = $state({
 
 // ---- preferences kept in this browser ---------------------------------------
 export type Theme = 'system' | 'light' | 'dark';
-export type Layout = 'grid' | 'wide';
 function load<T extends string>(key: string, allowed: readonly T[], fallback: T): T {
   try {
     const v = localStorage.getItem(key) as T | null;
@@ -50,11 +49,24 @@ function loadNumber(key: string, min: number, max: number, fallback: number): nu
 /** Explore: the map's share of the height it splits with the timeline. */
 export const SPLIT = { min: 0.2, max: 0.8, initial: 0.53 } as const;
 
+/** Desktop workspace: widths (px) of the filters column and the Explore list column. */
+export const WIDTHS = {
+  filters: { min: 220, max: 460, initial: 290 },
+  list: { min: 300, max: 760, initial: 420 },
+} as const;
+
 export const prefs = $state({
   theme: load<Theme>('qo-theme', ['system', 'light', 'dark'], 'system'),
-  layout: load<Layout>('qo-layout', ['grid', 'wide'], 'grid'),
   sidebar: load<'shown' | 'hidden'>('qo-sidebar', ['shown', 'hidden'], 'shown'),
-  listOpen: false, // wide layout: list drawer
+  /** Explore on desktop: the list column can be hidden (remembered). */
+  list: load<'shown' | 'hidden'>('qo-list', ['shown', 'hidden'], 'shown'),
+  filtersW: loadNumber(
+    'qo-filters-w',
+    WIDTHS.filters.min,
+    WIDTHS.filters.max,
+    WIDTHS.filters.initial,
+  ),
+  listW: loadNumber('qo-list-w', WIDTHS.list.min, WIDTHS.list.max, WIDTHS.list.initial),
   /** Filter groups the user opened or closed this visit (others use their default). */
   toggled: [] as string[],
   split: loadNumber('qo-split', SPLIT.min, SPLIT.max, SPLIT.initial),
@@ -65,7 +77,15 @@ export function setSplit(value: number): void {
   save('qo-split', prefs.split.toFixed(3));
 }
 
-export function setPref<K extends 'theme' | 'layout' | 'sidebar'>(
+export function setWidth(which: 'filters' | 'list', px: number): void {
+  const { min, max } = WIDTHS[which];
+  const v = Math.round(Math.min(max, Math.max(min, px)));
+  if (which === 'filters') prefs.filtersW = v;
+  else prefs.listW = v;
+  save(`qo-${which}-w`, String(v));
+}
+
+export function setPref<K extends 'theme' | 'sidebar' | 'list'>(
   key: K,
   value: (typeof prefs)[K],
 ): void {
