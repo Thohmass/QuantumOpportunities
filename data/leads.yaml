@@ -18,7 +18,7 @@
   url: https://www.houches-school-physics.com/program/program-2027/
 - title: More 2027 events on quantum.info – QSDC27 (10–11 May, San Diego); IQT PQC (25–26 Oct, New York)
   found: 2026-11-08
-  hint: Listed with links on quantum.info/conf/2027 (quantumsandiego.org returned 403; iqtevent.com not read yet)
+  hint: Listed with links on quantum.info/conf/2027 (quantumsandiego.org returned 403; iqtevent.com has no 2027 PQC page, only PQC+IQT 25–26 Oct 2026 and Q+AI Munich 26–28 Apr 2027 with site forthcoming)
   url: https://quantum.info/conf/2027.html
-  tries: 1
+  tries: 2
   last_tried: 2026-11-08

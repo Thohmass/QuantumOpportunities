@@ -1,6 +1,9 @@
 # Rotating discovery queries (docs/04-data-pipeline.md §6). The Scout uses the M with the oldest
 # last_used each run and updates last_used, uses and yield. Use the current and next year in queries.
 - q: quantum hackathon {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum computing hackathon Europe {year}
   last_used: 2026-11-08
   uses: 1

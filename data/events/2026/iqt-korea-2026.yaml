@@ -1,0 +1,29 @@
+id: iqt-korea-2026
+name: IQT Korea 2026
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-25
+  end: 2026-11-27
+location:
+  city: Incheon
+  country: KR
+  venue: Songdo ConvensiA
+topics: [business]
+audience: [researcher, industry]
+url: https://iqtkorea.com
+description: First Asian edition of the IQT industry event, with exhibition, talks and networking for companies, startups, investors, researchers and government around the quantum ecosystem. Hosted with Korean ministry and city support.
+sources:
+  - url: https://iqtkorea.com
+    kind: official
+    accessed: 2026-11-08
+  - url: https://www.qureca.com/calendar/
+    kind: aggregator
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
