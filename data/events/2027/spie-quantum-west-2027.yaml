@@ -1,0 +1,26 @@
+id: spie-quantum-west-2027
+name: SPIE Quantum West 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-30
+  end: 2027-02-04
+location:
+  city: San Francisco
+  country: US
+organizers: [spie]
+topics: [computing, sensing, business]
+audience: [researcher, industry]
+url: https://spie.org/conferences-and-exhibitions/photonics-west/program/conferences/quantum-west
+description: Conference and business summit on applied quantum technologies, held within SPIE Photonics West, with technical sessions, courses, an exhibition area and a commercialisation-focused summit.
+sources:
+  - url: https://spie.org/conferences-and-exhibitions/photonics-west/program/conferences/quantum-west
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

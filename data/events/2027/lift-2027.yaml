@@ -1,0 +1,27 @@
+id: lift-2027
+name: Leaning Into Fault Tolerance (LIFT 2027)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-22
+  end: 2027-03-26
+location:
+  city: Pisa
+  country: IT
+  venue: Scuola Normale Superiore, Palazzo del Castelletto
+organizers: [scuola-normale-superiore]
+topics: [qec, computing]
+audience: [researcher, phd, industry]
+url: https://indico.sns.it/event/152/
+description: Workshop on the path from noisy devices to large-scale fault-tolerant quantum computing, with invited talks on error-correcting codes and decoders, magic states, scalable architectures and resource estimation. Call for contributed talks and posters to open soon.
+sources:
+  - url: https://indico.sns.it/event/152/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

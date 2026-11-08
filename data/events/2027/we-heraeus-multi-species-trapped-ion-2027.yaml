@@ -1,0 +1,27 @@
+id: we-heraeus-multi-species-trapped-ion-2027
+name: Multi-Species Trapped-Ion Quantum Logic (884. WE-Heraeus-Seminar)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-09
+  end: 2027-05-14
+location:
+  city: Bad Honnef
+  country: DE
+  venue: Physikzentrum Bad Honnef
+organizers: [we-heraeus-foundation]
+topics: [hw-trapped-ions, sensing]
+audience: [researcher, phd]
+url: https://www.we-heraeus-stiftung.de/veranstaltungen/multi-species-trapped-ion-quantum-logic/
+description: Seminar on quantum control of mixed ion species, covering quantum logic clocks, spectroscopy of highly charged and molecular ions, and using several species in quantum computing. The foundation covers full board.
+sources:
+  - url: https://www.we-heraeus-stiftung.de/veranstaltungen/multi-species-trapped-ion-quantum-logic/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

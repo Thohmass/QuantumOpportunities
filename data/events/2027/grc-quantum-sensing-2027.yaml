@@ -1,0 +1,30 @@
+id: grc-quantum-sensing-2027
+name: Quantum Sensing Gordon Research Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-07-11
+  end: 2027-07-16
+location:
+  city: Aigle
+  country: CH
+  venue: Les Diablerets Conference Center, Les Diablerets
+organizers: [gordon-research-conferences]
+topics: [sensing]
+audience: [researcher, phd, postdoc]
+deadlines:
+  - kind: application
+    date: 2027-06-13
+url: https://www.grc.org/quantum-sensing-conference/2027/
+description: Conference on quantum sensors across platforms and scales, from spin, atomic, photonic and levitated systems to applications in fundamental physics, life sciences and navigation, and the step towards field-deployable devices.
+sources:
+  - url: https://www.grc.org/quantum-sensing-conference/2027/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

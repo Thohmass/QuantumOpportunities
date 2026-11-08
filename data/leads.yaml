@@ -24,38 +24,28 @@
   last_tried: 2026-11-08
 # Leads added 2026-11-08 by the overnight research run (scout-100): candidates from quantum.info/conf/2027 with
 # their official links, and recurring events from earlier editions (hints only; confirm on the official page).
-- title: Quantum Entanglement – New Concepts and Opportunities (WE-Heraeus seminar), Bad Honnef, 14–17 Feb 2027
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 with the WE-Heraeus link
-  url: https://www.we-heraeus-stiftung.de/veranstaltungen/quantum-entanglement-new-concepts-and-opportunities
-- title: Multi-Species Trapped-Ion Quantum Logic (WE-Heraeus seminar), Bad Honnef, 9–14 May 2027
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 with the WE-Heraeus link
-  url: https://www.we-heraeus-stiftung.de/veranstaltungen/multi-species-trapped-ion-quantum-logic/
 - title: Fundamentals and Applications of Superconducting Nanowire Single Photon Detectors (WE-Heraeus), Bad Honnef, 19–24 Sep 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027; the link there is a generic WE-Heraeus page, search the seminar title
   url: https://www.we-heraeus-stiftung.de/
-- title: SPIE Quantum West 2027 (at Photonics West), San Francisco, 30 Jan – 4 Feb 2027
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027
-  url: https://spie.org/conferences-and-exhibitions/photonics-west/program/conferences/quantum-west
 - title: Gordon Research Conference – Quantum Biology, Oxnard (Ventura), 7–12 Mar 2027 (GRS 6–7 Mar)
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027
   url: https://www.grc.org/quantum-biology-conference/2027/
-- title: Gordon Research Conference – Quantum Sensing, Les Diablerets, 11–16 Jul 2027 (GRS 10–11 Jul)
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 (country given there as France; Les Diablerets is in Switzerland, check the venue)
-  url: https://www.grc.org/quantum-sensing-conference/2027/
+  tries: 1
+  last_tried: 2026-11-08
 - title: Gordon Research Conference – Quantum Control of Light and Matter, Newport RI, 1–6 Aug 2027 (GRS 31 Jul – 1 Aug)
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027
   url: https://www.grc.org/quantum-control-of-light-and-matter-conference/2027/
+  tries: 1
+  last_tried: 2026-11-08
 - title: Quantum Spintronics 2027, Trondheim, 8–10 Jun 2027
   found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 (NTNU QuSpin workshops page)
+  hint: Official QuSpin page confirms 8–10 Jun 2027 but names no 2027 venue (series is usually Trondheim); create once the venue is stated
   url: https://www.ntnu.edu/quspin/workshops
+  tries: 1
+  last_tried: 2026-11-08
 - title: Workshop on Phases of Open Quantum Systems – complexity, learnability and error correction, Les Diablerets, 13–18 Jun 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027 (SwissMAP Research Station)
@@ -64,6 +54,8 @@
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027
   url: https://www.aps.org/events/2027/damop-2027
+  tries: 1
+  last_tried: 2026-11-08
 - title: IHP workshop – Advances in Quantum Cryptography – Information-theoretic Foundations, Paris, 11–15 Oct 2027
   found: 2026-11-08
   hint: Part of the IHP quantum cryptography trimester; listed on quantum.info/conf/2027 (the introductory school is already in the database)
@@ -126,3 +118,10 @@
   found: 2026-11-08
   hint: Regions with no events in the database yet; QWorld and community sites list workshops in many countries
   url: https://qworld.net/
+- title: QED-C Quantum Summit, Washington DC, mid-April (year not stated on the page)
+  found: 2026-11-08
+  hint: Seen in a search; check quantumconsortium.org for the 2027 edition
+  url: https://quantumconsortium.org/current-plenary
+- title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
+  found: 2026-11-08
+  hint: Probably 2027; no dates or place announced as of 2026-11-08
