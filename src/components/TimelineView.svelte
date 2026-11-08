@@ -72,6 +72,8 @@
     aria: string;
     iv: Interval;
     year?: boolean;
+    /** A day cell (selectable); week cells are labels only. */
+    day?: boolean;
   }
   function monthLabel(m: number, y: number, first: boolean, w: number): string {
     const year = m === 0 || first;
@@ -114,6 +116,7 @@
           label: String(new Date(t).getUTCDate()),
           aria: isoDay(t),
           iv: [t, t],
+          day: true,
         });
       }
     } else if (ppd >= 3) {
@@ -230,7 +233,11 @@
     let iv: Interval | undefined;
     if (drag.head) {
       const subRow = ev.clientY - canvas!.getBoundingClientRect().top > 22 && sub.length;
-      iv = cellsBetween(subRow ? sub : months, a, b);
+      iv = !subRow
+        ? cellsBetween(months, a, b)
+        : sub[0]?.day
+          ? cellsBetween(sub, a, b)
+          : [dayAt(a), dayAt(b)];
     } else iv = [dayAt(a), dayAt(b)];
     if (iv) setRanges(drag.add ? union(sel, iv) : [iv]);
     drag = undefined;
@@ -372,7 +379,7 @@
       <button class="clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
     {:else}
       <span class="hint muted"
-        >Click months or weeks (Shift / Ctrl to add), or drag, to pick dates</span
+        >Click months or days (Shift / Ctrl to add), or drag, to pick dates</span
       >
     {/if}
     <div class="zoom" role="group" aria-label="Zoom">
@@ -453,18 +460,31 @@
             aria-pressed={covers(sel, m.iv)}><span>{m.label}</span></button
           >
         {/each}
+        <!-- The selection shows as one continuous band in the lower header row too, so a selected month is lit
+             to its exact first and last day, even where a week runs across two months. -->
+        {#each selBands as b, i (i)}<div
+            class="head-band"
+            style:left="{b.left}px"
+            style:width="{b.w}px"
+          ></div>{/each}
         {#each sub as s (s.key)}
-          <button
-            type="button"
-            class="cell sub"
-            class:on={covers(sel, s.iv)}
-            style:left="{s.x}px"
-            style:width="{s.w}px"
-            onclick={(ev) => !suppressClick && pickCell(s, ev)}
-            aria-label="Select {s.aria}"
-            aria-pressed={covers(sel, s.iv)}
-            title={s.aria}>{s.label}</button
-          >
+          {#if s.day}
+            <button
+              type="button"
+              class="cell sub"
+              style:left="{s.x}px"
+              style:width="{s.w}px"
+              onclick={(ev) => !suppressClick && pickCell(s, ev)}
+              aria-label="Select {s.aria}"
+              aria-pressed={covers(sel, s.iv)}
+              title={s.aria}>{s.label}</button
+            >
+          {:else}
+            <!-- Weeks are a reference only: select months, days, or drag. -->
+            <span class="cell sub ref" style:left="{s.x}px" style:width="{s.w}px" title={s.aria}
+              >{s.label}</span
+            >
+          {/if}
         {/each}
       </div>
       <div class="today" style:left="{x(today)}px"><span>Today</span></div>
@@ -696,6 +716,18 @@
     position: sticky;
     left: 0;
     padding: 0 6px;
+  }
+  .cell.sub.ref {
+    pointer-events: none;
+    background: transparent;
+    font-weight: 400;
+  }
+  .head-band {
+    position: absolute;
+    top: 22px;
+    height: 19px;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    pointer-events: none;
   }
   .cell.sub {
     top: 22px;

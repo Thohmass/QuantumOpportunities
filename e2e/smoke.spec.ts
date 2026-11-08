@@ -158,3 +158,28 @@ test('the online button on the map switches the online-only filter on and off', 
   await expect(online).toHaveAttribute('aria-pressed', 'false');
   await expect(page).not.toHaveURL(/online/);
 });
+
+test('timeline: weeks are labels only; a selected month is lit to its exact days', async ({
+  page,
+}) => {
+  await page.goto('/#/timeline');
+  await expect(page.getByRole('button', { name: /^Select week/ })).toHaveCount(0);
+  const jan = page.getByRole('button', { name: /^Select January 2027/ });
+  await jan.click();
+  const cell = (await jan.boundingBox())!;
+  const band = (await page.locator('.head-band').first().boundingBox())!;
+  expect(Math.abs(band.x - cell.x)).toBeLessThan(2);
+  expect(Math.abs(band.width - cell.width)).toBeLessThan(2);
+});
+
+test('explore on desktop fills the window to its bottom edge', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.locator('.list-pane article.card').first().waitFor();
+  const bottom = await page
+    .locator('.list-pane')
+    .evaluate((el) => el.getBoundingClientRect().bottom);
+  expect(Math.abs(bottom - 900)).toBeLessThan(2);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBe(0);
+});

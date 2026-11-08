@@ -111,3 +111,5 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - winter schools: snow white
   - programmes and others: grey
   - Each colour has a darker edge (`--tc-edge`), so white and yellow stay visible.
+- **Timeline selection:** weeks are reference labels only. Select months or days (when zoomed in), or drag. A selected month is lit to its exact first and last day in both header rows, including weeks that run across two months.
+- **Desktop Explore** fills the window exactly to its bottom edge: no leftover strip and no page scroll.

@@ -217,7 +217,7 @@
           onclick={() => (app.filtersOpen = false)}
         ></div>{/if}
     {/if}
-    <main id="main">
+    <main id="main" class:workspace={app.view === 'explore' && !narrow}>
       {#if app.view !== 'about'}
         <div class="bar">
           <button
@@ -466,9 +466,18 @@
       'split vsplit list'
       'timeline vsplit list';
     gap: 0;
-    height: calc(100dvh - var(--header-h) - 64px);
-    min-height: 560px;
-    padding: 8px 0 12px;
+    padding: 8px 0 0;
+  }
+  /* Desktop Explore: the workspace fills the window exactly, down to its bottom edge (no page scroll). */
+  main.workspace {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--header-h));
+    min-height: 520px;
+  }
+  main.workspace .explore {
+    flex: 1;
+    min-height: 0;
   }
   .pane {
     min-height: 0;
