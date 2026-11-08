@@ -68,7 +68,7 @@ docs/                 these docs
 
 1. **Ruleset on `main`** (Settings → Rules → Rulesets → New branch ruleset): target the default branch; no bypass; restrict deletions; block force pushes; require a pull request (0 approvals, squash only); require status checks: `policy`, `lint-types`, `test`, `data`, `build`, `secrets-scan`, `dependency-vulns`, `workflow-lint`, `pr-policy`. The build session could not create it (the session's GitHub access can't write repository settings).
 2. Secret `CLAUDE_CODE_OAUTH_TOKEN` (done 6 Nov 2026; renewed 8 Nov 2026).
-3. Secret `DATA_PR_TOKEN`: a fine-grained personal access token for this repository only, with *Contents* and *Pull requests* read/write. The agent workflows use it after the agent has finished to push the data branch and open the PR (the Claude App token is revoked when the agent step ends, and PRs opened with `GITHUB_TOKEN` don't trigger CI). The agent never sees it. Renew it before it expires.
+3. Secret `DATA_PR_TOKEN`: a fine-grained personal access token for this repository only, with *Contents* and *Pull requests* read/write. The agent workflows use it after the agent has finished to push the data branch and open the PR, and `pr-policy` uses it to turn on auto-merge so that the merge triggers the deploy (the Claude App token is revoked when the agent step ends, and PRs opened with `GITHUB_TOKEN` don't trigger CI). The agent never sees it. Renew it before it expires.
 4. Optionally run *Scout* and *Refresher* once by hand (Actions → workflow → Run workflow) after the MVP merges.
 
 ## 7. How the MVP was built
