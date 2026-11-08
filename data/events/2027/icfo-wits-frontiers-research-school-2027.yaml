@@ -1,0 +1,27 @@
+id: icfo-wits-frontiers-research-school-2027
+name: ICFO-Wits Frontiers Research School – Photonics and Quantum Technologies
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-18
+  end: 2027-01-22
+location:
+  city: Johannesburg
+  country: ZA
+  venue: University of the Witwatersrand
+organizers: [icfo]
+topics: [optics, hw-photonics, computing]
+audience: [bsc, msc, phd]
+url: https://www.icfo.eu/event/4329/icfo-wits-frontiers-research-school-photonics-and-quantum-technologies-from-fundamentals-to-applications/
+description: Five-day intensive school on photonics and quantum technologies, from fundamentals to applications, for undergraduate, master's and early PhD students. Places are limited and selected by application.
+sources:
+  - url: https://www.icfo.eu/event/4329/icfo-wits-frontiers-research-school-photonics-and-quantum-technologies-from-fundamentals-to-applications/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

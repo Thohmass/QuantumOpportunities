@@ -28,11 +28,17 @@
   uses: 1
   yield: 1
 - q: quantum sensing metrology conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 2
 - q: quantum communication networks conference {year}
   last_used: 2026-11-08
   uses: 1
   yield: 0
 - q: quantum machine learning workshop school {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum technology conference Europe {year}
 - q: quantum industry conference {year}
   last_used: 2026-11-08
@@ -46,6 +52,9 @@
 - q: quantum education outreach conference {year}
 - q: student quantum hackathon university {year}
 - q: quantum photonics conference school {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 2
 - q: post-quantum cryptography conference {year}
   last_used: 2026-11-08
   uses: 1
