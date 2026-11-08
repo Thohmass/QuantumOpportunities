@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import About from './components/About.svelte';
   import Chips from './components/Chips.svelte';
   import EventDetail from './components/EventDetail.svelte';
@@ -18,6 +18,7 @@
   } from './lib/filters';
   import { enrich, localToday, type Ev } from './lib/model';
   import { buildIndex, search } from './lib/search';
+  import { suggestionPool } from './lib/suggest';
   import { SPLIT, WIDTHS, app, prefs, setPref, setSplit, setWidth } from './lib/state.svelte';
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
@@ -85,7 +86,9 @@
       meta,
       today,
       topicTree: tree,
-      searchHits: index ? search(index, app.filters.q) : undefined,
+      searchHits: index
+        ? search(index, [...app.filters.terms, app.filters.q].join(' '))
+        : undefined,
     };
   });
   const all = $derived(
@@ -93,7 +96,11 @@
   );
   // The timeline shows events outside the selected dates too (dimmed), so a selection never loses context.
   const noDates = $derived(ctx ? applyFilters(events, { ...app.filters, when: 'any' }, ctx) : []);
-  // The visible map area is a lens: outside it, events are dimmed (or hidden with "Only map area").
+  // Dimmed = uncertain: expected editions are drawn faint in the list and timeline.
+  const expectedIds = $derived(
+    new Set(all.filter((e) => e.status === 'expected').map((e) => e.id)),
+  );
+  // The visible map area is a lens: with "Only map area", events outside it are hidden from the other views.
   const usesMap = $derived(app.view === 'explore' || app.view === 'map');
   const outsideMap = $derived.by(() => {
     const b = app.mapBounds;
@@ -115,6 +122,10 @@
   );
   const counts = $derived(ctx ? facetCounts(events, app.filters, ctx) : undefined);
   const universe = $derived(ctx ? facetUniverse(events, ctx) : undefined);
+  // Filter options offered by the search box while typing.
+  const suggestPool = $derived(
+    meta && universe && counts ? suggestionPool(meta, universe, counts) : [],
+  );
   // Load the map code and world geometry only when a view with a map is first opened.
   let mapPromise: Promise<typeof import('./components/MapView.svelte')> | undefined;
   const mapModule = $derived.by(() => {
@@ -134,11 +145,30 @@
     return () => mq.removeEventListener('change', on);
   });
   const listHidden = $derived(app.view === 'explore' && !narrow && prefs.list === 'hidden');
-  const listOnScreen = $derived(app.view === 'list' || (app.view === 'explore' && !listHidden));
+  // The list is a drawer on phones and narrow windows, and when the map or the timeline is expanded. It
+  // slides out when an event is selected, or from the List button in the header.
+  const drawerMode = $derived(
+    app.view === 'map' || app.view === 'timeline' || (narrow && app.view === 'explore'),
+  );
+  $effect(() => {
+    app.drawerMode = drawerMode;
+    if (!drawerMode) app.listDrawer = false;
+  });
+  $effect(() => {
+    if (app.eventId && untrack(() => drawerMode)) app.listDrawer = true;
+  });
+  const listOnScreen = $derived(
+    app.view === 'list' ||
+      (app.view === 'explore' && !narrow && !listHidden) ||
+      (drawerMode && app.listDrawer),
+  );
   // Details: with a list on screen, the card unfolds and "More details" opens everything. Without one, the
   // details open directly: in the centred pop-up on Explore, in the side panel in the Map and Timeline views.
-  const panelEvent = $derived(selected && (!listOnScreen || app.detailOpen) ? selected : undefined);
-  const popup = $derived(app.view === 'explore' || (listOnScreen && app.detailOpen));
+  const panelEvent = $derived(
+    selected && (app.detailOpen || (!listOnScreen && !drawerMode)) ? selected : undefined,
+  );
+  // Details always open as the centred pop-up (a bottom sheet on phones).
+  const popup = true;
   $effect(() => {
     void app.eventId;
     app.detailOpen = false;
@@ -175,13 +205,18 @@
   });
   const sidebarHidden = $derived(prefs.sidebar === 'hidden');
 
-  // Lock page scroll behind the mobile filter drawer.
+  // Lock page scroll behind the mobile filter and list drawers.
   $effect(() => {
-    document.body.style.overflow = app.filtersOpen && window.innerWidth < 960 ? 'hidden' : '';
+    document.body.style.overflow =
+      (app.filtersOpen || app.listDrawer) && window.innerWidth < 960 ? 'hidden' : '';
   });
+  function drawerKey(ev: KeyboardEvent) {
+    if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) app.listDrawer = false;
+  }
 </script>
 
-<Header shown={filtered.length} total={events.filter((e) => !e.isPast).length} />
+<svelte:window onkeydown={drawerKey} />
+<Header shown={filtered.length} total={events.filter((e) => !e.isPast).length} pool={suggestPool} />
 
 {#if error}
   <p class="error" role="alert">{error}</p>
@@ -190,7 +225,7 @@
 {:else}
   <div
     class="layout"
-    class:wide={app.view === 'timeline' || app.view === 'map' || app.view === 'explore'}
+    class:wide={app.view !== 'about'}
     class:single={app.view === 'about'}
     class:nosidebar={sidebarHidden}
     style:--filters-w="{prefs.filtersW}px"
@@ -303,12 +338,12 @@
             <TimelineView
               events={timelineEvents}
               {today}
-              dimmed={outsideMap}
+              dimmed={expectedIds}
               compact
               fit={narrow}
             />
           </div>
-          {#if !listHidden}
+          {#if !listHidden && !narrow}
             {#if !narrow}
               <div class="vsplit">
                 <Resizer
@@ -323,14 +358,14 @@
               </div>
             {/if}
             <div class="pane list-pane">
-              <ListView events={filtered} {meta} {today} dimmed={outsideMap} compact />
+              <ListView events={filtered} {meta} {today} dimmed={expectedIds} compact panel />
             </div>
           {/if}
         </div>
       {:else if app.view === 'list'}
-        <ListView events={filtered} {meta} {today} />
+        <ListView events={filtered} {meta} {today} dimmed={expectedIds} panel />
       {:else if app.view === 'timeline'}
-        <TimelineView events={timelineEvents} {today} />
+        <TimelineView events={timelineEvents} {today} dimmed={expectedIds} />
       {:else if app.view === 'map'}
         {#await mapModule}
           <p class="loading">Loading map…</p>
@@ -344,12 +379,66 @@
       {/if}
     </main>
   </div>
+  {#if drawerMode && app.listDrawer}
+    <div class="drawer-scrim" aria-hidden="true" onclick={() => (app.listDrawer = false)}></div>
+    <div class="list-drawer" role="dialog" aria-label="Events">
+      <div class="drawer-head">
+        <b>Events</b>
+        <button
+          class="btn ghost"
+          type="button"
+          aria-label="Close the list"
+          onclick={() => (app.listDrawer = false)}>✕</button
+        >
+      </div>
+      <ListView events={filtered} {meta} {today} dimmed={expectedIds} compact />
+    </div>
+  {/if}
   {#if panelEvent}
     <EventDetail e={panelEvent} {meta} {today} {popup} onclose={closeDetail} />
   {/if}
 {/if}
 
 <style>
+  /* The list as a drawer (phones; expanded map or timeline): slides in from the right, below the header. */
+  .drawer-scrim {
+    position: fixed;
+    inset: var(--header-h) 0 0 0;
+    background: rgb(0 0 0 / 25%);
+    z-index: 44;
+  }
+  .list-drawer {
+    position: fixed;
+    top: var(--header-h);
+    right: 0;
+    bottom: 0;
+    width: min(460px, 100vw);
+    z-index: 45;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--bg);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 10px 14px max(20px, env(safe-area-inset-bottom));
+    animation: drawer-in 0.18s ease-out;
+  }
+  @keyframes drawer-in {
+    from {
+      transform: translateX(24px);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .list-drawer {
+      animation: none;
+    }
+  }
+  .drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
   .layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

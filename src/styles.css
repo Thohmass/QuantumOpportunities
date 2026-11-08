@@ -22,6 +22,7 @@
   --past-soft: #ece3d3;
   --shadow: 0 1px 2px rgb(60 40 10 / 7%), 0 4px 16px rgb(60 40 10 / 7%);
   --grain-opacity: 0.05;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: light;
   --map-sea: #d3dedb;
   --map-land: #fbf6ec;
@@ -38,6 +39,8 @@
   --t-meetup: #8d8273;
   --t-career_fair: #8d8273;
   --t-other: #8d8273;
+  --on-strong: #ffffff;
+  --on-light: #3a2a12;
   --radius: 10px;
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -65,7 +68,9 @@
   --past: #8f849c;
   --past-soft: #262031;
   --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 4px 16px rgb(0 0 0 / 35%);
-  --grain-opacity: 0.035;
+  --grain-opacity: 0.05;
+  /* Light grain: dark grain doesn't show on a dark background. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   color-scheme: dark;
   --map-sea: #0c0811;
   --map-land: #261e30;
@@ -80,6 +85,8 @@
   --t-meetup: #9d93a8;
   --t-career_fair: #9d93a8;
   --t-other: #9d93a8;
+  --on-strong: #1a1020;
+  --on-light: #1a1020;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
@@ -104,7 +111,9 @@
     --past: #8f849c;
     --past-soft: #262031;
     --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 4px 16px rgb(0 0 0 / 35%);
-    --grain-opacity: 0.035;
+    --grain-opacity: 0.05;
+    /* Light grain: dark grain doesn't show on a dark background. */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     color-scheme: dark;
     --map-sea: #0c0811;
     --map-land: #261e30;
@@ -119,6 +128,8 @@
     --t-meetup: #9d93a8;
     --t-career_fair: #9d93a8;
     --t-other: #9d93a8;
+    --on-strong: #1a1020;
+    --on-light: #1a1020;
   }
 }
 /* Paper grain: one tiny generated noise tile, drawn once behind everything (no images to load). */
@@ -129,7 +140,7 @@ body::before {
   z-index: -1;
   pointer-events: none;
   opacity: var(--grain-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: var(--grain);
 }
 
 * {
@@ -291,6 +302,12 @@ h3 {
 [class^='t-'],
 [class*=' t-'] {
   --tc-edge: color-mix(in srgb, var(--tc) 62%, var(--ink));
+  /* Ink drawn on top of the type colour (the icon inside a map bubble). */
+  --tc-on: var(--on-strong);
+}
+.t-summer_school,
+.t-winter_school {
+  --tc-on: var(--on-light);
 }
 .t-conference {
   --tc: var(--t-conference);
@@ -335,7 +352,6 @@ h3 {
   background: color-mix(in srgb, var(--tc, var(--muted)) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--tc-edge, var(--muted)) 45%, transparent);
 }
-.type-chip::before,
 .swatch {
   content: '';
   display: inline-block;

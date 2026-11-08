@@ -7,6 +7,9 @@ export const app = $state({
   filters: { ...DEFAULT_FILTERS } as Filters,
   eventId: undefined as string | undefined,
   filtersOpen: false,
+  /** The list is a drawer (phones, and the expanded map or timeline); is it open? */
+  listDrawer: false,
+  drawerMode: false,
   /** Event under the pointer (or keyboard focus) in any view: highlighted everywhere. */
   hoverId: undefined as string | undefined,
   /** Visible map area [south, west, north, east], set by the map. */

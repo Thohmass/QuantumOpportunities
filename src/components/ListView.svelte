@@ -1,5 +1,6 @@
 <script lang="ts">
   import EventCard from './EventCard.svelte';
+  import ExpandButton from './ExpandButton.svelte';
   import { monthName } from '../lib/dates';
   import type { SortKey } from '../lib/filters';
   import type { Ev } from '../lib/model';
@@ -13,6 +14,7 @@
     dimmed = new Set<string>(),
     compact = false,
     expandable = true,
+    panel = false,
   }: {
     events: Ev[];
     meta: Meta;
@@ -20,6 +22,8 @@
     dimmed?: Set<string>;
     compact?: boolean;
     expandable?: boolean;
+    /** Show the expand/shrink button (Explore panel or expanded list). */
+    panel?: boolean;
   } = $props();
 
   const PAGE = 60;
@@ -60,7 +64,7 @@
   ];
 </script>
 
-<section class="list" class:compact aria-label="Events">
+<section class="list" class:compact class:columns={panel && !compact} aria-label="Events">
   <div class="toolbar">
     <p class="count"><b>{events.length}</b> {events.length === 1 ? 'event' : 'events'}</p>
     <label>
@@ -69,6 +73,7 @@
         {#each sorts as [id, label] (id)}<option value={id}>{label}</option>{/each}
       </select>
     </label>
+    {#if panel}<ExpandButton panel="list" label="list" />{/if}
   </div>
 
   {#if !events.length}
@@ -106,6 +111,9 @@
     justify-content: space-between;
     gap: 10px;
   }
+  .toolbar label {
+    margin-left: auto;
+  }
   .count {
     margin: 0;
     color: var(--muted);
@@ -136,6 +144,11 @@
   .cards {
     display: grid;
     gap: 10px;
+  }
+  /* The expanded list on a wide screen: 2–3 columns, so cards keep a natural width. */
+  .list.columns .cards {
+    grid-template-columns: repeat(auto-fill, minmax(min(380px, 100%), 1fr));
+    align-items: start;
   }
   .empty {
     text-align: center;

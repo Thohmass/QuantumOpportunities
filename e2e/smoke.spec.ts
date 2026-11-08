@@ -106,16 +106,19 @@ test('filter groups start folded, except the top ones', async ({ page, isMobile 
   );
 });
 
-test('narrow window: scrolling over the list scrolls the page', async ({ page, isMobile }) => {
+// Changed in v0.6 (owner's request): on narrow windows the list is a drawer, not part of the page.
+test('narrow window: the list is a drawer that scrolls on its own', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Wheel scrolling is a desktop gesture');
   await page.setViewportSize({ width: 1000, height: 800 });
   await page.goto('/#/explore');
-  await page.locator('.list-pane article.card').first().waitFor();
-  await page.evaluate(() => window.scrollTo(0, 1000));
-  const before = await page.evaluate(() => window.scrollY);
-  await page.mouse.move(500, 500);
-  await page.mouse.wheel(0, 400);
-  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
+  await expect(page.locator('.list-pane')).toHaveCount(0);
+  await page.getByRole('button', { name: /^List/ }).click();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await drawer.locator('article.card').first().waitFor();
+  await page.mouse.move(800, 500);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
 test('explore: a hidden list stays hidden; clicking the map opens the details pop-up', async ({
@@ -182,4 +185,40 @@ test('explore on desktop fills the window to its bottom edge', async ({ page, is
     .evaluate((el) => el.getBoundingClientRect().bottom);
   expect(Math.abs(bottom - 900)).toBeLessThan(2);
   expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBe(0);
+});
+
+test('search: Enter keeps a term as a chip and clears the box; suggestions set filters', async ({
+  page,
+}) => {
+  await page.goto('/#/explore');
+  const box = page.getByPlaceholder(/Search events/);
+  await box.fill('germ');
+  const option = page.getByRole('option', { name: /Germany/ });
+  await expect(option).toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/country=DE/);
+  await expect(box).toHaveValue('');
+  await box.fill('hackathon berlin');
+  await page.getByRole('option', { name: /Search all text/ }).click();
+  await expect(page).toHaveURL(/k=hackathon/);
+  await expect(box).toHaveValue('');
+});
+
+test('panels expand and shrink back into Explore', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.getByRole('button', { name: 'Expand the timeline' }).click();
+  await expect(page).toHaveURL(/#\/timeline/);
+  await page.getByRole('button', { name: 'Shrink the timeline' }).click();
+  await expect(page).toHaveURL(/#\/explore/);
+  await page.getByRole('button', { name: 'Expand the list' }).click();
+  await expect(page.locator('section.list.columns')).toHaveCount(1);
+});
+
+test('expanded map: selecting an event opens the list drawer with its card', async ({ page }) => {
+  await page.goto('/#/map?e=saarland-qit-summer-school-2027');
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await expect(drawer.locator('article.card.open')).toContainText('Saarland');
+  await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
 });

@@ -20,6 +20,7 @@ const LISTS: [keyof Filters, string][] = [
   ['cost', 'cost'],
   ['audience', 'aud'],
   ['ranges', 'dates'],
+  ['terms', 'k'],
 ];
 const FLAGS: [keyof Filters, string][] = [
   ['travel', 'travel'],

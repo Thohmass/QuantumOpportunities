@@ -70,6 +70,11 @@
   const chips = $derived.by(() => {
     const f = app.filters;
     const out: Chip[] = [];
+    for (const t of f.terms)
+      out.push({
+        text: `“${t}”`,
+        clear: () => (app.filters.terms = app.filters.terms.filter((x) => x !== t)),
+      });
     if (f.q) out.push({ text: `“${f.q}”`, clear: () => (app.filters.q = '') });
     for (const k of FACETS)
       for (const v of f[k])

@@ -6,11 +6,14 @@
     depth?: number;
     /** CSS class giving the option a colour swatch, e.g. "t-hackathon". */
     swatch?: string;
+    /** Event type whose icon is shown before the label. */
+    icon?: string;
   }
 </script>
 
 <script lang="ts">
   import Section from './Section.svelte';
+  import TypeIcon from './TypeIcon.svelte';
 
   // Options keep a fixed order and never disappear: unavailable ones are dimmed, so the list doesn't jump.
   let {
@@ -49,7 +52,10 @@
         checked={selected.includes(o.value)}
         onchange={() => onToggle(o.value)}
       />
-      {#if o.swatch}<span class="swatch {o.swatch}" aria-hidden="true"></span>{/if}
+      {#if o.icon}<TypeIcon type={o.icon} size={15} />{:else if o.swatch}<span
+          class="swatch {o.swatch}"
+          aria-hidden="true"
+        ></span>{/if}
       <span class="lbl">{o.label}</span>
       <span class="n">{o.count}</span>
     </label>

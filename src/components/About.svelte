@@ -29,15 +29,18 @@
       <dt><span class="badge expected">Expected · unconfirmed</span></dt>
       <dd>
         Not announced yet. We expect it because the series happens regularly; the dates are
-        estimates from past editions. Shown as a soft fading gradient everywhere.
+        estimates from past editions. Drawn faint (dimmed) everywhere, with a soft fading bar on the
+        timeline.
       </dd>
       <dt><span class="notfound">Not found yet</span></dt>
       <dd>
         We haven’t found this information <em>yet</em>. It does not mean it doesn’t exist, and it
         does not mean “free” or “none”.
       </dd>
-      <dt>Faded timeline ends</dt>
-      <dd>Only the month or year is known, not the exact days.</dd>
+      <dt>Faded timeline bars</dt>
+      <dd>
+        Only the month or year is known, not the exact days. A gradient always means “uncertain”.
+      </dd>
     </dl>
     <p>
       Every event lists its sources and the date they were last checked, and links to the full

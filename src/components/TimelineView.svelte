@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
+  import ExpandButton from './ExpandButton.svelte';
   import { bounds, formatRange, isoDay, monthName } from '../lib/dates';
   import { statusLabel } from '../lib/format';
   import type { Ev } from '../lib/model';
@@ -165,7 +166,7 @@
             .filter((d) => d.x >= 0 && d.x < left)
         : [];
       const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
-      const label = e.name + (e.display.approx ? ' · month not known' : '');
+      const label = e.name;
       const end = left + barW + 8 + Math.min(LABEL_MAX, label.length * CHAR);
       let lane = lanes.findIndex((r) => r + 12 < startX);
       if (lane === -1) lane = lanes.push(end) - 1;
@@ -409,6 +410,7 @@
       >
       <button type="button" onclick={() => scrollToToday(true)}>Today</button>
     </div>
+    <ExpandButton panel="timeline" label="timeline" />
   </div>
 
   <div class="scroller" bind:this={scroller} onscroll={onScroll}>
@@ -532,11 +534,7 @@
             )}"
           >
             <span class="bar" style:width="{p.barW}px"></span>
-            <span class="label"
-              >{p.e.name}{#if p.e.display.approx}<span class="approx-note">
-                  · month not known</span
-                >{/if}</span
-            >
+            <span class="label">{p.e.name}</span>
           </button>
         </div>
       {/each}
@@ -544,8 +542,8 @@
   </div>
   {#if !compact}
     <p class="hint muted">
-      Colour = event type. Faded gradient = expected, not announced. Dotted outline = month not
-      known. Diamonds = deadlines.
+      Colour = event type. Faint = expected, not announced yet. Fading bar = only the month or year
+      is known. Diamonds = deadlines.
     </p>
   {/if}
 </section>
@@ -570,6 +568,16 @@
     align-items: center;
     gap: 6px 14px;
     padding-top: 6px;
+  }
+  /* Narrow: keep the expand button on the first row, next to the count. */
+  @media (max-width: 700px) {
+    .toolbar > :global(.expand) {
+      order: -1;
+      margin-left: auto;
+    }
+    .toolbar > .count {
+      order: -2;
+    }
   }
   .count {
     margin: 0;
@@ -802,8 +810,6 @@
       color-mix(in srgb, var(--tc) 45%, transparent) 50%,
       transparent
     );
-    outline: 1px dotted var(--tc);
-    outline-offset: -1px;
   }
   .item.postponed .bar,
   .item.cancelled .bar {
@@ -833,9 +839,9 @@
   .item.expected .label {
     font-style: italic;
   }
-  .approx-note {
-    color: var(--muted);
-    font-style: italic;
+  /* Dimmed = uncertain: expected editions are drawn faint until you point at them. */
+  .item.expected:not(.hot):not(.picked) {
+    opacity: 0.6;
   }
   .faded {
     opacity: 0.25;

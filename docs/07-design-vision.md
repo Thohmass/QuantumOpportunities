@@ -28,6 +28,12 @@ The point of the site is **connecting information in one picture**: where, when 
   - near-black purple dark theme with orange/yellow highlights
   - type colours by meaning: pink hackathons, sun-yellow summer schools, snow-white winter schools, green workshops, blue conferences, grey for the rest
 
+**v0.6 additions:**
+- **Panels, not pages:** every panel can expand over the others and shrink back. The list becomes a drawer wherever the map needs the room.
+- **Dimmed means uncertain** (expected editions); gradients mean an unknown month.
+- **Event types:** each has an icon as well as a colour. Map dots grow into icon bubbles from country zoom.
+- **Search:** suggests exact filter options rather than guessing from free text.
+
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
 - A real-proportions map, but with curves, lines, colours and shapes from the project's own identity rather than a stock basemap.
