@@ -1,0 +1,33 @@
+id: sheffield-quantum-optics-nanophotonics-winter-school-2027
+name: 5th Quantum Optics and Nanophotonics Winter School (Sheffield)
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-20
+  end: 2027-01-22
+deadlines:
+  - kind: abstract
+    date: 2026-12-15
+    note: poster abstract
+  - kind: registration
+    date: 2027-01-15
+location:
+  city: Sheffield
+  country: GB
+  venue: The Wave, University of Sheffield
+organizers: [university-of-sheffield]
+topics: [optics, hw-photonics, hw-spins]
+audience: [phd, postdoc, researcher]
+url: https://quantumschool.sheffield.ac.uk/
+description: Three-day school on quantum light and nanophotonics, covering generation and detection of quantum light, new nanophotonic materials, strong light-matter coupling and spin-photon interfaces. Open to researchers from PhD level up.
+sources:
+  - url: https://quantumschool.sheffield.ac.uk/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

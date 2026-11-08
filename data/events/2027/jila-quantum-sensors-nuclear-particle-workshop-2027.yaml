@@ -1,0 +1,27 @@
+id: jila-quantum-sensors-nuclear-particle-workshop-2027
+name: JILA Workshop on Precision Nuclear and Particle Physics with Quantum Sensors
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-20
+  end: 2027-06-23
+location:
+  city: Boulder
+  country: US
+  venue: JILA, University of Colorado Boulder
+organizers: [jila]
+topics: [sensing, optics]
+audience: [researcher, phd, postdoc]
+url: https://indico.cern.ch/event/1719036/
+description: Workshop on using quantum sensors and precision measurement for nuclear and particle physics, including nuclear clocks and tests of fundamental symmetries. Contributed talks and posters are invited; places are limited.
+sources:
+  - url: https://indico.cern.ch/event/1719036/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

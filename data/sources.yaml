@@ -75,6 +75,11 @@
   url: https://www.ibm.com/quantum/events
   kind: company
   covers: [hackathons, fall fests, summer schools]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: Page content shows only filters, no event list.
 - id: unitary-foundation-events
   name: Unitary Foundation – community events
   url: https://unitary.foundation/
@@ -89,6 +94,11 @@
   url: https://qworld.net/
   kind: community
   covers: [workshops, schools, hackathons]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-08.
 - id: devpost-quantum
   name: Devpost – quantum hackathons
   url: https://devpost.com/hackathons?search=quantum
