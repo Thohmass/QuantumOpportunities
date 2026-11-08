@@ -222,3 +222,18 @@ test('expanded map: selecting an event opens the list drawer with its card', asy
   await expect(drawer.locator('article.card.open')).toContainText('Saarland');
   await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
 });
+
+test('map: the wheel zooms smoothly, and expanding keeps the view', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Mouse wheel is a desktop gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  // Zoom in over an event (Europe is the densest area).
+  const dot = (await page.locator('.map-pane g.dot').nth(20).boundingBox())!;
+  await page.mouse.move(dot.x + dot.width / 2, dot.y + dot.height / 2);
+  for (let i = 0; i < 6; i++) await page.mouse.wheel(0, -300);
+  await expect(page.locator('g.dot .bubble.big').first()).toBeAttached({ timeout: 3000 });
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: 'Expand the map' }).click();
+  await expect(page).toHaveURL(/#\/map/);
+  await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
+});

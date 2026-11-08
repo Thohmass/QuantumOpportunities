@@ -143,3 +143,12 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **Dimmed = uncertain.** Events outside the map area are no longer dimmed; *Only map area* still hides them. Expected editions are dimmed instead, in every view. On the map they are plain faint dots with no ring.
 - **Removed:** the dotted "month not known" outline. Year-only events keep only the faint gradient.
 - **Dark theme grain:** light-coloured grain on the dark background.
+
+## 14. v0.7 changes (8 Nov 2026, sixth review)
+
+- **Map momentum:** after a drag or a pinch, the view keeps moving and zooming at the speed you released it, slowing down smoothly (time constant ≈ 0.3 s, as in Google Maps). Touching the map stops it.
+- **Pinch:** after two fingers, the finger lifted last no longer drags the view, so the centre stays put.
+- **Mouse wheel and trackpad zoom** ease towards their target around the pointer instead of jumping per notch. Reduced motion turns both off.
+- **Expand / shrink animation:** the panel grows over the workspace (or shrinks back) while the others fade, in browsers with view transitions. Elsewhere it switches at once.
+- **Map and timeline keep their view** when a panel is expanded or shrunk: same place and zoom on the map, same zoom and dates on the timeline.
+- **Dark-mode extensions:** a phone browser's dark-mode add-on (e.g. Dark Reader) darkened the page but couldn't recolour the map canvas, which left a light map in a dark page. The site now asks such add-ons to leave it alone (`darkreader-lock`), since it has its own dark theme, and the sea is painted on the same canvas as the land.

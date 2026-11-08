@@ -1,3 +1,8 @@
+<script lang="ts" module>
+  // Zoom and position survive the timeline being re-created (e.g. when a panel is expanded or shrunk).
+  let remembered: { ppd: number; leftDate: number } | undefined;
+</script>
+
 <script lang="ts">
   import { tick, untrack } from 'svelte';
   import ExpandButton from './ExpandButton.svelte';
@@ -35,7 +40,7 @@
   type Zoom = keyof typeof ZOOMS;
   const MIN_PPD = 0.45;
   const MAX_PPD = 48;
-  let ppd = $state<number>(ZOOMS.quarter);
+  let ppd = $state<number>(remembered?.ppd ?? ZOOMS.quarter);
   const preset = $derived(
     (Object.keys(ZOOMS) as Zoom[]).find((z) => Math.abs(ZOOMS[z] / ppd - 1) < 0.04),
   );
@@ -251,12 +256,14 @@
   let viewFrame = 0;
   function readView() {
     viewFrame = 0;
-    if (scroller)
+    if (scroller) {
       view = {
         left: scroller.scrollLeft,
         width: scroller.clientWidth,
         height: scroller.clientHeight,
       };
+      remembered = { ppd, leftDate: range[0] + (scroller.scrollLeft / ppd) * DAY };
+    }
   }
   const onScroll = () => (viewFrame ||= requestAnimationFrame(readView));
   $effect(() => {
@@ -273,9 +280,18 @@
   // Re-centre on today only when the start of the axis changes (first load, or new data far in the past) — not
   // when a selection changes the filtered events (an unchanged number doesn't re-run this).
   const axisStart = $derived(range[0]);
+  let restored = false;
+  /** Where an earlier timeline was (read now, before this one's first scroll overwrites it). */
+  const startAt = remembered;
   $effect(() => {
     void axisStart;
-    untrack(() => scrollToToday());
+    untrack(() => {
+      const r = startAt;
+      if (!restored && r) {
+        restored = true;
+        void tick().then(() => scroller?.scrollTo({ left: Math.max(0, x(r.leftDate)) }));
+      } else scrollToToday();
+    });
   });
 
   /** Zooms to `next` pixels per day, keeping the date under `at` (px from the scroller's left) in place. */
@@ -549,6 +565,10 @@
 </section>
 
 <style>
+  /* Named for the expand/shrink animation (view transitions). */
+  .timeline {
+    view-transition-name: qo-timeline;
+  }
   .timeline {
     display: grid;
     gap: 8px;

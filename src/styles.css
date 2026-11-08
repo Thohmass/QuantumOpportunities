@@ -362,3 +362,14 @@ h3 {
   box-shadow: inset 0 0 0 1px var(--tc-edge, transparent);
   flex: none;
 }
+
+/* Expanding and shrinking panels: the named panels glide to their new size and place; the rest cross-fades. */
+::view-transition-group(*) {
+  animation-duration: 0.34s;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+::view-transition-old(*),
+::view-transition-new(*) {
+  height: 100%;
+  object-fit: cover;
+}

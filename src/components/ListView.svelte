@@ -100,6 +100,10 @@
 </section>
 
 <style>
+  /* Named for the expand/shrink animation (view transitions). */
+  .list {
+    view-transition-name: qo-list;
+  }
   .list {
     display: grid;
     gap: 10px;
