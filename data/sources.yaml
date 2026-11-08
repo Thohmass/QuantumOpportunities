@@ -119,3 +119,7 @@
   url: https://physics.dtu.dk/
   kind: university
   covers: [Copenhagen-area events, hackathons]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
