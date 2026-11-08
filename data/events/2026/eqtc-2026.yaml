@@ -1,0 +1,26 @@
+id: eqtc-2026
+name: EQTC 2026 – European Quantum Technologies Conference
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-29
+  end: 2026-12-03
+location:
+  city: Dublin
+  country: IE
+  venue: Convention Centre Dublin
+topics: [computing, communication, sensing]
+audience: [researcher, industry]
+url: https://www.eqtc2026.eu/
+description: The European Quantum Technologies Conference, listed as a Quantum Flagship event, held in Dublin. Registration is open on the event site.
+sources:
+  - url: https://qt.eu/events/eqtc-2026-european-quantum-technologies-conference
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

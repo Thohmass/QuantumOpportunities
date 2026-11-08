@@ -1,0 +1,26 @@
+id: pqcrypto-2027
+name: PQCrypto 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-12
+  end: 2027-05-14
+location:
+  city: Waterloo
+  country: CA
+  venue: University of Waterloo
+topics: [pqc]
+audience: [phd, postdoc, researcher, industry]
+url: https://easychair.org/cfp/pqcrypto2027
+description: The 18th International Conference on Post-Quantum Cryptography, with a call for papers on original research. Accepted papers are planned for Springer's LNCS series. Submission closes in late November 2026.
+sources:
+  - url: https://easychair.org/cfp/pqcrypto2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
