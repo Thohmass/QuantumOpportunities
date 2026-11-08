@@ -65,7 +65,9 @@ jobs:
     steps:
       - name: Enable squash auto-merge
         env:
-          GH_TOKEN: ${{ github.token }}
+          # Merges done by GitHub's own token don't trigger other workflows, so the site was not redeployed after
+          # auto-merged data PRs. Enabling auto-merge with DATA_PR_TOKEN makes the merge count as a normal push.
+          GH_TOKEN: ${{ secrets.DATA_PR_TOKEN || github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: gh pr merge -R "$REPO" "$PR_NUMBER" --auto --squash || echo "::warning::Auto-merge not enabled (is the main ruleset with required checks in place?)"
