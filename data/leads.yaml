@@ -77,8 +77,10 @@
   url: https://www.qcmc-conference.org
 - title: unitaryHACK 2027 (Unitary Foundation, online open-source quantum hackathon)
   found: 2026-11-08
-  hint: Recurring every year (usually late May – June); check the Unitary Foundation site for the 2027 edition
-  url: https://unitary.foundation/
+  hint: Recurring every year (usually late May – June); unitary.foundation shows no 2027 dates, try unitaryhack.dev
+  url: https://unitaryhack.dev
+  tries: 1
+  last_tried: 2026-11-08
 - title: Qiskit Global Summer School 2027 (IBM, online)
   found: 2026-11-08
   hint: Recurring every summer (usually July); check IBM Quantum events / Qiskit for the 2027 edition
