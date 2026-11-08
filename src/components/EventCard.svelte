@@ -139,6 +139,10 @@
     background: var(--surface);
     border: 1px solid var(--line);
     border-left: 5px solid var(--tc);
+    /* A thin darker line inside the colour edge keeps white and yellow visible. */
+    background-image: linear-gradient(var(--tc-edge), var(--tc-edge));
+    background-size: 1px 100%;
+    background-repeat: no-repeat;
     border-radius: var(--radius);
     padding: 12px 14px 12px 14px;
     transition:
@@ -178,7 +182,7 @@
   }
   .card.hot {
     box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--warn) 55%, transparent),
+      0 0 0 2px color-mix(in srgb, var(--hot) 55%, transparent),
       var(--shadow);
   }
   .card.dim {

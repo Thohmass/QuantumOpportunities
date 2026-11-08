@@ -120,7 +120,7 @@
           {intervals.length} separate periods selected on the timeline.
         </p>{/if}
       <p class="note">
-        Tip: click months or weeks on the timeline; Shift-click selects a range, Ctrl/Cmd-click adds
+        Tip: click months or days on the timeline; Shift-click selects a range, Ctrl/Cmd-click adds
         one.
       </p>
     {/if}

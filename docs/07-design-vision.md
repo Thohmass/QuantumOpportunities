@@ -20,6 +20,14 @@ The point of the site is **connecting information in one picture**: where, when 
 - The timeline zooms continuously, and its height can be shared with the map.
 - **Gradients mean uncertainty.** They mark expected editions and unknown months. Decorative fades and gradient backgrounds are avoided, so the signal stays clear. Texture for the sea or land (pattern, noise) is welcome later.
 
+**v0.5 additions:**
+- **Desktop:** a resizable workspace where every panel border can be dragged and panels can be hidden.
+- **Phones:** one scrolling page.
+- **Warm identity:**
+  - old-paper light theme with grain
+  - near-black purple dark theme with orange/yellow highlights
+  - type colours by meaning: pink hackathons, sun-yellow summer schools, snow-white winter schools, green workshops, blue conferences, grey for the rest
+
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
 - A real-proportions map, but with curves, lines, colours and shapes from the project's own identity rather than a stock basemap.

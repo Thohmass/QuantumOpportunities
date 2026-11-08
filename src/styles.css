@@ -1,122 +1,146 @@
 /* Design tokens and base styles. Light and dark follow the system setting. */
 :root {
-  --bg: #f3f5f8;
-  --surface: #ffffff;
-  --surface-2: #f8f9fb;
-  --ink: #111720;
-  --muted: #5a6575;
-  --line: #d9dee5;
-  --accent: #2a4fd4;
+  /* Light: warm "old paper" — essentially white, turning slightly yellow-brown — with a faint grain. */
+  --bg: #f4ecdd;
+  --surface: #fbf6ec;
+  --surface-2: #f7f0e3;
+  --ink: #2a2017;
+  --muted: #6e604f;
+  --line: #e0d3bd;
+  --accent: #c2410c;
   --accent-ink: #ffffff;
-  --accent-soft: #e3e9fb;
-  --open: #0f7f57;
-  --open-soft: #dbf2e8;
+  --accent-soft: #f6dcc4;
+  /* Hover highlight, shared by every view. */
+  --hot: #ea580c;
+  --open: #2f7d32;
+  --open-soft: #e0eed2;
   --expected: #9a5800;
-  --expected-soft: #faead2;
-  --warn: #be3d0a;
-  --warn-soft: #fce6db;
-  --past: #6b7480;
-  --past-soft: #e8ebef;
-  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 4px 16px rgb(16 24 40 / 6%);
+  --expected-soft: #f6e4c4;
+  --warn: #b42318;
+  --warn-soft: #f8dcd2;
+  --past: #847764;
+  --past-soft: #ece3d3;
+  --shadow: 0 1px 2px rgb(60 40 10 / 7%), 0 4px 16px rgb(60 40 10 / 7%);
+  --grain-opacity: 0.05;
+  color-scheme: light;
+  --map-sea: #d3dedb;
+  --map-land: #fbf6ec;
+  --map-coast: #a5927a;
+  /* Event types: hackathons and challenges pink, summer schools sun yellow, workshops green, conferences blue,
+     winter schools snow white, programmes and the rest grey. Light colours get a darker edge (--tc-edge). */
+  --t-conference: #1f6fd1;
+  --t-workshop: #2b9a3e;
+  --t-hackathon: #e0337f;
+  --t-challenge: #e0337f;
+  --t-summer_school: #f2b705;
+  --t-winter_school: #ffffff;
+  --t-programme: #8d8273;
+  --t-meetup: #8d8273;
+  --t-career_fair: #8d8273;
+  --t-other: #8d8273;
   --radius: 10px;
   --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --header-h: 112px;
-  color-scheme: light;
-  --map-sea: #d6e5f2;
-  --map-land: #fbfcfd;
-  --map-coast: #8aa3bd;
-  /* Event types: one colour each, used on cards, timeline bars, map pins and the filter list. */
-  --t-conference: #2563eb;
-  --t-workshop: #0e7490;
-  --t-hackathon: #7c3aed;
-  --t-summer_school: #059669;
-  --t-winter_school: #0284c7;
-  --t-challenge: #db2777;
-  --t-programme: #4d7c0f;
-  --t-meetup: #a16207;
-  --t-career_fair: #475569;
-  --t-other: #6b7280;
+  --header-h: 56px; /* measured by Header.svelte */
 }
 /* Dark theme: chosen in the header, or the system is dark and nothing else is chosen. */
 :root[data-theme='dark'] {
-  --bg: #0d1117;
-  --surface: #151b23;
-  --surface-2: #1b222c;
-  --ink: #e6eaf0;
-  --muted: #94a0b0;
-  --line: #283240;
-  --accent: #7e9cff;
-  --accent-ink: #0d1117;
-  --accent-soft: #1c2644;
-  --open: #4bc893;
-  --open-soft: #11301f;
-  --expected: #e6a64a;
-  --expected-soft: #33240c;
-  --warn: #f28a55;
-  --warn-soft: #3a1e10;
-  --past: #8e97a5;
-  --past-soft: #222a34;
-  --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
+  /* Dark: almost black with a hint of purple, warm orange/yellow highlights. */
+  --bg: #120d17;
+  --surface: #1a1421;
+  --surface-2: #211a2a;
+  --ink: #f4ede4;
+  --muted: #a99db4;
+  --line: #322841;
+  --accent: #ff9f43;
+  --accent-ink: #1a0f05;
+  --accent-soft: #3a2614;
+  --hot: #ffb347;
+  --open: #7dd87f;
+  --open-soft: #17301a;
+  --expected: #ffc861;
+  --expected-soft: #3a2a0e;
+  --warn: #ff7a59;
+  --warn-soft: #3d1a12;
+  --past: #8f849c;
+  --past-soft: #262031;
+  --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 4px 16px rgb(0 0 0 / 35%);
+  --grain-opacity: 0.035;
   color-scheme: dark;
-  --map-sea: #0f2235;
-  --map-land: #262c34;
-  --map-coast: #9cc4ec;
-  --t-conference: #60a5fa;
-  --t-workshop: #22d3ee;
-  --t-hackathon: #a78bfa;
-  --t-summer_school: #34d399;
-  --t-winter_school: #7dd3fc;
-  --t-challenge: #f472b6;
-  --t-programme: #a3e635;
-  --t-meetup: #facc15;
-  --t-career_fair: #94a3b8;
-  --t-other: #9ca3af;
+  --map-sea: #0c0811;
+  --map-land: #261e30;
+  --map-coast: #8c76a6;
+  --t-conference: #4ea3ff;
+  --t-workshop: #4fd166;
+  --t-hackathon: #ff5aa5;
+  --t-challenge: #ff5aa5;
+  --t-summer_school: #ffd23f;
+  --t-winter_school: #f7f4ef;
+  --t-programme: #9d93a8;
+  --t-meetup: #9d93a8;
+  --t-career_fair: #9d93a8;
+  --t-other: #9d93a8;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0d1117;
-    --surface: #151b23;
-    --surface-2: #1b222c;
-    --ink: #e6eaf0;
-    --muted: #94a0b0;
-    --line: #283240;
-    --accent: #7e9cff;
-    --accent-ink: #0d1117;
-    --accent-soft: #1c2644;
-    --open: #4bc893;
-    --open-soft: #11301f;
-    --expected: #e6a64a;
-    --expected-soft: #33240c;
-    --warn: #f28a55;
-    --warn-soft: #3a1e10;
-    --past: #8e97a5;
-    --past-soft: #222a34;
-    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 4px 16px rgb(0 0 0 / 30%);
+    /* Dark: almost black with a hint of purple, warm orange/yellow highlights. */
+    --bg: #120d17;
+    --surface: #1a1421;
+    --surface-2: #211a2a;
+    --ink: #f4ede4;
+    --muted: #a99db4;
+    --line: #322841;
+    --accent: #ff9f43;
+    --accent-ink: #1a0f05;
+    --accent-soft: #3a2614;
+    --hot: #ffb347;
+    --hot: #ffb347;
+    --open: #7dd87f;
+    --open-soft: #17301a;
+    --expected: #ffc861;
+    --expected-soft: #3a2a0e;
+    --warn: #ff7a59;
+    --warn-soft: #3d1a12;
+    --past: #8f849c;
+    --past-soft: #262031;
+    --shadow: 0 1px 2px rgb(0 0 0 / 35%), 0 4px 16px rgb(0 0 0 / 35%);
+    --grain-opacity: 0.035;
     color-scheme: dark;
-    --map-sea: #0f2235;
-    --map-land: #262c34;
-    --map-coast: #9cc4ec;
-    --t-conference: #60a5fa;
-    --t-workshop: #22d3ee;
-    --t-hackathon: #a78bfa;
-    --t-summer_school: #34d399;
-    --t-winter_school: #7dd3fc;
-    --t-challenge: #f472b6;
-    --t-programme: #a3e635;
-    --t-meetup: #facc15;
-    --t-career_fair: #94a3b8;
-    --t-other: #9ca3af;
+    --map-sea: #0c0811;
+    --map-land: #261e30;
+    --map-coast: #8c76a6;
+    --t-conference: #4ea3ff;
+    --t-workshop: #4fd166;
+    --t-hackathon: #ff5aa5;
+    --t-challenge: #ff5aa5;
+    --t-summer_school: #ffd23f;
+    --t-winter_school: #f7f4ef;
+    --t-programme: #9d93a8;
+    --t-meetup: #9d93a8;
+    --t-career_fair: #9d93a8;
+    --t-other: #9d93a8;
   }
+}
+/* Paper grain: one tiny generated noise tile, drawn once behind everything (no images to load). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 * {
   box-sizing: border-box;
 }
+html {
+  background: var(--bg);
+}
 html,
 body {
   margin: 0;
-  background: var(--bg);
   color: var(--ink);
   font: 15px/1.5 var(--font);
   -webkit-font-smoothing: antialiased;
@@ -262,7 +286,12 @@ h3 {
   }
 }
 
-/* Type colour helpers: elements with class t-<type> get --tc. */
+/* Type colour helpers: elements with class t-<type> get --tc, and --tc-edge (a darker or lighter edge so
+   white and yellow stay visible on paper and dark backgrounds alike). */
+[class^='t-'],
+[class*=' t-'] {
+  --tc-edge: color-mix(in srgb, var(--tc) 62%, var(--ink));
+}
 .t-conference {
   --tc: var(--t-conference);
 }
@@ -302,9 +331,9 @@ h3 {
   padding: 3px 9px;
   border-radius: 999px;
   white-space: nowrap;
-  color: var(--tc, var(--muted));
+  color: var(--tc-edge, var(--muted));
   background: color-mix(in srgb, var(--tc, var(--muted)) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--tc, var(--muted)) 45%, transparent);
+  border: 1px solid color-mix(in srgb, var(--tc-edge, var(--muted)) 45%, transparent);
 }
 .type-chip::before,
 .swatch {
@@ -314,5 +343,6 @@ h3 {
   height: 8px;
   border-radius: 50%;
   background: var(--tc, var(--muted));
+  box-shadow: inset 0 0 0 1px var(--tc-edge, transparent);
   flex: none;
 }

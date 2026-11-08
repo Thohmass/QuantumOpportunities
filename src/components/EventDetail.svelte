@@ -93,7 +93,7 @@
 
 <svelte:window onkeydown={(ev) => ev.key === 'Escape' && close()} />
 
-<div class="backdrop" onclick={close} aria-hidden="true"></div>
+<div class="backdrop" class:popup onclick={close} aria-hidden="true"></div>
 <div class="detail" class:popup role="dialog" aria-modal="true" aria-labelledby="detail-title">
   <div class="top">
     <div class="badges">
@@ -165,6 +165,9 @@
     }
   }
   @media (min-width: 900px) {
+    .backdrop.popup {
+      background: rgb(0 0 0 / 40%);
+    }
     .detail.popup {
       top: 50%;
       left: 50%;

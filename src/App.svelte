@@ -6,6 +6,7 @@
   import FilterPanel from './components/FilterPanel.svelte';
   import Header from './components/Header.svelte';
   import ListView from './components/ListView.svelte';
+  import Resizer from './components/Resizer.svelte';
   import TimelineView from './components/TimelineView.svelte';
   import {
     applyFilters,
@@ -17,7 +18,7 @@
   } from './lib/filters';
   import { enrich, localToday, type Ev } from './lib/model';
   import { buildIndex, search } from './lib/search';
-  import { SPLIT, app, prefs, setPref, setSplit } from './lib/state.svelte';
+  import { SPLIT, WIDTHS, app, prefs, setPref, setSplit, setWidth } from './lib/state.svelte';
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
@@ -123,8 +124,8 @@
   });
   const selected = $derived(app.eventId ? events.find((e) => e.id === app.eventId) : undefined);
 
-  // Where details open: inside the list card when a list is on screen, else in the side panel.
-  // Phones and tablets always stack map, timeline and list.
+  // Desktop (≥ 1100 px) is a workspace that fills the window: filters | map + timeline | list, with draggable
+  // borders and panels that can be hidden. Narrower screens stack everything in one scrolling page.
   const mq = matchMedia('(max-width: 1099px)');
   let narrow = $state(mq.matches);
   onMount(() => {
@@ -132,23 +133,18 @@
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
   });
-  const wideLayout = $derived(app.view === 'explore' && prefs.layout === 'wide' && !narrow);
-  const listOnScreen = $derived(
-    app.view === 'list' || (app.view === 'explore' && (!wideLayout || prefs.listOpen)),
-  );
-  $effect(() => {
-    // Wide layout: selecting an event opens the list drawer, where its details unfold.
-    if (wideLayout && app.eventId) prefs.listOpen = true;
-  });
-  // The list card shows the essentials; "More details" opens everything in a pop-up.
+  const listHidden = $derived(app.view === 'explore' && !narrow && prefs.list === 'hidden');
+  const listOnScreen = $derived(app.view === 'list' || (app.view === 'explore' && !listHidden));
+  // Details: with a list on screen, the card unfolds and "More details" opens everything. Without one, the
+  // details open directly: in the centred pop-up on Explore, in the side panel in the Map and Timeline views.
   const panelEvent = $derived(selected && (!listOnScreen || app.detailOpen) ? selected : undefined);
-  const popup = $derived(listOnScreen && app.detailOpen);
+  const popup = $derived(app.view === 'explore' || (listOnScreen && app.detailOpen));
   $effect(() => {
     void app.eventId;
     app.detailOpen = false;
   });
   function closeDetail() {
-    if (popup) app.detailOpen = false;
+    if (listOnScreen) app.detailOpen = false;
     else app.eventId = undefined;
   }
 
@@ -197,18 +193,31 @@
     class:wide={app.view === 'timeline' || app.view === 'map' || app.view === 'explore'}
     class:single={app.view === 'about'}
     class:nosidebar={sidebarHidden}
+    style:--filters-w="{prefs.filtersW}px"
   >
     {#if app.view !== 'about'}
       <aside class="sidebar" class:open={app.filtersOpen} aria-label="Filters">
         <FilterPanel {meta} {counts} {universe} shown={filtered.length} />
       </aside>
+      {#if !sidebarHidden}
+        <div class="filters-split">
+          <Resizer
+            value={prefs.filtersW}
+            min={WIDTHS.filters.min}
+            max={WIDTHS.filters.max}
+            label="Resize the filters"
+            onresize={(v) => setWidth('filters', v)}
+            onreset={() => setWidth('filters', WIDTHS.filters.initial)}
+          />
+        </div>
+      {/if}
       {#if app.filtersOpen}<div
           class="scrim"
           aria-hidden="true"
           onclick={() => (app.filtersOpen = false)}
         ></div>{/if}
     {/if}
-    <main id="main">
+    <main id="main" class:workspace={app.view === 'explore' && !narrow}>
       {#if app.view !== 'about'}
         <div class="bar">
           <button
@@ -230,43 +239,37 @@
             {sidebarHidden ? 'Filters' : 'Hide filters'}
           </button>
           <div class="chips"><Chips {meta} /></div>
-          {#if app.view === 'explore'}
-            <div class="seg" role="group" aria-label="Layout">
-              <button
-                type="button"
-                class:on={prefs.layout === 'grid'}
-                aria-pressed={prefs.layout === 'grid'}
-                onclick={() => setPref('layout', 'grid')}>Side by side</button
+          {#if app.view === 'explore' && !narrow}
+            <button
+              class="btn ghost side-toggle"
+              type="button"
+              aria-pressed={!listHidden}
+              onclick={() => setPref('list', listHidden ? 'shown' : 'hidden')}
+              title={listHidden ? 'Show the list' : 'Hide the list'}
+            >
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+                ><path
+                  d="M4 5h16v14H4zM15 5v14"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                /></svg
               >
-              <button
-                type="button"
-                class:on={prefs.layout === 'wide'}
-                aria-pressed={prefs.layout === 'wide'}
-                onclick={() => setPref('layout', 'wide')}>Wide map</button
-              >
-            </div>
-            {#if wideLayout}
-              <button
-                class="btn list-toggle"
-                type="button"
-                aria-pressed={prefs.listOpen}
-                onclick={() => (prefs.listOpen = !prefs.listOpen)}
-              >
-                {prefs.listOpen ? 'Hide list' : `List (${filtered.length})`}
-              </button>
-            {/if}
+              {listHidden ? `List (${filtered.length})` : 'Hide list'}
+            </button>
           {/if}
         </div>
       {/if}
       {#if app.view === 'explore'}
         <div
           class="explore"
-          class:wide-layout={wideLayout}
-          class:list-open={wideLayout && prefs.listOpen}
+          class:no-list={listHidden}
           class:splitting
           bind:this={exploreEl}
           style:--map-fr="{prefs.split}fr"
           style:--tl-fr="{1 - prefs.split}fr"
+          style:--list-w="{prefs.listW}px"
         >
           <div class="pane map-pane">
             {#await mapModule}
@@ -305,7 +308,20 @@
               fit={narrow}
             />
           </div>
-          {#if !wideLayout || prefs.listOpen}
+          {#if !listHidden}
+            {#if !narrow}
+              <div class="vsplit">
+                <Resizer
+                  value={prefs.listW}
+                  min={WIDTHS.list.min}
+                  max={WIDTHS.list.max}
+                  sign={-1}
+                  label="Resize the list"
+                  onresize={(v) => setWidth('list', v)}
+                  onreset={() => setWidth('list', WIDTHS.list.initial)}
+                />
+              </div>
+            {/if}
             <div class="pane list-pane">
               <ListView events={filtered} {meta} {today} dimmed={outsideMap} compact />
             </div>
@@ -370,9 +386,21 @@
     background: rgb(0 0 0 / 35%);
     z-index: 44;
   }
+  .filters-split {
+    display: none;
+  }
   @media (min-width: 960px) {
     .layout {
-      grid-template-columns: 290px minmax(0, 1fr);
+      grid-template-columns: var(--filters-w) 0 minmax(0, 1fr);
+    }
+    /* The border between the filters and the content: a zero-width column whose handle overlaps both. */
+    .filters-split {
+      display: flex;
+      justify-content: center;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100dvh - var(--header-h));
+      z-index: 2;
     }
     .sidebar {
       position: sticky;
@@ -396,7 +424,8 @@
     .layout.nosidebar {
       grid-template-columns: minmax(0, 1fr);
     }
-    .layout.nosidebar .sidebar {
+    .layout.nosidebar .sidebar,
+    .layout.single .filters-split {
       display: none;
     }
   }
@@ -421,69 +450,48 @@
       display: none;
     }
   }
-  .seg {
-    display: flex;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--surface);
-  }
-  .seg button {
-    border: 0;
-    background: transparent;
-    padding: 5px 10px;
-    font-size: 0.82rem;
-    min-height: 32px;
-  }
-  .seg button + button {
-    border-left: 1px solid var(--line);
-  }
-  .seg button.on {
-    background: var(--accent-soft);
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .list-toggle {
-    min-height: 34px;
-    padding: 4px 12px;
-    font-size: 0.85rem;
-  }
-  .explore.wide-layout {
+  .explore.no-list {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       'map'
       'split'
       'timeline';
   }
-  .explore.wide-layout.list-open {
-    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
-    grid-template-areas:
-      'map list'
-      'split list'
-      'timeline list';
-  }
   .explore {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
+    grid-template-columns: minmax(0, 1fr) 12px minmax(0, var(--list-w));
     grid-template-rows: minmax(0, var(--map-fr)) 12px minmax(0, var(--tl-fr));
     grid-template-areas:
-      'map list'
-      'split list'
-      'timeline list';
-    gap: 0 12px;
-    height: calc(100dvh - var(--header-h) - 64px);
-    min-height: 560px;
-    padding: 8px 0 12px;
+      'map vsplit list'
+      'split vsplit list'
+      'timeline vsplit list';
+    gap: 0;
+    padding: 8px 0 0;
+  }
+  /* Desktop Explore: the workspace fills the window exactly, down to its bottom edge (no page scroll). */
+  main.workspace {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - var(--header-h));
+    min-height: 520px;
+  }
+  main.workspace .explore {
+    flex: 1;
+    min-height: 0;
   }
   .pane {
     min-height: 0;
     min-width: 0;
   }
   /* Phones and tablets: map, then timeline, then the list in the page flow (scrolling the list scrolls the page). */
+  .vsplit {
+    grid-area: vsplit;
+    display: flex;
+    justify-content: center;
+  }
   @media (max-width: 1099px) {
     .explore,
-    .explore.wide-layout,
-    .explore.wide-layout.list-open {
+    .explore.no-list {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: 40dvh auto auto;
       grid-template-areas:
@@ -495,14 +503,6 @@
       min-height: 0;
     }
     .split {
-      display: none;
-    }
-    .list-pane {
-      overflow: visible;
-      padding-right: 0;
-    }
-    .seg,
-    .list-toggle {
       display: none;
     }
   }
@@ -543,6 +543,15 @@
     overflow-y: auto;
     padding-right: 4px;
     overscroll-behavior: contain;
+  }
+  /* In the stacked page the list is part of the page: it must not be its own scroll box, or wheel and touch
+     scrolling over it would stop there instead of moving the page. */
+  @media (max-width: 1099px) {
+    .list-pane {
+      overflow: visible;
+      overscroll-behavior: auto;
+      padding-right: 0;
+    }
   }
   .loading,
   .error {

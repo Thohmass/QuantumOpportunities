@@ -105,3 +105,81 @@ test('filter groups start folded, except the top ones', async ({ page, isMobile 
     'false',
   );
 });
+
+test('narrow window: scrolling over the list scrolls the page', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Wheel scrolling is a desktop gesture');
+  await page.setViewportSize({ width: 1000, height: 800 });
+  await page.goto('/#/explore');
+  await page.locator('.list-pane article.card').first().waitFor();
+  await page.evaluate(() => window.scrollTo(0, 1000));
+  const before = await page.evaluate(() => window.scrollY);
+  await page.mouse.move(500, 500);
+  await page.mouse.wheel(0, 400);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
+});
+
+test('explore: a hidden list stays hidden; clicking the map opens the details pop-up', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.getByRole('button', { name: 'Hide list' }).click();
+  await expect(page.locator('.list-pane')).toHaveCount(0);
+  await page.locator('.map-pane g.dot').first().click();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.locator('.list-pane')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: /^List \(/ })).toBeVisible();
+});
+
+test('explore: the list border can be resized from the keyboard', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const list = page.locator('.list-pane');
+  const before = (await list.boundingBox())!.width;
+  await page.getByRole('separator', { name: 'Resize the list' }).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(async () => (await list.boundingBox())!.width).toBeGreaterThan(before);
+});
+
+test('the online button on the map switches the online-only filter on and off', async ({
+  page,
+}) => {
+  await page.goto('/#/explore');
+  const online = page.getByRole('button', { name: /online$/ });
+  await expect(online).toHaveAttribute('aria-pressed', 'false');
+  await online.click();
+  await expect(online).toHaveAttribute('aria-pressed', 'true');
+  await expect(page).toHaveURL(/online/);
+  await online.click();
+  await expect(online).toHaveAttribute('aria-pressed', 'false');
+  await expect(page).not.toHaveURL(/online/);
+});
+
+test('timeline: weeks are labels only; a selected month is lit to its exact days', async ({
+  page,
+}) => {
+  await page.goto('/#/timeline');
+  await expect(page.getByRole('button', { name: /^Select week/ })).toHaveCount(0);
+  const jan = page.getByRole('button', { name: /^Select January 2027/ });
+  await jan.click();
+  const cell = (await jan.boundingBox())!;
+  const band = (await page.locator('.head-band').first().boundingBox())!;
+  expect(Math.abs(band.x - cell.x)).toBeLessThan(2);
+  expect(Math.abs(band.width - cell.width)).toBeLessThan(2);
+});
+
+test('explore on desktop fills the window to its bottom edge', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.locator('.list-pane article.card').first().waitFor();
+  const bottom = await page
+    .locator('.list-pane')
+    .evaluate((el) => el.getBoundingClientRect().bottom);
+  expect(Math.abs(bottom - 900)).toBeLessThan(2);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight - innerHeight)).toBe(0);
+});
