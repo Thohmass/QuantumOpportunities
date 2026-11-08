@@ -28,17 +28,11 @@
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027; the link there is a generic WE-Heraeus page, search the seminar title
   url: https://www.we-heraeus-stiftung.de/
-- title: Gordon Research Conference – Quantum Biology, Oxnard (Ventura), 7–12 Mar 2027 (GRS 6–7 Mar)
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027
-  url: https://www.grc.org/quantum-biology-conference/2027/
-  tries: 1
-  last_tried: 2026-11-08
 - title: Gordon Research Conference – Quantum Control of Light and Matter, Newport RI, 1–6 Aug 2027 (GRS 31 Jul – 1 Aug)
   found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027
+  hint: Listed on quantum.info/conf/2027; the grc.org 2027 URL returned HTTP 404 on 2026-11-08
   url: https://www.grc.org/quantum-control-of-light-and-matter-conference/2027/
-  tries: 1
+  tries: 2
   last_tried: 2026-11-08
 - title: Quantum Spintronics 2027, Trondheim, 8–10 Jun 2027
   found: 2026-11-08
