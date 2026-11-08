@@ -1,0 +1,27 @@
+id: benasque-superconducting-qubit-school-2027
+name: Spring School on Superconducting Qubit Technology 2027 (Benasque)
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-09-21"
+  end: "2027-10-01"
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [hw-superconducting]
+audience: [msc, phd]
+url: https://www.benasque.org/
+description: Eleven-day school on superconducting qubit technology organised by people from Qilimanjaro, IFAE and IQM. No dedicated event page was linked yet; the programme listing gives the dates and organisers.
+sources:
+  - url: https://benasque.org/new_general/cgi-bin/years.pl?ano=2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

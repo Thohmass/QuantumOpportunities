@@ -1,29 +1,17 @@
 # Unverified hints (no official page confirmed yet). Not shown on the site.
 # The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
-- title: Spring School on Superconducting Qubit Technology 2027, Benasque (21 Sep – 1 Oct 2027)
-  found: 2026-11-06
-  hint: benasque.org programme gives 21 Sep – 1 Oct 2027 (quantum.info said Apr 2027); no event page linked yet. Not created, find-similar could not run
-  url: https://www.benasque.org/
-  tries: 1
-  last_tried: 2026-11-07
-- title: Quantum Information 2027, Benasque (20 Jun – 9 Jul 2027)
-  found: 2026-11-06
-  hint: On benasque.org programme (organisers Cirac, Ekert); no event page linked. Not created, find-similar could not run
-  url: https://www.benasque.org/
-  tries: 1
-  last_tried: 2026-11-07
 - title: SEEQA 2027 – Seeking Quantum Advantage, Oxford (22–27 Aug 2027)
   found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027; no 2027 page found by search (only 2024 and 2025 editions)
+  hint: Listed on quantum.info/conf/2027; searches find only the 2024 and 2025 editions (NQCC pages)
   url: https://quantum.info/conf/2027.html
-  tries: 1
-  last_tried: 2026-11-07
+  tries: 2
+  last_tried: 2026-11-08
 - title: AQIS 2027, Tsukuba (23–27 Aug 2027)
   found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027; no 2027 page found (AQIS 2026 is in Seoul)
+  hint: Listed on quantum.info/conf/2027; search finds no 2027 page (AQIS 2026 is in Seoul, 24-28 Aug 2026)
   url: https://quantum.info/conf/2027.html
-  tries: 1
-  last_tried: 2026-11-07
+  tries: 2
+  last_tried: 2026-11-08
 - title: DPG Spring Meeting SAMOP 2027, Hannover (28 Feb – 5 Mar 2027)
   found: 2026-11-06
   hint: Listed on quantum.info/conf/2027
@@ -46,23 +34,7 @@
   found: 2026-11-06
   hint: Listed on quantum.info/conf/2027
   url: https://quantum.info/conf/2027.html
-- title: Bristol Quantum Information Technologies Workshop (BQIT 2027), 26–28 Apr 2027
-  found: 2026-11-06
-  hint: Official Bristol page confirms 26-28 Apr 2027, in person and online. Not created, find-similar could not run
-  url: https://bristol.ac.uk/qet-labs/events/bqit-workshop/
-  tries: 1
-  last_tried: 2026-11-07
-- title: Quantum Days 2027, Sherbrooke (17–19 Feb 2027)
-  found: 2026-11-06
-  hint: Institut quantique and Deep Tech Canada confirm 17-19 Feb 2027, Delta Sherbrooke. Not created, find-similar could not run
-  url: https://www.usherbrooke.ca/iq/fr/actualites/evenements/details/59308
-  tries: 1
-  last_tried: 2026-11-07
 - title: Further Les Houches 2027 schools with quantum content (Non-linear, Imaging and Quantum Optics 18–23 Apr; Out of Equilibrium Physics in Low Dimensional Quantum Fluids 14–19 Mar; School on Low-Dimensional Quantum Matter 4–15 Oct)
   found: 2026-11-07
   hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
   url: https://www.houches-school-physics.com/program/program-2027/
-- title: Benasque 2027 Quantum Nanophotonics (28 Mar – 2 Apr) and Winter School on Ultracold Quantum Many-Body Systems (24–30 Jan)
-  found: 2026-11-07
-  hint: On the benasque.org programme
-  url: https://www.benasque.org/

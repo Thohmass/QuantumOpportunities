@@ -1,0 +1,27 @@
+id: quantum-days-2027
+name: Quantum Days 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: "2027-02-17"
+  end: "2027-02-19"
+location:
+  city: Sherbrooke
+  country: CA
+  venue: Hôtel Delta Sherbrooke by Marriott
+organizers: [institut-quantique]
+topics: [computing, business]
+audience: [researcher, industry, phd]
+url: https://2027.quantumdays.ca
+description: Gathering of Canada's quantum community covering research, industry applications, investment, policy, commercialisation, startups and careers, hosted by the Institut quantique.
+sources:
+  - url: https://www.usherbrooke.ca/iq/fr/actualites/evenements/details/59308
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
