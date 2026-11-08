@@ -21,11 +21,17 @@
   yield: 0
 - q: quantum information conference {year}
 - q: quantum error correction conference workshop {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 1
 - q: quantum sensing metrology conference {year}
 - q: quantum communication networks conference {year}
 - q: quantum machine learning workshop school {year}
 - q: quantum technology conference Europe {year}
 - q: quantum industry conference {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 1
 - q: quantum computing conference Asia {year}
   last_used: 2026-11-08
   uses: 1

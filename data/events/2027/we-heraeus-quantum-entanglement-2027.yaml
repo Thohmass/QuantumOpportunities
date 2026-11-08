@@ -1,0 +1,27 @@
+id: we-heraeus-quantum-entanglement-2027
+name: Quantum Entanglement – New Concepts and Opportunities (879. WE-Heraeus-Seminar)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-14
+  end: 2027-02-17
+location:
+  city: Bad Honnef
+  country: DE
+  venue: Physikzentrum Bad Honnef
+organizers: [we-heraeus-foundation]
+topics: [qit, optics]
+audience: [researcher, phd]
+url: https://www.we-heraeus-stiftung.de/veranstaltungen/quantum-entanglement-new-concepts-and-opportunities
+description: Seminar on recent work on entanglement, from high-dimensional and multipartite theory to experiments with ions, superconducting qubits and photons. The foundation covers full board.
+sources:
+  - url: https://www.we-heraeus-stiftung.de/veranstaltungen/quantum-entanglement-new-concepts-and-opportunities
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
