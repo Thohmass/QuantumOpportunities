@@ -16,8 +16,9 @@
   found: 2026-11-07
   hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
   url: https://www.houches-school-physics.com/program/program-2027/
-- title: More 2027 events on quantum.info – Australian Quantum Software Network Conference (9–11 Feb, Sydney); QP 2027 workshop (15–16 Mar, Kyoto); Quantum Networks Summit (7–8 Apr, Paris); QSDC27 (10–11 May, San Diego); QEI2027 (7–10 Sep, Lisbon); IQT PQC (25–26 Oct, New York)
+- title: More 2027 events on quantum.info – QSDC27 (10–11 May, San Diego); IQT PQC (25–26 Oct, New York)
   found: 2026-11-08
-  hint: Listed with links on quantum.info/conf/2027; official pages not read yet (run ended)
+  hint: Listed with links on quantum.info/conf/2027 (quantumsandiego.org returned 403; iqtevent.com not read yet)
   url: https://quantum.info/conf/2027.html
-  tries: 0
+  tries: 1
+  last_tried: 2026-11-08

@@ -1,0 +1,26 @@
+id: qei-2027
+name: QEI 2027 – Quantum Energy Initiative Workshop
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-09-07
+  end: 2027-09-10
+location:
+  city: Lisbon
+  country: PT
+organizers: [quantum-energy-initiative]
+topics: [qit, computing]
+audience: [researcher, phd, industry]
+url: https://quantum-energy-initiative.org/2026/qei-2027-will-be-in-lisbon-in-september-2027/
+description: Workshop on the energy demands of quantum technologies, from fundamental physics and thermodynamics to error correction, algorithms and engineering. Programme committee and call for talks are to be announced.
+sources:
+  - url: https://quantum-energy-initiative.org/2026/qei-2027-will-be-in-lisbon-in-september-2027/
+    kind: organiser_social
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

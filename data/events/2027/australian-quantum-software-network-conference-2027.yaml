@@ -1,0 +1,35 @@
+id: australian-quantum-software-network-conference-2027
+name: The Australian Quantum Software Network Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-09
+  end: 2027-02-11
+deadlines:
+  - kind: abstract
+    date: 2026-10-02
+    note: abstract submission deadline (AoE); already passed
+location:
+  city: Sydney
+  country: AU
+cost:
+  kind: paid
+  min: 250
+  max: 250
+  currency: AUD
+  note: registration details still to be announced
+topics: [qc-software, computing, sensing, simulation]
+audience: [researcher, industry]
+url: https://quantumsoftware.org.au/projects/the-australian-quantum-software-network-conference/
+description: Gathering in central Sydney of quantum software researchers, developers and industry members to exchange ideas and build collaborations across algorithms, sensing and simulation.
+sources:
+  - url: https://quantumsoftware.org.au/projects/the-australian-quantum-software-network-conference/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
