@@ -8,3 +8,4 @@
 - { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 3, note: "PQCrypto 2027, EQTC 2026 and World Quantum Cannes Festival created; Devpost 403; other sources and queries not reached" }
 - { date: 2026-11-08, job: scout, checked: 12, updated: 0, created: 6, note: "SEEQA, IHP crypto school, QCNC, QuNeW, NQCC Scalability and Quantum Australia created; AQIS still unconfirmed; quantum.info and Nordita scanned, 3 queries run" }
 - { date: 2026-11-08, job: scout, checked: 6, updated: 0, created: 4, note: "AQSN conference, QP 2027, Quantum Networks Summit and QEI 2027 created; QSDC27 403; sources and queries not reached" }
+- { date: 2026-11-08, job: scout, checked: 4, updated: 0, created: 1, note: "IQT Korea 2026 created; QURECA scanned, one query run; IQT PQC 2027 still unconfirmed" }

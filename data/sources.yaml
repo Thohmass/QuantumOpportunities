@@ -25,6 +25,10 @@
   url: https://www.qureca.com/calendar/
   kind: aggregator
   covers: [conferences, industry events]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 1
+  zero_yield_streak: 0
 - id: qt-eu-events
   name: Quantum Flagship (qt.eu) events
   url: https://qt.eu/events
