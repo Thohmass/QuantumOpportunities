@@ -31,6 +31,10 @@
   url: https://www.benasque.org/
   kind: organiser
   covers: [workshops, schools]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 4
+  zero_yield_streak: 0
 - id: les-houches-school
   name: École de Physique des Houches – schools
   url: https://www.houches-school-physics.com/

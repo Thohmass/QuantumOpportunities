@@ -1,2 +1,7 @@
 # Pairs of event ids that look alike but are different events. CI does not flag them as duplicates.
-[]
+- [benasque-quantum-information-2027, benasque-quantum-nanophotonics-2027]
+- [benasque-quantum-information-2027, benasque-superconducting-qubit-school-2027]
+- [benasque-quantum-information-2027, benasque-ultracold-winter-school-2027]
+- [benasque-superconducting-qubit-school-2027, benasque-ultracold-winter-school-2027]
+- [benasque-superconducting-qubit-school-2027, benasque-quantum-nanophotonics-2027]
+- [benasque-ultracold-winter-school-2027, benasque-quantum-nanophotonics-2027]

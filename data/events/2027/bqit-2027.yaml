@@ -1,0 +1,26 @@
+id: bqit-2027
+name: BQIT:27 – Bristol Quantum Information Technologies Workshop
+type: workshop
+status: confirmed
+format: hybrid
+dates:
+  start: "2027-04-26"
+  end: "2027-04-28"
+location:
+  city: Bristol
+  country: GB
+organizers: [university-of-bristol]
+topics: [qit, computing]
+audience: [researcher, phd, industry]
+url: https://bristol.ac.uk/qet-labs/events/bqit-workshop/
+description: Three-day workshop on quantum information technologies, from theory to industrial innovation, run by the Bristol QET Labs in person and online. Registration and poster submissions are announced for later in 2026.
+sources:
+  - url: https://bristol.ac.uk/qet-labs/events/bqit-workshop/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
