@@ -27,21 +27,24 @@
   let el: HTMLElement | undefined = $state();
   const hot = $derived(app.hoverId === e.id);
   const open = $derived(expandable && app.eventId === e.id);
-  // Selected (clicked) anywhere → scroll to its top. Hovering only highlights, it never scrolls.
+  // Selected (clicked) anywhere → scroll only as much as needed to show the whole card: not at all if it is
+  // already fully visible, down until it is the last card shown, or up until it is the first. A card taller
+  // than the box is shown from its top. Hovering never scrolls.
   $effect(() => {
     void app.focusTick;
     if (open && el)
       setTimeout(() => {
         if (!el) return;
-        // Inside a panel or drawer, scroll only that box (scrollIntoView would also move the page).
         const box = el.closest<HTMLElement>('.list-drawer, .list-pane');
-        if (box && getComputedStyle(box).overflowY !== 'visible')
-          box.scrollTo({
-            top:
-              el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop - 8,
-            behavior: 'smooth',
-          });
-        else el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        if (!box || getComputedStyle(box).overflowY === 'visible')
+          return el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        const b = box.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
+        const pad = 8;
+        let delta = 0;
+        if (r.height > b.height - 2 * pad || r.top < b.top + pad) delta = r.top - b.top - pad;
+        else if (r.bottom > b.bottom - pad) delta = r.bottom - b.bottom + pad;
+        if (delta) box.scrollBy({ top: delta, behavior: 'smooth' });
       }, 50);
   });
 

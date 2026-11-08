@@ -152,3 +152,11 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **Expand / shrink animation:** the panel grows over the workspace (or shrinks back) while the others fade, in browsers with view transitions. Elsewhere it switches at once.
 - **Map and timeline keep their view** when a panel is expanded or shrunk: same place and zoom on the map, same zoom and dates on the timeline.
 - **Dark-mode extensions:** a phone browser's dark-mode add-on (e.g. Dark Reader) darkened the page but couldn't recolour the map canvas, which left a light map in a dark page. The site now asks such add-ons to leave it alone (`darkreader-lock`), since it has its own dark theme, and the sea is painted on the same canvas as the land.
+- **Phones: the list drawer follows the finger.** A tab on the right edge, within thumb reach, can be tapped or dragged to the left to pull the list out. Swiping the open drawer to the right pushes it away; a short flick is enough, and letting go part-way snaps it open or shut.
+- **Edge to edge:** panels run to the window edges, with no frame or side margins. Only text pages (About) keep a margin. The bar above the panels is compact, and on phones it takes no space unless filters are active.
+- **The number of events is shown once,** in the header (on phones, on the List button). The list and timeline no longer repeat it.
+- **Timeline controls:**
+  - The mouse wheel (or a pinch) zooms; sideways scrolling moves along.
+  - Only − / + remain, floating in the bottom-left corner (top-right on phones). The Week / Month / Quarter / Year / Today buttons and the selection hint are gone. A guided tour of less obvious features is planned just before v1.0.
+- **Expected events on the timeline** are easier to see: less transparent, with a stronger gradient.
+- **Selecting an event** scrolls the list only as much as needed to show the whole card: not at all if it is already fully visible, otherwise until it is the first or last card shown.
