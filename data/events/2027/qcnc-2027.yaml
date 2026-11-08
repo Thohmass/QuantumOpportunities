@@ -1,0 +1,31 @@
+id: qcnc-2027
+name: QCNC 2027 – Quantum Communications, Networking, and Computing
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-22
+  end: 2027-03-26
+deadlines:
+  - kind: abstract
+    date: 2026-10-20
+    note: paper submission
+location:
+  city: Sapporo
+  country: JP
+  venue: Hokkaido
+topics: [communication, networks, qkd]
+audience: [phd, postdoc, researcher, industry]
+url: https://easychair.org/cfp/qcnc2027
+description: IEEE-format conference on quantum communications, networking and computing with five tracks, including hardware, networks, security and testbeds. Accepted papers go to IEEE Xplore.
+sources:
+  - url: https://easychair.org/cfp/qcnc2027
+    kind: official
+    accessed: 2026-11-08
+    note: location given only as Hokkaido
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

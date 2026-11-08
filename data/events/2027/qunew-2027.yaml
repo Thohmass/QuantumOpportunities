@@ -1,0 +1,34 @@
+id: qunew-2027
+name: QuNeW 2027 – Quantum Networks Workshop
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-12
+  end: 2027-05-14
+deadlines:
+  - kind: abstract
+    date: 2026-12-12
+    note: submission deadline (AOE)
+  - kind: registration
+    date: 2027-02-01
+    note: registration opens
+location:
+  city: Naha
+  country: JP
+  venue: OIST Main Campus, Onna Village, Okinawa
+organizers: [oist]
+topics: [networks, communication]
+audience: [phd, postdoc, researcher, industry]
+url: https://www.oist.jp/conference/qunew-2027
+description: Third edition of the biennial three-day workshop on quantum networks for about 150 experts, with invited and contributed talks and posters on repeaters, integrated photonics, space links and societal impact.
+sources:
+  - url: https://www.oist.jp/conference/qunew-2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

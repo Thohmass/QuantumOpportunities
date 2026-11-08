@@ -1,0 +1,30 @@
+id: nqcc-scalability-conference-2027
+name: NQCC Quantum Computing Scalability Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-04
+location:
+  city: Oxford
+  country: GB
+organizers: [nqcc]
+topics: [computing, qc-hardware]
+audience: [researcher, industry, phd, postdoc]
+url: https://www.nqcc.ac.uk/quantum-computing-scalability-conference-2027/
+description: Conference on scalability bottlenecks across quantum computing platforms, with technical talks, panels and a poster session limited to 60 posters. Standard ticket GBP 250; poster selection in January 2027.
+sources:
+  - url: https://www.nqcc.ac.uk/quantum-computing-scalability-conference-2027/
+    kind: official
+    accessed: 2026-11-08
+    note: month only; full dates and venue not stated on the page
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-08
+    note: lists 31 Mar - 2 Apr, Oxford (hint only)
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

@@ -1,0 +1,31 @@
+id: ihp-quantum-cryptography-school-2027
+name: Introductory School – Advances in Quantum Cryptography (IHP Paris)
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-09-13
+  end: 2027-09-17
+deadlines:
+  - kind: application
+    date: 2027-03-15
+    note: deadline for financial support requests; registration is free but mandatory
+location:
+  city: Paris
+  country: FR
+  venue: Institut Henri Poincaré
+organizers: [institut-henri-poincare]
+topics: [qkd, qit]
+audience: [phd, postdoc, researcher]
+url: https://indico.math.cnrs.fr/event/16600/
+description: Introductory school opening the IHP thematic trimester on quantum cryptography (13 Sep – 10 Dec 2027), meant to give theoretical computer science, maths and cryptography people a shared language. Three workshops follow in October–December.
+sources:
+  - url: https://indico.math.cnrs.fr/event/16600/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08
