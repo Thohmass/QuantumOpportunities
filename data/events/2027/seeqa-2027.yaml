@@ -1,0 +1,29 @@
+id: seeqa-2027
+name: SEEQA 2027 – Seeking Quantum Advantage
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-22
+  end: 2027-08-27
+location:
+  city: Oxford
+  country: GB
+  venue: Merton College
+topics: [qc-algorithms, qec, computing]
+audience: [phd, postdoc, researcher]
+url: https://conference.seeqa.org/
+description: Invitation-only Oxford workshop on progress towards quantum advantage across algorithms, hardware, error correction and AI. A tutorial day opens the programme; registration is not open yet and a mailing list is offered.
+sources:
+  - url: https://conference.seeqa.org/
+    kind: official
+    accessed: 2026-11-08
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

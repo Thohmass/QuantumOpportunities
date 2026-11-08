@@ -1,16 +1,10 @@
 # Unverified hints (no official page confirmed yet). Not shown on the site.
 # The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
-- title: SEEQA 2027 – Seeking Quantum Advantage, Oxford (22–27 Aug 2027)
-  found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027; searches find only the 2024 and 2025 editions (NQCC pages)
-  url: https://quantum.info/conf/2027.html
-  tries: 2
-  last_tried: 2026-11-08
 - title: AQIS 2027, Tsukuba (23–27 Aug 2027)
   found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027; search finds no 2027 page (AQIS 2026 is in Seoul, 24-28 Aug 2026)
+  hint: Listed on quantum.info/conf/2027 with link aqis-conf.org/2027, but that URL shows AQIS 2026 (KAIST, Daejeon, 24-28 Aug 2026); no 2027 page yet
   url: https://quantum.info/conf/2027.html
-  tries: 2
+  tries: 3
   last_tried: 2026-11-08
 - title: Quantum.Tech World 2027, Boston (25–26 May 2027)
   found: 2026-11-06
@@ -18,13 +12,12 @@
   url: https://quantum.info/conf/2027.html
   tries: 1
   last_tried: 2026-11-08
-- title: Introductory School to Advances in Quantum Cryptography, IHP Paris (13–17 Sep 2027)
-  found: 2026-11-06
-  hint: Part of the IHP quantum cryptography trimester (13 Sep – 10 Dec 2027); not found on ihp.fr home page (read again 2026-11-08)
-  url: https://quantum.info/conf/2027.html
-  tries: 2
-  last_tried: 2026-11-08
 - title: Further Les Houches 2027 schools with quantum content (Non-linear, Imaging and Quantum Optics 18–23 Apr; Out of Equilibrium Physics in Low Dimensional Quantum Fluids 14–19 Mar; School on Low-Dimensional Quantum Matter 4–15 Oct)
   found: 2026-11-07
   hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
   url: https://www.houches-school-physics.com/program/program-2027/
+- title: More 2027 events on quantum.info – Australian Quantum Software Network Conference (9–11 Feb, Sydney); QP 2027 workshop (15–16 Mar, Kyoto); Quantum Networks Summit (7–8 Apr, Paris); QSDC27 (10–11 May, San Diego); QEI2027 (7–10 Sep, Lisbon); IQT PQC (25–26 Oct, New York)
+  found: 2026-11-08
+  hint: Listed with links on quantum.info/conf/2027; official pages not read yet (run ended)
+  url: https://quantum.info/conf/2027.html
+  tries: 0

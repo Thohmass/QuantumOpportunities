@@ -6,11 +6,20 @@
   kind: aggregator
   covers: [conferences, workshops, schools]
   note: One page per year (/conf/<year>.html). Dates there are hints; confirm on official pages.
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 3
+  zero_yield_streak: 0
 - id: nordita-nordic-quantum-events
   name: Nordita – Nordic quantum events
   url: https://nordita.org/nordic-quantum/nordic-quantum-events
   kind: aggregator
   covers: [Nordic conferences, workshops, schools]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: Listings failed to load on 2026-11-08 ("could not load the Nordic Quantum listings").
 - id: qureca-calendar
   name: QURECA quantum events calendar
   url: https://www.qureca.com/calendar/
