@@ -1,0 +1,30 @@
+id: qvls-winter-school-2027
+name: QVLS Winter School 2027
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-08
+  end: 2027-02-12
+deadlines:
+  - kind: application
+    date: 2027-01-10
+    note: apply by email with CV and a recommendation letter
+location:
+  city: Hannover
+  country: DE
+organizers: [quantum-valley-lower-saxony]
+topics: [hw-trapped-ions, qec, simulation]
+audience: [phd, postdoc, researcher]
+url: https://www.qvls.de/events/qvls-winter-school-2027
+description: Week-long school on trapped-ion quantum technologies, covering ion-trap physics, gates and algorithms, error correction and quantum simulation. Aimed at early-career researchers from Germany and abroad; no participation fee.
+sources:
+  - url: https://www.qvls.de/events/qvls-winter-school-2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

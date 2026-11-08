@@ -13,3 +13,4 @@
 - { date: 2026-11-08, job: scout, checked: 3, updated: 0, created: 0, note: "Unitary Foundation scanned (no 2027 dates), 2 queries run; nothing new" }
 - { date: 2026-11-08, job: scout, checked: 8, updated: 0, created: 4, note: "JILA quantum sensors workshop, AQTI 2027, Sheffield winter school and ICFO-Wits school created; QWorld and Qiskit sources scanned, nothing new; 3 queries run" }
 - { date: 2026-11-08, job: scout, checked: 6, updated: 0, created: 2, note: "Saarland QIT school and Bristol Quantum in the Summer created; unitaryHACK still no 2027 page; 1 query run; sources not reached" }
+- { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 1, note: "QVLS Winter School 2027 created; IPAM winter school added as lead; DTU scanned, NBI unreachable; 2 queries run" }
