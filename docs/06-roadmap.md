@@ -40,5 +40,9 @@ Accounts would make personal features easier and enable social ones:
 - personal data under GDPR
 - moderation for reviews: in a small community a review can identify a person or an organiser
 
+## Before v1.0
+
+- **Guided tour:** a short walkthrough of the less obvious features (multi-select months with Shift/Ctrl, dragging dates, the map as a lens, search suggestions, gestures). Built last, once the layout has settled (Tomáš, 8 Nov 2026).
+
 ## Later
 Jobs, PhD positions, internships, grants (deadline-first views); PWA/offline; trends page; embeddable widget (e.g. for the QIS student board); translations; dev agents (Lynote's Developer + Reviewer).

@@ -66,7 +66,7 @@
 
 <section class="list" class:compact class:columns={panel && !compact} aria-label="Events">
   <div class="toolbar">
-    <p class="count"><b>{events.length}</b> {events.length === 1 ? 'event' : 'events'}</p>
+    <!-- The number of events is shown once, in the header. -->
     <label>
       <span class="muted">Sort</span>
       <select bind:value={app.filters.sort}>
@@ -100,6 +100,10 @@
 </section>
 
 <style>
+  /* Named for the expand/shrink animation (view transitions). */
+  .list {
+    view-transition-name: qo-list;
+  }
   .list {
     display: grid;
     gap: 10px;
@@ -113,13 +117,6 @@
   }
   .toolbar label {
     margin-left: auto;
-  }
-  .count {
-    margin: 0;
-    color: var(--muted);
-  }
-  .count b {
-    color: var(--ink);
   }
   label {
     display: flex;
@@ -162,5 +159,9 @@
   }
   .list.compact {
     padding-bottom: 16px;
+  }
+  /* The expanded list runs edge to edge; its cards keep a small margin from the window. */
+  .list.columns {
+    padding-inline: 10px;
   }
 </style>

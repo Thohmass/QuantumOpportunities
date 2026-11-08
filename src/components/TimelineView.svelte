@@ -1,3 +1,8 @@
+<script lang="ts" module>
+  // Zoom and position survive the timeline being re-created (e.g. when a panel is expanded or shrunk).
+  let remembered: { ppd: number; leftDate: number } | undefined;
+</script>
+
 <script lang="ts">
   import { tick, untrack } from 'svelte';
   import ExpandButton from './ExpandButton.svelte';
@@ -30,15 +35,11 @@
   } = $props();
 
   const DAY = 86_400_000;
-  // Zoom is continuous (pixels per day): Ctrl/⌘ + wheel, trackpad or touch pinch, the − / + buttons, or a preset.
-  const ZOOMS = { week: 30, month: 9, quarter: 3.2, year: 1.1 } as const;
-  type Zoom = keyof typeof ZOOMS;
+  // Zoom is continuous (pixels per day): the mouse wheel, trackpad or touch pinch, or the − / + buttons.
+  const DEFAULT_PPD = 3.2;
   const MIN_PPD = 0.45;
   const MAX_PPD = 48;
-  let ppd = $state<number>(ZOOMS.quarter);
-  const preset = $derived(
-    (Object.keys(ZOOMS) as Zoom[]).find((z) => Math.abs(ZOOMS[z] / ppd - 1) < 0.04),
-  );
+  let ppd = $state<number>(remembered?.ppd ?? DEFAULT_PPD);
   /** The visible part of the scroller, kept up to date (once per frame) while scrolling and resizing. */
   let view = $state({ left: 0, width: 800, height: 0 });
   const HEAD = 46;
@@ -251,12 +252,14 @@
   let viewFrame = 0;
   function readView() {
     viewFrame = 0;
-    if (scroller)
+    if (scroller) {
       view = {
         left: scroller.scrollLeft,
         width: scroller.clientWidth,
         height: scroller.clientHeight,
       };
+      remembered = { ppd, leftDate: range[0] + (scroller.scrollLeft / ppd) * DAY };
+    }
   }
   const onScroll = () => (viewFrame ||= requestAnimationFrame(readView));
   $effect(() => {
@@ -273,9 +276,18 @@
   // Re-centre on today only when the start of the axis changes (first load, or new data far in the past) — not
   // when a selection changes the filtered events (an unchanged number doesn't re-run this).
   const axisStart = $derived(range[0]);
+  let restored = false;
+  /** Where an earlier timeline was (read now, before this one's first scroll overwrites it). */
+  const startAt = remembered;
   $effect(() => {
     void axisStart;
-    untrack(() => scrollToToday());
+    untrack(() => {
+      const r = startAt;
+      if (!restored && r) {
+        restored = true;
+        void tick().then(() => scroller?.scrollTo({ left: Math.max(0, x(r.leftDate)) }));
+      } else scrollToToday();
+    });
   });
 
   /** Zooms to `next` pixels per day, keeping the date under `at` (px from the scroller's left) in place. */
@@ -308,9 +320,10 @@
     const el = scroller;
     if (!el) return;
     const left = (clientX: number) => clientX - el.getBoundingClientRect().left;
-    // Ctrl/⌘ + wheel, and trackpad pinch (which browsers report as Ctrl + wheel).
+    // The mouse wheel (and a trackpad pinch, reported as Ctrl + wheel) zooms around the pointer. Sideways
+    // scrolling (trackpad swipe, Shift + wheel) still moves along the timeline.
     const onWheel = (ev: WheelEvent) => {
-      if (!ev.ctrlKey && !ev.metaKey) return;
+      if (ev.shiftKey || Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) return;
       ev.preventDefault();
       const dy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
       queueZoom(Math.exp(-dy * 0.004), left(ev.clientX));
@@ -374,43 +387,28 @@
 </script>
 
 <section class="timeline" class:compact class:fit aria-label="Timeline">
-  <div class="toolbar">
-    <p class="count"><b>{events.length - events.filter(outside).length}</b> in range</p>
+  <!-- Controls float over the timeline: expand in the top-right corner (as on every panel), zoom bottom-left. -->
+  <div class="corner"><ExpandButton panel="timeline" label="timeline" /></div>
+  <div class="zoom" role="group" aria-label="Zoom">
+    <button
+      type="button"
+      class="btn"
+      aria-label="Zoom out"
+      title="Zoom out (or mouse wheel, pinch)"
+      disabled={ppd <= MIN_PPD}
+      onclick={() => zoomTo(ppd / 1.5)}>−</button
+    >
+    <button
+      type="button"
+      class="btn"
+      aria-label="Zoom in"
+      title="Zoom in (or mouse wheel, pinch)"
+      disabled={ppd >= MAX_PPD}
+      onclick={() => zoomTo(ppd * 1.5)}>+</button
+    >
     {#if sel.length}
-      <button class="clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
-    {:else}
-      <span class="hint muted"
-        >Click months or days (Shift / Ctrl to add), or drag, to pick dates</span
-      >
+      <button class="btn clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
     {/if}
-    <div class="zoom" role="group" aria-label="Zoom">
-      <button
-        type="button"
-        class="step"
-        aria-label="Zoom out"
-        title="Zoom out (or Ctrl + wheel, pinch)"
-        disabled={ppd <= MIN_PPD}
-        onclick={() => zoomTo(ppd / 1.5)}>−</button
-      >
-      {#each Object.keys(ZOOMS) as z (z)}
-        <button
-          type="button"
-          class:on={preset === z}
-          aria-pressed={preset === z}
-          onclick={() => zoomTo(ZOOMS[z as Zoom])}>{z}</button
-        >
-      {/each}
-      <button
-        type="button"
-        class="step"
-        aria-label="Zoom in"
-        title="Zoom in (or Ctrl + wheel, pinch)"
-        disabled={ppd >= MAX_PPD}
-        onclick={() => zoomTo(ppd * 1.5)}>+</button
-      >
-      <button type="button" onclick={() => scrollToToday(true)}>Today</button>
-    </div>
-    <ExpandButton panel="timeline" label="timeline" />
   </div>
 
   <div class="scroller" bind:this={scroller} onscroll={onScroll}>
@@ -549,86 +547,63 @@
 </section>
 
 <style>
+  /* Named for the expand/shrink animation (view transitions). */
+  .timeline {
+    view-transition-name: qo-timeline;
+  }
   .timeline {
     display: grid;
     gap: 8px;
     padding-bottom: 20px;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    position: relative;
+    grid-template-rows: minmax(0, 1fr) auto;
     height: calc(100dvh - var(--header-h) - 70px);
     min-height: 360px;
+  }
+  .corner {
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    z-index: 12;
+  }
+  .zoom {
+    position: absolute;
+    left: 8px;
+    bottom: 10px;
+    z-index: 12;
+    display: flex;
+    gap: 6px;
+  }
+  .compact .zoom {
+    bottom: 8px;
+  }
+  /* Phones (the timeline grows with its rows, so its bottom can be far away): next to the expand button. */
+  .fit .zoom {
+    top: 4px;
+    bottom: auto;
+    left: auto;
+    right: 52px;
+  }
+  .zoom .btn {
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 10px;
+    box-shadow: var(--shadow);
+  }
+  .zoom .btn:disabled {
+    opacity: 0.45;
   }
   .timeline.compact {
     height: 100%;
     min-height: 0;
     padding: 0;
   }
-  .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 14px;
-    padding-top: 6px;
-  }
-  /* Narrow: keep the expand button on the first row, next to the count. */
-  @media (max-width: 700px) {
-    .toolbar > :global(.expand) {
-      order: -1;
-      margin-left: auto;
-    }
-    .toolbar > .count {
-      order: -2;
-    }
-  }
-  .count {
-    margin: 0;
-    color: var(--muted);
-    font-size: 0.9rem;
-  }
-  .count b {
-    color: var(--ink);
-  }
   .hint {
     font-size: 0.8rem;
     margin: 0;
   }
   .clear {
-    border: 1px solid var(--accent);
-    background: var(--accent-soft);
-    color: var(--accent);
-    border-radius: 999px;
-    padding: 3px 10px;
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-  .zoom {
-    display: flex;
-    margin-left: auto;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--surface);
-  }
-  .zoom button {
-    border: 0;
-    border-right: 1px solid var(--line);
-    background: transparent;
-    padding: 5px 9px;
-    font-size: 0.82rem;
-    text-transform: capitalize;
-    min-height: 32px;
-  }
-  .zoom button:last-child {
-    border-right: 0;
-  }
-  .zoom .step {
-    min-width: 32px;
-    font-size: 1rem;
-    line-height: 1;
-  }
-  .zoom button:disabled {
-    opacity: 0.4;
-  }
-  .zoom button.on {
+    border-color: var(--accent);
     background: var(--accent-soft);
     color: var(--accent);
     font-weight: 600;
@@ -797,10 +772,10 @@
     /* Uncertain = soft gradient: solid in the middle, fading towards both ends. */
     background: linear-gradient(
       90deg,
-      color-mix(in srgb, var(--tc) 12%, transparent),
-      color-mix(in srgb, var(--tc) 75%, transparent) 35%,
-      color-mix(in srgb, var(--tc) 75%, transparent) 65%,
-      color-mix(in srgb, var(--tc) 12%, transparent)
+      color-mix(in srgb, var(--tc) 25%, transparent),
+      color-mix(in srgb, var(--tc) 90%, transparent) 35%,
+      color-mix(in srgb, var(--tc) 90%, transparent) 65%,
+      color-mix(in srgb, var(--tc) 25%, transparent)
     );
   }
   .item.approx .bar {
@@ -841,7 +816,7 @@
   }
   /* Dimmed = uncertain: expected editions are drawn faint until you point at them. */
   .item.expected:not(.hot):not(.picked) {
-    opacity: 0.6;
+    opacity: 0.82;
   }
   .faded {
     opacity: 0.25;

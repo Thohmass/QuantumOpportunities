@@ -1,3 +1,8 @@
+<script lang="ts" module>
+  // The view (centre and geographic scale) survives the map being re-created, e.g. when a panel is expanded.
+  let remembered: { centre: [number, number]; scale: number } | undefined;
+</script>
+
 <script lang="ts">
   // Our own minimal map: land and sea only (no tiles, borders, labels, roads or rivers). Lazy-loaded with its
   // geometry. The land is painted on a canvas, redrawn sharply at most once per frame while panning and zooming;
@@ -37,6 +42,8 @@
   /** Becomes true once the zoom behaviour exists, so the first framing and deep-linked events can run. */
   let ready = $state(false);
   let fitted = false;
+  /** The view this map starts from, if an earlier map was showing (read now: the first resize overwrites it). */
+  const startView = remembered;
 
   // ---- projection and land, fitted to the box -------------------------------
   const projection = $derived.by((): GeoProjection | undefined => {
@@ -48,11 +55,12 @@
     return new Path2D(geoPath(projection)(land) ?? '');
   });
 
-  let colors = { land: '#fff', coast: '#888' };
+  let colors = { sea: '#ddd', land: '#fff', coast: '#888' };
   function readColors() {
     if (!box) return;
     const cs = getComputedStyle(box);
     colors = {
+      sea: cs.getPropertyValue('--map-sea').trim() || colors.sea,
       land: cs.getPropertyValue('--map-land').trim() || colors.land,
       coast: cs.getPropertyValue('--map-coast').trim() || colors.coast,
     };
@@ -61,7 +69,9 @@
     const ctx = canvas?.getContext('2d');
     if (!ctx || !landPath) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
+    // The sea is painted here too, so land and sea always come from the same theme.
+    ctx.fillStyle = colors.sea;
+    ctx.fillRect(0, 0, w, h);
     ctx.translate(t.x, t.y);
     ctx.scale(t.k, t.k);
     ctx.fillStyle = colors.land;
@@ -135,7 +145,7 @@
   let frame = 0;
   function setupZoom() {
     zoomer = d3zoom<SVGSVGElement, unknown>()
-      .scaleExtent([1, 60])
+      .scaleExtent([K_MIN, K_MAX])
       .translateExtent([
         [0, 0],
         [w, h],
@@ -144,9 +154,18 @@
         [0, 0],
         [w, h],
       ])
-      .on('start', () => (moving = true))
+      // The wheel is handled below (smoothed); everything else as d3 does by default.
+      .filter(
+        (ev: Event) =>
+          ev.type !== 'wheel' && !(ev as MouseEvent).ctrlKey && !(ev as MouseEvent).button,
+      )
+      .on('start', (ev) => {
+        moving = true;
+        if (ev.sourceEvent) stopGlide();
+      })
       .on('zoom', (ev) => {
         next = ev.transform;
+        if (ev.sourceEvent) sample(ev.transform, ev.sourceEvent);
         frame ||= requestAnimationFrame(() => {
           frame = 0;
           if (next) t = next;
@@ -157,10 +176,143 @@
         frame = 0;
         t = ev.transform;
         moving = false;
-        publishBounds();
+        if (ev.sourceEvent) startCoast();
+        if (!gliding) publishBounds();
       });
     select(svg).call(zoomer).on('dblclick.zoom', null);
     ready = true;
+  }
+
+  // ---- smoothing: momentum after a drag or pinch, and an eased mouse wheel ------------------
+  // While a gesture runs, the last ~120 ms of positions are kept. On release, the view keeps moving and zooming
+  // at that speed, slowing down smoothly (like Google Maps). After a pinch, the finger lifted last no longer
+  // pans the view, so the centre doesn't jump.
+  const K_MIN = 1;
+  const K_MAX = 60;
+  /** Momentum fades with this time constant (ms). */
+  const TAU = 325;
+  let samples: { time: number; t: ZoomTransform }[] = [];
+  let pinch: [number, number] | undefined;
+  let wasPinch = false;
+  let gliding = false;
+  let glideFrame = 0;
+
+  function local(x: number, y: number): [number, number] {
+    const r = svg.getBoundingClientRect();
+    return [x - r.left, y - r.top];
+  }
+  function sample(tr: ZoomTransform, src: Event) {
+    const now = performance.now();
+    const touches = (src as TouchEvent).touches;
+    if (touches?.length >= 2) {
+      wasPinch = true;
+      pinch = local(
+        (touches[0]!.clientX + touches[1]!.clientX) / 2,
+        (touches[0]!.clientY + touches[1]!.clientY) / 2,
+      );
+    }
+    samples.push({ time: now, t: tr });
+    while (samples.length > 2 && now - samples[0]!.time > 120) samples.shift();
+  }
+  function stopGlide() {
+    cancelAnimationFrame(glideFrame);
+    glideFrame = 0;
+    if (gliding) {
+      gliding = false;
+      publishBounds();
+    }
+  }
+  /** Moves the view: scale by f around the screen point a, then shift by (dx, dy). */
+  function nudge(f: number, a: [number, number], dx: number, dy: number) {
+    if (!zoomer) return;
+    const k = Math.min(K_MAX, Math.max(K_MIN, t.k * f));
+    const g = k / t.k;
+    const next = zoomIdentity
+      .translate(a[0] + dx + g * (t.x - a[0]), a[1] + dy + g * (t.y - a[1]))
+      .scale(k);
+    select(svg).call(zoomer.transform, next);
+  }
+  function startCoast() {
+    const s = samples;
+    samples = [];
+    const pinched = wasPinch;
+    wasPinch = false;
+    if (s.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const last = s[s.length - 1]!;
+    const first = s[0]!;
+    const dt = last.time - first.time;
+    // Released while still moving? (A pinch may end with a short pause while the last finger lifts.)
+    if (dt < 16 || performance.now() - last.time > (pinched ? 160 : 60)) return;
+    const a: [number, number] = pinched && pinch ? pinch : [w / 2, h / 2];
+    const [wx, wy] = first.t.invert(a);
+    let vx = (last.t.applyX(wx) - a[0]) / dt;
+    let vy = (last.t.applyY(wy) - a[1]) / dt;
+    let vz = Math.log(last.t.k / first.t.k) / dt;
+    if (Math.hypot(vx, vy) < 0.08 && Math.abs(vz) < 0.0004) return;
+    gliding = true;
+    let prev = performance.now();
+    const step = (now: number) => {
+      const d = now - prev;
+      prev = now;
+      const decay = Math.exp(-d / TAU);
+      const travel = TAU * (1 - decay);
+      nudge(Math.exp(vz * travel), a, vx * travel, vy * travel);
+      vx *= decay;
+      vy *= decay;
+      vz *= decay;
+      if (Math.hypot(vx, vy) < 0.01 && Math.abs(vz) < 0.00005) return stopGlide();
+      glideFrame = requestAnimationFrame(step);
+    };
+    glideFrame = requestAnimationFrame(step);
+  }
+
+  // Mouse wheel and trackpad: each notch sets a target zoom; the view eases towards it around the pointer.
+  let wheelTarget = 0;
+  let wheelAt: [number, number] = [0, 0];
+  let wheelFrame = 0;
+  function onWheel(ev: WheelEvent) {
+    ev.preventDefault();
+    if (!zoomer) return;
+    if (!wheelFrame) {
+      stopGlide();
+      wheelTarget = Math.log2(t.k);
+    }
+    const delta =
+      -ev.deltaY * (ev.deltaMode === 1 ? 0.05 : ev.deltaMode ? 1 : 0.002) * (ev.ctrlKey ? 10 : 1);
+    wheelTarget = Math.min(Math.log2(K_MAX), Math.max(Math.log2(K_MIN), wheelTarget + delta));
+    wheelAt = local(ev.clientX, ev.clientY);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      nudge(2 ** wheelTarget / t.k, wheelAt, 0, 0);
+      publishBounds();
+      return;
+    }
+    if (wheelFrame) return;
+    gliding = true;
+    let prev = performance.now();
+    const step = (now: number) => {
+      const d = now - prev;
+      prev = now;
+      const gap = wheelTarget - Math.log2(t.k);
+      if (Math.abs(gap) < 0.002) {
+        wheelFrame = 0;
+        return stopGlide();
+      }
+      nudge(2 ** (gap * (1 - Math.exp(-d / 70))), wheelAt, 0, 0);
+      wheelFrame = requestAnimationFrame(step);
+    };
+    wheelFrame = requestAnimationFrame(step);
+  }
+
+  // After a pinch, ignore the last finger's movement (it would drag the view off centre while lifting).
+  function onTouchMove(ev: TouchEvent) {
+    if (wasPinch && ev.touches.length === 1) ev.stopPropagation();
+  }
+  function onTouchStart(ev: TouchEvent) {
+    if (ev.touches.length === 1) {
+      wasPinch = false;
+      samples = [];
+    }
+    stopGlide();
   }
 
   function publishBounds() {
@@ -175,6 +327,8 @@
     const nw = projection.invert?.([clampX(x0), y0]);
     const se = projection.invert?.([clampX(x1), y1]);
     if (nw && se) app.mapBounds = [se[1], nw[0], nw[1], se[0]];
+    const centre = projection.invert?.(t.invert([w / 2, h / 2]));
+    if (centre) remembered = { centre: [centre[0], centre[1]], scale: t.k * projection.scale() };
   }
 
   onMount(() => {
@@ -185,6 +339,9 @@
       dpr = Math.min(3, window.devicePixelRatio || 1);
     });
     ro.observe(box);
+    svg.addEventListener('wheel', onWheel, { passive: false });
+    box.addEventListener('touchstart', onTouchStart, { capture: true, passive: true });
+    box.addEventListener('touchmove', onTouchMove, { capture: true, passive: true });
     const mq = matchMedia('(prefers-color-scheme: dark)');
     const onScheme = () => requestAnimationFrame(() => (readColors(), draw()));
     mq.addEventListener('change', onScheme);
@@ -192,6 +349,11 @@
       ro.disconnect();
       mq.removeEventListener('change', onScheme);
       cancelAnimationFrame(frame);
+      cancelAnimationFrame(glideFrame);
+      cancelAnimationFrame(wheelFrame);
+      svg.removeEventListener('wheel', onWheel);
+      box.removeEventListener('touchstart', onTouchStart, { capture: true });
+      box.removeEventListener('touchmove', onTouchMove, { capture: true });
       app.mapBounds = undefined;
     };
   });
@@ -225,7 +387,13 @@
   $effect(() => {
     if (fitted || !ready || !dots.length) return;
     fitted = true;
-    untrack(() => fitToResults(false));
+    untrack(() => {
+      const r = startView;
+      const at = r && projection?.(r.centre);
+      if (r && at && projection)
+        zoomTo(Math.max(K_MIN, r.scale / projection.scale()), at[0], at[1], false);
+      else fitToResults(false);
+    });
   });
 
   function zoomTo(k: number, cx: number, cy: number, animate = true) {
@@ -381,6 +549,10 @@
 </section>
 
 <style>
+  /* Named for the expand/shrink animation (view transitions). */
+  .mapview {
+    view-transition-name: qo-map;
+  }
   .mapview {
     position: relative;
     height: calc(100dvh - var(--header-h) - 70px);

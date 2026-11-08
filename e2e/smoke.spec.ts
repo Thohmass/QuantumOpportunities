@@ -86,14 +86,16 @@ test('explore: hovering an event does not scroll the timeline', async ({ page, i
   expect(await scroller.evaluate((el) => [el.scrollLeft, el.scrollTop])).toEqual(before);
 });
 
+// Changed in v0.7 (owner's request): the Week / Month / Quarter / Year / Today buttons were removed; only − / +.
 test('the timeline zooms step by step', async ({ page }) => {
   await page.goto('/#/timeline');
-  const quarter = page.getByRole('button', { name: 'quarter' });
-  await expect(quarter).toHaveAttribute('aria-pressed', 'true');
+  const month = page.getByRole('button', { name: /^Select / }).first();
+  const width = async () => (await month.boundingBox())!.width;
+  const before = await width();
   await page.getByRole('button', { name: 'Zoom in' }).last().click();
-  await expect(quarter).toHaveAttribute('aria-pressed', 'false');
+  await expect.poll(width).toBeGreaterThan(before * 1.3);
   await page.getByRole('button', { name: 'Zoom out' }).last().click();
-  await expect(quarter).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(width).toBeLessThan(before * 1.1);
 });
 
 test('filter groups start folded, except the top ones', async ({ page, isMobile }) => {
@@ -221,4 +223,71 @@ test('expanded map: selecting an event opens the list drawer with its card', asy
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await expect(drawer.locator('article.card.open')).toContainText('Saarland');
   await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
+});
+
+test('map: the wheel zooms smoothly, and expanding keeps the view', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Mouse wheel is a desktop gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  // Zoom in over an event (Europe is the densest area).
+  const dot = (await page.locator('.map-pane g.dot').nth(20).boundingBox())!;
+  await page.mouse.move(dot.x + dot.width / 2, dot.y + dot.height / 2);
+  for (let i = 0; i < 6; i++) await page.mouse.wheel(0, -300);
+  await expect(page.locator('g.dot .bubble.big').first()).toBeAttached({ timeout: 3000 });
+  await page.waitForTimeout(600);
+  await page.getByRole('button', { name: 'Expand the map' }).click();
+  await expect(page).toHaveURL(/#\/map/);
+  await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
+});
+
+test('phones: the list drawer follows the finger (pull the tab, swipe to close)', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Touch gesture on phones');
+  await page.goto('/#/explore');
+  const swipe = async (selector: string, from: [number, number], to: [number, number]) =>
+    page.evaluate(
+      ({ selector, from, to }) => {
+        const el = document.querySelector(selector)!;
+        const touch = (x: number, y: number) =>
+          new Touch({ identifier: 1, target: el, clientX: x, clientY: y });
+        const fire = (type: string, x: number, y: number, list = true) =>
+          el.dispatchEvent(
+            new TouchEvent(type, {
+              bubbles: true,
+              cancelable: true,
+              touches: list ? [touch(x, y)] : [],
+              changedTouches: [touch(x, y)],
+            }),
+          );
+        fire('touchstart', ...from);
+        for (let i = 1; i <= 6; i++)
+          fire(
+            'touchmove',
+            from[0] + ((to[0] - from[0]) * i) / 6,
+            from[1] + ((to[1] - from[1]) * i) / 6,
+          );
+        fire('touchend', ...to, false);
+      },
+      { selector, from, to },
+    );
+  const w = page.viewportSize()!.width;
+  await page.locator('.pull-tab').waitFor();
+  await swipe('.pull-tab', [w - 10, 500], [w - 300, 505]);
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await expect(drawer).toBeVisible();
+  await page.waitForTimeout(300);
+  await swipe('.list-drawer', [80, 400], [w - 20, 410]);
+  await expect(drawer).toBeHidden();
+});
+
+test('selecting a visible card does not scroll the list', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const pane = page.locator('.list-pane');
+  await pane.locator('article.card').nth(1).click();
+  await page.waitForTimeout(500);
+  expect(await pane.evaluate((el) => el.scrollTop)).toBe(0);
 });

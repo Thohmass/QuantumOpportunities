@@ -1,10 +1,20 @@
 <script lang="ts">
   // The corner button of a panel (map, timeline, list): expands it over the other panels, or shrinks it back
   // into the Explore workspace. Expanded panels have their own URL (#/map, #/timeline, #/list).
+  import { flushSync } from 'svelte';
   import { app } from '../lib/state.svelte';
 
   let { panel, label }: { panel: 'map' | 'timeline' | 'list'; label: string } = $props();
   const expanded = $derived(app.view === panel);
+
+  // Animated where the browser supports view transitions: the panel grows over (or shrinks back into) the
+  // workspace while the others fade. Elsewhere, or with reduced motion, it switches at once.
+  function toggle() {
+    const go = () => (app.view = expanded ? 'explore' : panel);
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches)
+      return go();
+    document.startViewTransition(() => flushSync(go));
+  }
 </script>
 
 <button
@@ -12,7 +22,7 @@
   type="button"
   aria-label={expanded ? `Shrink the ${label}` : `Expand the ${label}`}
   title={expanded ? `Shrink the ${label}` : `Expand the ${label}`}
-  onclick={() => (app.view = expanded ? 'explore' : panel)}
+  onclick={toggle}
 >
   <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
     {#if expanded}

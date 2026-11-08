@@ -210,6 +210,85 @@
     document.body.style.overflow =
       (app.filtersOpen || app.listDrawer) && window.innerWidth < 960 ? 'hidden' : '';
   });
+  // Phones: the list drawer follows the finger. Drag the tab on the right edge to the left to pull it out;
+  // swipe the open drawer to the right to push it away. A short flick is enough; letting go part-way snaps.
+  let drawerEl: HTMLDivElement | undefined = $state();
+  let tabEl: HTMLButtonElement | undefined = $state();
+  let swipe:
+    { x0: number; y0: number; t0: number; dx: number; opening: boolean; on: boolean } | undefined =
+    $state();
+  const drawerShift = $derived.by(() => {
+    if (!swipe?.on) return undefined;
+    const w = drawerEl?.offsetWidth ?? window.innerWidth;
+    return swipe.opening ? Math.max(0, w + swipe.dx) : Math.max(0, swipe.dx);
+  });
+  function swipeStart(ev: TouchEvent, opening: boolean) {
+    if (ev.touches.length !== 1) return;
+    const p = ev.touches[0]!;
+    swipe = { x0: p.clientX, y0: p.clientY, t0: performance.now(), dx: 0, opening, on: opening };
+    if (opening) app.listDrawer = true;
+  }
+  function swipeMove(ev: TouchEvent) {
+    if (!swipe || ev.touches.length !== 1) return;
+    const p = ev.touches[0]!;
+    const dx = p.clientX - swipe.x0;
+    const dy = p.clientY - swipe.y0;
+    if (!swipe.on) {
+      // Decide once: a mostly sideways move to the right closes; anything else is ordinary scrolling.
+      if (Math.hypot(dx, dy) < 10) return;
+      if (Math.abs(dx) <= Math.abs(dy) || dx < 0) {
+        swipe = undefined;
+        return;
+      }
+      swipe.on = true;
+    }
+    ev.preventDefault();
+    swipe.dx = dx;
+  }
+  function swipeEnd() {
+    if (!swipe) return;
+    const s = swipe;
+    swipe = undefined;
+    if (!s.on) return;
+    const w = drawerEl?.offsetWidth ?? window.innerWidth;
+    const speed = s.dx / Math.max(1, performance.now() - s.t0); // px per ms
+    if (s.opening) app.listDrawer = -s.dx > w * 0.25 || speed < -0.4 || Math.abs(s.dx) < 6;
+    else app.listDrawer = !(s.dx > w * 0.25 || speed > 0.4);
+  }
+  $effect(() => {
+    const tab = tabEl;
+    if (!tab) return;
+    // The tab stays in the page (under the drawer) until the finger lifts, so it keeps getting the moves.
+    const start = (e: TouchEvent) => swipeStart(e, true);
+    tab.addEventListener('touchstart', start, { passive: true });
+    tab.addEventListener('touchmove', swipeMove, { passive: false });
+    tab.addEventListener('touchend', swipeEnd);
+    tab.addEventListener('touchcancel', swipeEnd);
+    return () => {
+      tab.removeEventListener('touchstart', start);
+      tab.removeEventListener('touchmove', swipeMove);
+      tab.removeEventListener('touchend', swipeEnd);
+      tab.removeEventListener('touchcancel', swipeEnd);
+    };
+  });
+  $effect(() => {
+    const el = drawerEl;
+    if (!el) return;
+    const start = (e: TouchEvent) => {
+      if (!swipe) swipeStart(e, false);
+    };
+    el.addEventListener('touchstart', start, { passive: true });
+    el.addEventListener('touchmove', swipeMove, { passive: false });
+    el.addEventListener('touchend', swipeEnd);
+    el.addEventListener('touchcancel', swipeEnd);
+    return () => {
+      el.removeEventListener('touchstart', start);
+      el.removeEventListener('touchmove', swipeMove);
+      el.removeEventListener('touchend', swipeEnd);
+      el.removeEventListener('touchcancel', swipeEnd);
+    };
+  });
+
   function drawerKey(ev: KeyboardEvent) {
     if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) app.listDrawer = false;
   }
@@ -252,7 +331,12 @@
           onclick={() => (app.filtersOpen = false)}
         ></div>{/if}
     {/if}
-    <main id="main" class:workspace={app.view === 'explore' && !narrow}>
+    <main
+      id="main"
+      class:workspace={(app.view === 'explore' && !narrow) ||
+        app.view === 'map' ||
+        app.view === 'timeline'}
+    >
       {#if app.view !== 'about'}
         <div class="bar">
           <button
@@ -379,9 +463,45 @@
       {/if}
     </main>
   </div>
+  {#if drawerMode && narrow && (!app.listDrawer || swipe?.opening)}
+    <!-- Phones: a tab in thumb reach; tap it, or drag it to the left, to pull out the list. -->
+    <button
+      class="pull-tab"
+      type="button"
+      bind:this={tabEl}
+      aria-label="Open the list ({filtered.length} events)"
+      onclick={() => (app.listDrawer = true)}
+    >
+      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
+        ><path
+          d="M15 5l-7 7 7 7"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        /></svg
+      >
+      <span>{filtered.length}</span>
+    </button>
+  {/if}
   {#if drawerMode && app.listDrawer}
-    <div class="drawer-scrim" aria-hidden="true" onclick={() => (app.listDrawer = false)}></div>
-    <div class="list-drawer" role="dialog" aria-label="Events">
+    <div
+      class="drawer-scrim"
+      aria-hidden="true"
+      style:opacity={drawerShift !== undefined && drawerEl
+        ? 1 - drawerShift / drawerEl.offsetWidth
+        : undefined}
+      onclick={() => (app.listDrawer = false)}
+    ></div>
+    <div
+      class="list-drawer"
+      class:dragging={drawerShift !== undefined}
+      role="dialog"
+      aria-label="Events"
+      bind:this={drawerEl}
+      style:transform={drawerShift !== undefined ? `translateX(${drawerShift}px)` : undefined}
+    >
       <div class="drawer-head">
         <b>Events</b>
         <button
@@ -433,6 +553,34 @@
       animation: none;
     }
   }
+  .list-drawer {
+    /* Vertical scrolling stays native; sideways moves are ours (swipe to close). */
+    touch-action: pan-y;
+    transition: transform 0.2s ease-out;
+  }
+  .list-drawer.dragging {
+    transition: none;
+    animation: none;
+  }
+  .pull-tab {
+    position: fixed;
+    right: 0;
+    top: 62%;
+    z-index: 30;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: 12px 6px 12px 8px;
+    border: 1px solid var(--line);
+    border-right: 0;
+    border-radius: 12px 0 0 12px;
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow);
+    font-size: 0.78rem;
+    font-weight: 700;
+    touch-action: none;
+  }
   .drawer-head {
     display: flex;
     align-items: center;
@@ -448,9 +596,13 @@
   .layout.wide {
     max-width: none;
   }
+  /* Panels run edge to edge (no frame around them); text-only pages keep a margin. */
   main {
-    padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
+    padding: 0;
     min-width: 0;
+  }
+  .layout.single main {
+    padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
   }
   .sidebar {
     position: fixed;
@@ -521,9 +673,18 @@
   .bar {
     display: flex;
     align-items: center;
-    gap: 8px 10px;
+    gap: 6px 10px;
     flex-wrap: wrap;
-    padding-top: 8px;
+    padding: 4px 10px;
+  }
+  .bar:not(:has(.chips :global(*))) .chips {
+    display: none;
+  }
+  @media (max-width: 959px) {
+    /* Phones: the bar only holds filter chips; without any it takes no space. */
+    .bar:not(:has(.chips :global(*))) {
+      display: none;
+    }
   }
   .chips {
     flex: 1;
@@ -555,7 +716,7 @@
       'split vsplit list'
       'timeline vsplit list';
     gap: 0;
-    padding: 8px 0 0;
+    padding: 0;
   }
   /* Desktop Explore: the workspace fills the window exactly, down to its bottom edge (no page scroll). */
   main.workspace {
@@ -563,6 +724,14 @@
     flex-direction: column;
     height: calc(100dvh - var(--header-h));
     min-height: 520px;
+  }
+  /* An expanded map or timeline fills the rest of the window too. */
+  main.workspace > :global(.mapview),
+  main.workspace > :global(.timeline) {
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    margin: 0;
   }
   main.workspace .explore {
     flex: 1;
@@ -587,7 +756,7 @@
         'map'
         'timeline'
         'list';
-      gap: 12px;
+      gap: 0;
       height: auto;
       min-height: 0;
     }
@@ -630,7 +799,7 @@
   .list-pane {
     grid-area: list;
     overflow-y: auto;
-    padding-right: 4px;
+    padding: 0 10px 0 0;
     overscroll-behavior: contain;
   }
   /* In the stacked page the list is part of the page: it must not be its own scroll box, or wheel and touch
