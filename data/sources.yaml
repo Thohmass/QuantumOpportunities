@@ -49,6 +49,10 @@
   url: https://www.ihp.fr/en
   kind: organiser
   covers: [trimesters, schools, workshops]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
 - id: qiskit-events
   name: Qiskit events
   url: https://www.ibm.com/quantum/events
