@@ -6,7 +6,7 @@
   yield: 0
 - q: quantum computing hackathon Europe {year}
   last_used: 2026-11-08
-  uses: 1
+  uses: 2
   yield: 0
 - q: quantum hackathon Nordic Denmark Sweden Finland Norway {year}
   last_used: 2026-11-08
@@ -58,7 +58,7 @@
   yield: 1
 - q: quantum computing conference Asia {year}
   last_used: 2026-11-08
-  uses: 1
+  uses: 2
   yield: 2
 - q: quantum computing conference North America {year}
   last_used: 2026-11-08
