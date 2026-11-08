@@ -43,6 +43,11 @@
   url: https://www.nanowerk.com/events.php
   kind: aggregator
   covers: [conferences]
+  last_scanned: 2026-11-08
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: Fetch returned HTTP 403 on 2026-11-08.
 - id: benasque-center
   name: Centro de Ciencias de Benasque – programme
   url: https://www.benasque.org/

@@ -46,6 +46,9 @@
   uses: 1
   yield: 0
 - q: quantum technology conference Europe {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum industry conference {year}
   last_used: 2026-11-08
   uses: 1

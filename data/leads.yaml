@@ -71,15 +71,11 @@
 - title: Single Photon Workshop (SPW 2027), Singapore, 15–19 Nov 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027 without a link; search for the official page
-- title: QCMC 2027 – International Conference on Quantum Communication, Measurement and Computing
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027, dates and place still TBA
-  url: https://www.qcmc-conference.org
 - title: unitaryHACK 2027 (Unitary Foundation, online open-source quantum hackathon)
   found: 2026-11-08
   hint: Recurring every year (usually late May – June); unitary.foundation shows no 2027 dates, try unitaryhack.dev
   url: https://unitaryhack.dev
-  tries: 2
+  tries: 3
   last_tried: 2026-11-08
 - title: Qiskit Global Summer School 2027 (IBM, online)
   found: 2026-11-08
@@ -99,10 +95,14 @@
   url: https://www.lanl.gov/
 - title: Quantum Korea 2027, Seoul
   found: 2026-11-08
-  hint: Annual Korean quantum conference and expo (usually late June); search for the official site
+  hint: Annual Korean quantum conference and expo (usually late June/July; 2026 was 2–4 Jul at DDP); no 2027 announcement found
+  tries: 1
+  last_tried: 2026-11-08
 - title: Quantum World Congress 2027 (USA)
   found: 2026-11-08
-  hint: Annual conference near Washington DC (usually September); search for the official site
+  hint: Annual conference near Washington DC (usually September; 2026 was 23–25 Sep, College Park); no 2027 dates found
+  tries: 1
+  last_tried: 2026-11-08
 - title: Q2B Tokyo 2027 and Q2B Paris 2027
   found: 2026-11-08
   hint: QC Ware's Q2B runs regional editions besides Silicon Valley/Chicago (Tokyo usually July, Paris usually September); series q2b already exists
