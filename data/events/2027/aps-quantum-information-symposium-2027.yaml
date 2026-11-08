@@ -1,0 +1,31 @@
+id: aps-quantum-information-symposium-2027
+name: APS Quantum Information Symposium (QIS) 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-10
+location:
+  city: New Orleans
+  country: US
+  venue: Hyatt Regency New Orleans
+organizers: [aps]
+topics: [computing, sensing, networks, qit]
+audience: [researcher, phd, postdoc, industry]
+url: https://www.aps.org/about/partner/quantum-information-symposium-2027
+description: First edition of a symposium run by the APS Division of Quantum Information, covering quantum computing, sensing, networking and related areas. Exact days are unclear, as two APS pages differ by two days in October. Abstract call and registration are announced for early 2027.
+sources:
+  - url: https://www.aps.org/about/partner/quantum-information-symposium-2027
+    kind: official
+    accessed: 2026-11-08
+    note: seen in search results (page returned 403 to fetch); lists 16-22 Oct 2027
+  - url: https://www.aps.org/events/2027/division-quantum-information-symposium-qis
+    kind: official
+    accessed: 2026-11-08
+    note: seen in search results (403 to fetch); lists 18-22 Oct 2027
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

@@ -2,6 +2,9 @@
 # last_used each run and updates last_used, uses and yield. Use the current and next year in queries.
 - q: quantum hackathon {year}
 - q: quantum computing hackathon Europe {year}
+  last_used: 2026-11-08
+  uses: 1
+  yield: 0
 - q: quantum hackathon Nordic Denmark Sweden Finland Norway {year}
 - q: quantum challenge competition prize {year}
 - q: quantum summer school {year} application
