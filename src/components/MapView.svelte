@@ -20,6 +20,7 @@
   import LensPanel from './LensPanel.svelte';
   import { LAB } from '../lib/lab';
   import { LENS_DEFAULTS, lensPoint, lensScale, makeLens, type LensSettings } from '../lib/lens';
+  import { SIZE_DEFAULTS, radiusAt, type SizeSettings } from '../lib/size';
   import { typeIcon } from '../lib/icons';
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
@@ -44,11 +45,8 @@
     onmore?: () => void;
   } = $props();
 
-  /** Closest two dots may come, centre to centre (px): small dots, and the large bubbles shown from BIG_AT. */
-  const SPACING = 15;
-  const SPACING_BIG = 27;
-  /** Zoom level (about country scale) from which every dot grows into a bubble with its type icon. */
-  const BIG_AT = 3.5;
+  /** The bubble shape is drawn at this radius and scaled to the size for the zoom level (lib/size.ts). */
+  const DRAWN_R = 11;
   const land = loadLand();
   let box: HTMLDivElement;
   let svg: SVGSVGElement;
@@ -166,12 +164,35 @@
   // Overlaps depend only on the zoom level (not on panning). The level is rounded to small steps and each step's
   // layout is kept, so zooming doesn't recompute it every frame; dots glide to their new spots.
   const kStep = $derived(2 ** (Math.round(Math.log2(t.k) * 8) / 8));
-  const big = $derived(kStep >= BIG_AT);
-  const spacing = $derived(big ? SPACING_BIG : SPACING);
+  // Bubbles grow continuously with the zoom; from a certain size they show their type icon.
+  function loadSize(): SizeSettings {
+    try {
+      return { ...SIZE_DEFAULTS, ...JSON.parse(localStorage.getItem('qo-size') ?? '{}') };
+    } catch {
+      return { ...SIZE_DEFAULTS };
+    }
+  }
+  // Only the lab (?lab) can change these; everyone else gets the defaults.
+  let sizeSettings = $state(LAB ? loadSize() : { ...SIZE_DEFAULTS });
+  $effect(() => {
+    const json = JSON.stringify(sizeSettings);
+    if (!LAB) return;
+    try {
+      localStorage.setItem('qo-size', json);
+    } catch {
+      /* private mode: not remembered */
+    }
+  });
+  const radius = $derived(radiusAt(sizeSettings, kStep));
+  const big = $derived(radius >= sizeSettings.iconAt);
+  const spacing = $derived(2 * radius + sizeSettings.gap);
   let packCache = new Map<number, [number, number][]>();
   let packFor: Dot[] | undefined;
+  let packSettings = '';
   const offsets = $derived.by(() => {
-    if (packFor !== dots) {
+    const key = JSON.stringify(sizeSettings);
+    if (packFor !== dots || packSettings !== key) {
+      packSettings = key;
       packCache = new Map();
       packFor = dots;
     }
@@ -602,7 +623,7 @@
     if (i < 0) return { left: Math.max(8, (w - cw) / 2), top: h - peekH - 14 };
     const [x, y] = placeOf(i);
     if (x < -20 || x > w + 20 || y < -20 || y > h + 20) return undefined;
-    const gap = (big ? 15 : 9) + 12;
+    const gap = radius + 16;
     const left = Math.min(Math.max(8, x - cw / 2), w - cw - 8);
     const above = y - gap - peekH > 8;
     return {
@@ -647,8 +668,7 @@
             {@const isHot = app.hoverId === d.e.id}
             {@const lp = lens ? lensPoint(lens, x + o[0], y + o[1]) : undefined}
             {@const ls = lens ? lensScale(lens, x + o[0], y + o[1]) : 1}
-            {@const grow =
-              (big ? 1 : 0.5) * ls * (isHot || app.eventId === d.e.id ? (big ? 1.12 : 1.2) : 1)}
+            {@const grow = (radius / DRAWN_R) * ls * (isHot || app.eventId === d.e.id ? 1.15 : 1)}
             <g
               class="dot t-{d.e.type} {d.e.status}"
               class:past={d.e.isPast}
@@ -676,14 +696,14 @@
                   transform={lp ? `translate(${lp[0] - x - o[0]} ${lp[1] - y - o[1]})` : undefined}
                 >
                   <circle class="hit" r={(spacing / 2 + 1) * ls} />
-                  <circle class="ring" r={(big ? 14.5 : 8.5) * ls} />
-                  <!-- One bubble, drawn at full size and scaled down to a dot below BIG_AT. -->
+                  <circle class="ring" r={(radius * 1.15 + 3) * ls} />
+                  <!-- One bubble shape, scaled to the size for the zoom level (and the lens). -->
                   <g
                     class="bubble"
                     class:big
                     class:lensing={!!lens}
-                    class:iconic={lens && grow >= 0.8}
-                    style:transform={lens ? `scale(${grow})` : undefined}
+                    class:iconic={grow * DRAWN_R >= sizeSettings.iconAt}
+                    style:transform="scale({grow})"
                   >
                     <circle class="pin" r="11" />
                     <path
@@ -734,7 +754,13 @@
       <!-- The lens is a lab experiment (see "lab" above). -->
     {:else if lensPanel}
       <div class="lens-panel-wrap">
-        <LensPanel bind:s={lensSettings} onclose={() => (lensPanel = false)} />
+        <LensPanel
+          bind:s={lensSettings}
+          bind:size={sizeSettings}
+          {radius}
+          zoom={t.k}
+          onclose={() => (lensPanel = false)}
+        />
       </div>
     {:else}
       <button
@@ -862,11 +888,7 @@
     fill: transparent;
   }
   .bubble {
-    transform: scale(0.5);
     transition: transform 0.25s ease-out;
-  }
-  .bubble.big {
-    transform: scale(1);
   }
   .pin {
     fill: var(--tc);
@@ -883,7 +905,6 @@
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .bubble.big .icon,
   .bubble.iconic .icon {
     opacity: 1;
   }
@@ -948,14 +969,6 @@
   .dot.hot .ring,
   .dot:focus-visible .ring {
     stroke: var(--hot);
-  }
-  .dot.picked .bubble,
-  .dot.hot .bubble {
-    transform: scale(0.6);
-  }
-  .dot.picked .bubble.big,
-  .dot.hot .bubble.big {
-    transform: scale(1.12);
   }
   .label {
     position: absolute;
