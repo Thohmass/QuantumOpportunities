@@ -167,9 +167,19 @@
     app.drawerMode = drawerMode;
     if (!drawerMode) app.listDrawer = false;
   });
+  // Where the list isn't on screen but the map is (phones; desktop with the list hidden), selecting an event
+  // first shows a small card on the map; its details button opens the list (phones) or the pop-up (desktop).
+  const peekMode = $derived(app.view === 'explore' && (narrow || listHidden));
   $effect(() => {
-    if (app.eventId && untrack(() => drawerMode)) app.listDrawer = true;
+    app.peekMode = peekMode;
   });
+  $effect(() => {
+    if (app.eventId && untrack(() => drawerMode && !peekMode)) app.listDrawer = true;
+  });
+  function peekMore() {
+    if (drawerMode) app.listDrawer = true;
+    else app.detailOpen = true;
+  }
   const listOnScreen = $derived(
     app.view === 'list' ||
       (app.view === 'explore' && !narrow && !listHidden) ||
@@ -178,7 +188,9 @@
   // Details: with a list on screen, the card unfolds and "More details" opens everything. Without one, the
   // details open directly: in the centred pop-up on Explore, in the side panel in the Map and Timeline views.
   const panelEvent = $derived(
-    selected && (app.detailOpen || (!listOnScreen && !drawerMode)) ? selected : undefined,
+    selected && (app.detailOpen || (!listOnScreen && !drawerMode && !peekMode))
+      ? selected
+      : undefined,
   );
   // Details always open as the centred pop-up (a bottom sheet on phones).
   const popup = true;
@@ -187,7 +199,7 @@
     app.detailOpen = false;
   });
   function closeDetail() {
-    if (listOnScreen) app.detailOpen = false;
+    if (listOnScreen || peekMode) app.detailOpen = false;
     else app.eventId = undefined;
   }
 
@@ -413,7 +425,7 @@
   // header) deselects the event. Outside a non-modal drawer, it also rolls the drawer back.
   const INTERACTIVE =
     'a, button, input, select, textarea, label, summary, [role="button"], [role="separator"], ' +
-    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab';
+    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap';
   function clickAway(ev: MouseEvent) {
     const t = ev.target;
     if (!(t instanceof Element) || ev.button !== 0) return;
@@ -532,7 +544,14 @@
             {#await mapModule}
               <p class="loading">Loading map…</p>
             {:then M}
-              {#if M}<M.default events={all} {meta} compact />{/if}
+              {#if M}<M.default
+                  events={all}
+                  {meta}
+                  compact
+                  peek={peekMode}
+                  {today}
+                  onmore={peekMore}
+                />{/if}
             {:catch}
               <p class="error">The map could not be loaded.</p>
             {/await}

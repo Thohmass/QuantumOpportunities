@@ -10,6 +10,8 @@ export const app = $state({
   /** The list is a drawer (phones, and the expanded map or timeline); is it open? */
   listDrawer: false,
   drawerMode: false,
+  /** The map shows a small card for the selected event, so selecting doesn't open the list or details. */
+  peekMode: false,
   /** Event under the pointer (or keyboard focus) in any view: highlighted everywhere. */
   hoverId: undefined as string | undefined,
   /** Visible map area [south, west, north, east], set by the map. */
@@ -145,7 +147,7 @@ export function toggleIn(list: string[], value: string): string[] {
 
 export function openEvent(id: string, focus = false): void {
   app.eventId = id;
-  if (app.drawerMode) app.listDrawer = true;
+  if (app.drawerMode && !app.peekMode) app.listDrawer = true;
   if (focus) app.focusTick++;
 }
 

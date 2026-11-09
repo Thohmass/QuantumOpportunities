@@ -125,6 +125,8 @@ test('narrow window: the list is a drawer that scrolls on its own', async ({ pag
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
+// Changed in v0.9 (owner's request): with the list hidden, a click first shows a small card on the map;
+// its details button opens the pop-up.
 test('explore: a hidden list stays hidden; clicking the map opens the details pop-up', async ({
   page,
   isMobile,
@@ -135,6 +137,7 @@ test('explore: a hidden list stays hidden; clicking the map opens the details po
   await page.getByRole('button', { name: 'Hide list' }).click();
   await expect(page.locator('.list-pane')).toHaveCount(0);
   await page.locator('.map-pane g.dot').first().click();
+  await page.getByRole('button', { name: 'All details' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('.list-pane')).toHaveCount(0);
   await page.keyboard.press('Escape');
@@ -554,4 +557,37 @@ test('many filter chips can be folded into one row and unfolded again', async ({
   await expect.poll(async () => (await bar.boundingBox())!.height).toBeLessThan(tall);
   await page.getByRole('button', { name: 'Show all filter chips' }).click();
   await expect.poll(async () => (await bar.boundingBox())!.height).toBe(tall);
+});
+
+test('phones: selecting an event shows a small card on the map first; its details button opens the list', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phone layout');
+  await page.goto('/#/explore');
+  await page.locator('.timeline-pane button.item[aria-label^="MIT iQuHACK"]').click();
+  const card = page.getByRole('group', { name: /MIT iQuHACK 2027: summary/ });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText('Apply by');
+  await expect(page.getByRole('dialog', { name: 'Events' })).toBeHidden();
+  await card.getByRole('button', { name: 'All details' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await expect(drawer.locator('article.card.open')).toContainText('MIT iQuHACK 2027');
+});
+
+test('desktop with the list hidden: the small card closes with its ✕, which deselects', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.getByRole('button', { name: 'Hide list' }).click();
+  await page.locator('.map-pane g.dot').nth(5).click();
+  const card = page.getByRole('group', { name: /: summary$/ });
+  await expect(card).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await card.getByRole('button', { name: 'Close' }).click();
+  await expect(card).toHaveCount(0);
+  await expect(page).not.toHaveURL(/e=/);
 });
