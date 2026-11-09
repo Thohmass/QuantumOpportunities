@@ -36,7 +36,7 @@
   } = $props();
 
   const DAY = 86_400_000;
-  // Zoom is continuous (pixels per day): the mouse wheel, trackpad or touch pinch, or the − / + buttons.
+  // Zoom is continuous (pixels per day): Ctrl/⌘ + wheel, trackpad or touch pinch, or the − / + buttons.
   const DEFAULT_PPD = 3.2;
   const MIN_PPD = 0.45;
   const MAX_PPD = 48;
@@ -425,10 +425,10 @@
     const el = scroller;
     if (!el) return;
     const left = (clientX: number) => clientX - el.getBoundingClientRect().left;
-    // The mouse wheel (and a trackpad pinch, reported as Ctrl + wheel) zooms around the pointer. Sideways
-    // scrolling (trackpad swipe, Shift + wheel) still moves along the timeline.
+    // The wheel scrolls (up/down through the rows; Shift or a sideways swipe moves along the dates).
+    // Ctrl/⌘ + wheel zooms around the pointer; a trackpad pinch arrives as Ctrl + wheel too.
     const onWheel = (ev: WheelEvent) => {
-      if (ev.shiftKey || Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) return;
+      if (!ev.ctrlKey && !ev.metaKey) return;
       ev.preventDefault();
       const dy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
       queueZoom(Math.exp(-dy * 0.004), left(ev.clientX));
@@ -500,7 +500,7 @@
         type="button"
         class="btn"
         aria-label="Zoom out"
-        title="Zoom out (or mouse wheel, pinch)"
+        title="Zoom out (or Ctrl/⌘ + wheel, pinch)"
         disabled={ppd <= MIN_PPD}
         onclick={() => zoomTo(ppd / 1.5)}>−</button
       >
@@ -508,7 +508,7 @@
         type="button"
         class="btn"
         aria-label="Zoom in"
-        title="Zoom in (or mouse wheel, pinch)"
+        title="Zoom in (or Ctrl/⌘ + wheel, pinch)"
         disabled={ppd >= MAX_PPD}
         onclick={() => zoomTo(ppd * 1.5)}>+</button
       >

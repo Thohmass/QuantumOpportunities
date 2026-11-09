@@ -445,3 +445,24 @@ test('Clear all also turns off "Only map area"', async ({ page }) => {
   await expect(page.getByRole('checkbox', { name: 'Only map area' })).not.toBeChecked();
   await expect(page.getByLabel('Active filters')).toHaveCount(0);
 });
+
+test('timeline: the wheel scrolls through the rows; Ctrl + wheel zooms', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse wheel is a desktop gesture');
+  await page.setViewportSize({ width: 1440, height: 450 });
+  await page.goto('/#/timeline');
+  const scroller = page.locator('.timeline .scroller');
+  const month = page.locator('.head .cell.month').first();
+  const width = (await month.boundingBox())!.width;
+  const box = (await scroller.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 400);
+  await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  expect((await month.boundingBox())!.width).toBe(width);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, -400);
+  await page.keyboard.up('Control');
+  await expect.poll(async () => (await month.boundingBox())!.width).toBeGreaterThan(width);
+});
