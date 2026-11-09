@@ -34,6 +34,12 @@ The point of the site is **connecting information in one picture**: where, when 
 - **Event types:** each has an icon as well as a colour. Map dots grow into icon bubbles from country zoom.
 - **Search:** suggests exact filter options rather than guessing from free text.
 
+**v0.8–v0.9 additions:**
+- **One selection, one highlight:** the selected event has the same orange ring everywhere; clicking empty space deselects.
+- **Layers of detail:** hover or tap shows a little (a name on the timeline, a small card on the map), a click opens more, and *All details* opens everything. Nothing jumps straight to the heaviest view.
+- **Information on demand:** secondary marks (deadlines, names that don't fit) appear for the event you point at or select, not for every event at once.
+- **Design rule: icons before words.** When an icon alone says clearly what a button does (an arrow to hide a panel, a funnel for filters, ✕ to close, ↗ for an outside link), use the icon without a label. A specific icon is read faster than text, and repeating it in words is redundant. Every icon-only button still has an accessible name and a tooltip. Use words when no icon is unambiguous.
+
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
 - A real-proportions map, but with curves, lines, colours and shapes from the project's own identity rather than a stock basemap.
