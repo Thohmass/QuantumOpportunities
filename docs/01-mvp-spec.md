@@ -230,3 +230,17 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **The maths:** a smooth fisheye (`src/lib/lens.ts`). It has no hard rim. Space is squeezed slightly in a ring around the focus, and bubbles there shrink a little so they don't pile up.
 - **Optional:** magnify the land too. The coastline bends, but nothing leaves its true place.
 - **Tuning panel:** the magnifier button at the bottom-left of the map. It has reach and size for dots and for icons, make room, follow lag, focus (mouse or map centre) and land, and the values are remembered.
+
+## 18. v0.11 changes (9 Nov 2026, tenth review)
+
+- **Map bubbles grow continuously with the zoom.**
+  - They go from a small dot over the whole world (radius 4.5 px) to 13 px at zoom 12×, along an S-curve, with zoom counted in steps.
+  - The type icon appears from a radius of 8.5 px.
+  - The space between bubbles follows their size.
+  - In the map lab (`?lab`), every value can be tuned live: smallest and largest size, the zoom range, the growth curve (linear, slow-then-fast, fast-then-slow, S-curve), the radius from which the icon shows, and the gap between bubbles.
+- **Room past the map's edges:** half a screen, so any place, even at the edge of the world, can be brought to the middle of the screen. It is measured on screen, so zoomed in it is only a short way of sea.
+- **Phones:**
+  - The Filters button always opens the filters. The search box's invisible input used to cover most of the button.
+  - The filters slide in from the left.
+  - On the expanded map and timeline, selecting an event shows the small card instead of the whole list. On the timeline it sits under the event's bar.
+- **Cards:** the type, cost and expected chips are gone. The colour edge is wider and carries the type's name in bold capitals, read from bottom to top, in a shade of the edge itself. Postponed and cancelled keep their badge, and cost stays in the full details.
