@@ -34,10 +34,10 @@ description: "Company-centred quantum hackathon in Tallinn: five company teams, 
 sources:
   - url: https://kvant.ee/en/qest-hack-2026/
     kind: official
-    accessed: 2026-10-28
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-10-28
-  unchanged_streak: 0
+  last_checked: 2026-11-09
+  unchanged_streak: 1
 added:
   date: 2026-10-23
   by: radar-import

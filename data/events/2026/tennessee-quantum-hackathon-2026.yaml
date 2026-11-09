@@ -10,6 +10,7 @@ dates:
 location:
   city: Chattanooga
   country: US
+  venue: Max Fuller Center, UT Chattanooga
 organizers: [colab-chattanooga, ut-chattanooga]
 topics: [computing, qc-algorithms, qc-software]
 audience: [bsc, msc, phd]
@@ -21,9 +22,9 @@ description: Regional quantum hackathon in Chattanooga for college students from
 sources:
   - url: https://thecompanylab.org/event/tennessee-quantum-hackathon/
     kind: official
-    accessed: 2026-10-23
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-10-23
+  last_checked: 2026-11-09
   unchanged_streak: 0
 added:
   date: 2026-10-23

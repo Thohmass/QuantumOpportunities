@@ -17,6 +17,12 @@ deadlines:
 location:
   city: Hannover
   country: DE
+cost:
+  kind: paid
+  min: 100
+  max: 350
+  currency: EUR
+  note: Early bird to 2027-01-27, regular after; student member 100/130, member 240/270, non-member 320/350; day tickets and free categories exist; net prices exempt from VAT
 organizers: [dpg]
 topics: [optics, qit]
 audience: [phd, postdoc, researcher]
@@ -26,8 +32,11 @@ sources:
   - url: https://hannover27.dpg-tagungen.de/deadlines
     kind: official
     accessed: 2026-11-08
+  - url: https://hannover27.dpg-tagungen.de/attend/registration
+    kind: official
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-09
   unchanged_streak: 0
 added:
   date: 2026-11-08

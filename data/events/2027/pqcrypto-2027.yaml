@@ -6,6 +6,13 @@ format: in_person
 dates:
   start: 2027-05-12
   end: 2027-05-14
+deadlines:
+  - kind: abstract
+    date: 2026-11-17
+    note: Abstract registration and initial paper submission, AoE
+  - kind: other
+    date: 2026-11-24
+    note: Final paper submission, AoE
 location:
   city: Waterloo
   country: CA
@@ -17,9 +24,9 @@ description: The 18th International Conference on Post-Quantum Cryptography, wit
 sources:
   - url: https://easychair.org/cfp/pqcrypto2027
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-09
   unchanged_streak: 0
 added:
   date: 2026-11-08

@@ -14,6 +14,9 @@ location:
   city: Paris
   country: FR
   venue: Institut Henri Poincaré
+cost:
+  kind: free
+  note: Registration is mandatory
 organizers: [institut-henri-poincare]
 topics: [qkd, qit]
 audience: [phd, postdoc, researcher]
@@ -22,9 +25,9 @@ description: Introductory school opening the IHP thematic trimester on quantum c
 sources:
   - url: https://indico.math.cnrs.fr/event/16600/
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-09
   unchanged_streak: 0
 added:
   date: 2026-11-08

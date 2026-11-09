@@ -25,10 +25,10 @@ description: Quantum hackathon at the Sri Siddhartha Institute of Technology for
 sources:
   - url: https://nationalquantumfest.com/
     kind: official
-    accessed: 2026-10-28
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-10-28
-  unchanged_streak: 0
+  last_checked: 2026-11-09
+  unchanged_streak: 1
 added:
   date: 2026-10-28
   by: radar-import
