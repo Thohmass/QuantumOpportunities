@@ -29,3 +29,6 @@ export const TYPE_ICONS: Record<string, string> = {
 };
 
 export const typeIcon = (type: string): string => TYPE_ICONS[type] ?? TYPE_ICONS.other!;
+
+/** The classic filter funnel (24 × 24 view box, stroked). */
+export const FUNNEL = 'M3.5 4.5h17l-6.5 8v6l-4 2v-8z';
