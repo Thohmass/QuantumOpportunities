@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount, untrack } from 'svelte';
   import About from './components/About.svelte';
-  import Chips from './components/Chips.svelte';
   import EdgeToggle from './components/EdgeToggle.svelte';
   import EventDetail from './components/EventDetail.svelte';
   import FilterPanel from './components/FilterPanel.svelte';
@@ -35,7 +34,6 @@
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
-  import { FUNNEL } from './lib/icons';
 
   const today = localToday();
   let meta: Meta | undefined = $state();
@@ -393,30 +391,6 @@
     };
   });
 
-  // The filter chips: when they take more than one row, they can be folded into one.
-  let chipsEl: HTMLDivElement | undefined = $state();
-  let chipsWrap = $state(false);
-  const chipsFolded = $derived(chipsWrap && prefs.chips === 'folded');
-  $effect(() => {
-    const el = chipsEl;
-    if (!el) return;
-    const measure = () => {
-      const items = el.querySelectorAll('button');
-      const first = items[0];
-      const last = items[items.length - 1];
-      chipsWrap = !!first && !!last && last.offsetTop > first.offsetTop + 4;
-    };
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    const mo = new MutationObserver(measure);
-    mo.observe(el, { childList: true, subtree: true });
-    measure();
-    return () => {
-      ro.disconnect();
-      mo.disconnect();
-    };
-  });
-
   function drawerKey(ev: KeyboardEvent) {
     if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) closeDrawer();
   }
@@ -425,7 +399,7 @@
   // header) deselects the event. Outside a non-modal drawer, it also rolls the drawer back.
   const INTERACTIVE =
     'a, button, input, select, textarea, label, summary, [role="button"], [role="separator"], ' +
-    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap';
+    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap, .name-line, .link';
   function clickAway(ev: MouseEvent) {
     const t = ev.target;
     if (!(t instanceof Element) || ev.button !== 0) return;
@@ -437,7 +411,12 @@
 </script>
 
 <svelte:window onkeydown={drawerKey} onclick={clickAway} />
-<Header shown={filtered.length} total={events.filter((e) => !e.isPast).length} pool={suggestPool} />
+<Header
+  shown={filtered.length}
+  total={events.filter((e) => !e.isPast).length}
+  pool={suggestPool}
+  {meta}
+/>
 
 {#if error}
   <p class="error" role="alert">{error}</p>
@@ -453,7 +432,16 @@
   >
     {#if app.view !== 'about'}
       <aside class="sidebar" class:open={app.filtersOpen} aria-label="Filters">
-        <FilterPanel {meta} {counts} {universe} shown={filtered.length} />
+        <FilterPanel
+          {meta}
+          {counts}
+          {universe}
+          shown={filtered.length}
+          onclose={() =>
+            matchMedia('(max-width: 959px)').matches
+              ? (app.filtersOpen = false)
+              : setPref('sidebar', 'hidden')}
+        />
       </aside>
       {#if !sidebarHidden}
         <div class="filters-split">
@@ -465,31 +453,6 @@
             onresize={(v) => setWidth('filters', v)}
             onreset={() => setWidth('filters', WIDTHS.filters.initial)}
           />
-          <EdgeToggle
-            edge="left"
-            open
-            label="Hide filters"
-            onclick={() => setPref('sidebar', 'hidden')}
-          />
-        </div>
-      {:else}
-        <div class="desk-only">
-          <EdgeToggle
-            edge="left"
-            open={false}
-            label="Show filters"
-            onclick={() => setPref('sidebar', 'shown')}
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
-              ><path
-                d={FUNNEL}
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linejoin="round"
-              /></svg
-            >
-          </EdgeToggle>
         </div>
       {/if}
       {#if app.filtersOpen}<div
@@ -502,34 +465,6 @@
       id="main"
       class:workspace={app.view === 'explore' || app.view === 'map' || app.view === 'timeline'}
     >
-      {#if app.view !== 'about'}
-        <div class="bar" class:folded={chipsFolded}>
-          <div class="chips" id="active-chips" bind:this={chipsEl}><Chips {meta} /></div>
-          {#if chipsWrap}
-            <!-- Many chips take several rows: an arrow hanging under the bar folds them into one. -->
-            <button
-              type="button"
-              class="fold"
-              aria-controls="active-chips"
-              aria-expanded={!chipsFolded}
-              aria-label={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
-              title={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
-              onclick={() => setPref('chips', chipsFolded ? 'open' : 'folded')}
-            >
-              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
-                ><path
-                  d={chipsFolded ? 'M5 9l7 7 7-7' : 'M5 15l7-7 7 7'}
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.6"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                /></svg
-              >
-            </button>
-          {/if}
-        </div>
-      {/if}
       {#if app.view === 'explore'}
         <div
           class="explore"
@@ -890,61 +825,6 @@
     }
     .layout.nosidebar .sidebar,
     .layout.single .filters-split {
-      display: none;
-    }
-  }
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 6px 10px;
-    flex-wrap: wrap;
-    padding: 4px 10px;
-  }
-  .bar {
-    position: relative;
-    z-index: 14;
-  }
-  /* Folded: one row of chips (the rest are a click away). */
-  .bar.folded .chips {
-    max-height: 44px;
-    overflow: hidden;
-  }
-  .fold {
-    position: absolute;
-    right: 14px;
-    bottom: -18px;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 18px;
-    padding: 0;
-    border: 1px solid var(--line);
-    border-top: 0;
-    border-radius: 0 0 10px 10px;
-    background: var(--bg);
-    color: var(--muted);
-    box-shadow: 0 3px 6px rgb(0 0 0 / 12%);
-  }
-  .fold:hover,
-  .fold:focus-visible {
-    color: var(--ink);
-  }
-  .bar:has(.fold) {
-    border-bottom: 1px solid var(--line);
-  }
-  /* The bar only holds filter chips; without any it takes no space. */
-  .bar:not(:has(.chips :global(*))) {
-    display: none;
-  }
-  .chips {
-    flex: 1;
-    min-width: 0;
-  }
-  .desk-only {
-    display: contents;
-  }
-  @media (max-width: 959px) {
-    .desk-only {
       display: none;
     }
   }

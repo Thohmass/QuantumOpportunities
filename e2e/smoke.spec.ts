@@ -444,9 +444,11 @@ test('phones: the list tab can be moved to the left edge, and the list then open
   await expect.poll(async () => (await drawer.boundingBox())!.x).toBeLessThan(1);
 });
 
+// Changed in v0.10: the chips moved into the search box, which opens first on phones.
 test('Clear all also turns off "Only map area"', async ({ page }) => {
   await page.goto('/#/explore?type=hackathon');
   await page.getByRole('checkbox', { name: 'Only map area' }).check();
+  await page.getByRole('combobox', { name: 'Search events' }).click();
   await page.getByLabel('Active filters').getByRole('button', { name: 'Clear all' }).click();
   await expect(page.getByRole('checkbox', { name: 'Only map area' })).not.toBeChecked();
   await expect(page.getByLabel('Active filters')).toHaveCount(0);
@@ -524,6 +526,7 @@ test('timeline: a band icon filters to its event type, and back', async ({ page 
   expect(await page.locator('.band-icon').count()).toBeGreaterThan(1);
 });
 
+// Changed in v0.10: the filters' arrow is in the panel's top-right corner; the funnel brings them back.
 test('desktop: arrows on the panel borders hide filters and list; tabs at the edges bring them back', async ({
   page,
   isMobile,
@@ -541,22 +544,11 @@ test('desktop: arrows on the panel borders hide filters and list; tabs at the ed
   expect(tab.x + tab.width).toBeGreaterThan(1438);
   await page.getByRole('button', { name: 'Hide filters' }).click();
   await expect(page.getByRole('complementary', { name: 'Filters' })).toBeHidden();
-  await page.getByRole('button', { name: 'Show filters' }).click();
+  // Changed in v0.10: the filters come back with the funnel in the search box.
+  await page.getByRole('button', { name: 'Filters', exact: true }).click();
   await expect(page.getByRole('complementary', { name: 'Filters' })).toBeVisible();
   await showList.click();
   await expect(page.locator('.list-pane')).toHaveCount(1);
-});
-
-test('many filter chips can be folded into one row and unfolded again', async ({ page }) => {
-  await page.goto(
-    '/#/explore?type=hackathon,conference,workshop,summer_school,challenge,winter_school,programme',
-  );
-  const bar = page.locator('div.bar');
-  const tall = (await bar.boundingBox())!.height;
-  await page.getByRole('button', { name: 'Fold the filter chips' }).click();
-  await expect.poll(async () => (await bar.boundingBox())!.height).toBeLessThan(tall);
-  await page.getByRole('button', { name: 'Show all filter chips' }).click();
-  await expect.poll(async () => (await bar.boundingBox())!.height).toBe(tall);
 });
 
 test('phones: selecting an event shows a small card on the map first; its details button opens the list', async ({
@@ -590,4 +582,97 @@ test('desktop with the list hidden: the small card closes with its ✕, which de
   await card.getByRole('button', { name: 'Close' }).click();
   await expect(card).toHaveCount(0);
   await expect(page).not.toHaveURL(/e=/);
+});
+
+// Replaces "many filter chips can be folded into one row" (v0.9): the chips bar is gone.
+test('active filters are chips in the search box; the ones that do not fit unfold when pointed at', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(
+    '/#/explore?type=hackathon,conference,workshop,summer_school,challenge,winter_school,programme',
+  );
+  const box = page.locator('.search .box');
+  await expect(box.getByRole('group', { name: 'Active filters' })).toBeVisible();
+  const more = box.getByRole('button', { name: /more filters$/ });
+  await expect(more).toBeVisible();
+  const all = page.getByRole('group', { name: 'Every active filter' });
+  await expect(all).toBeHidden();
+  await box.hover();
+  await expect(all.getByRole('button', { name: 'Remove filter Programme' })).toBeVisible();
+  await all.getByRole('button', { name: 'Remove filter Programme' }).click();
+  await expect(page).not.toHaveURL(/programme/);
+});
+
+test('the funnel in the search box shows and hides the filters', async ({ page, isMobile }) => {
+  await page.goto('/#/explore');
+  const panel = page.getByRole('complementary', { name: 'Filters' });
+  if (isMobile) {
+    await page.getByRole('combobox', { name: 'Search events' }).click();
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await expect(panel).toBeVisible();
+    await panel.getByRole('button', { name: 'Hide filters' }).click();
+    await expect(panel).toBeHidden();
+  } else {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await expect(panel).toBeVisible();
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await expect(panel).toBeHidden();
+    await page.getByRole('button', { name: 'Filters', exact: true }).click();
+    await expect(panel).toBeVisible();
+  }
+});
+
+test('timeline: a pointed-at event closes as soon as the mouse leaves; its row is shaded', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const tl = page.locator('.timeline-pane');
+  await tl.locator('button.item').nth(6).hover();
+  await expect(tl.locator('.name-line')).toHaveCount(1);
+  await expect(tl.locator('.row-hl')).toHaveCount(1);
+  await page.mouse.move(700, 120); // over the map
+  await expect(tl.locator('.name-line')).toHaveCount(0);
+  await expect(tl.locator('.row-hl')).toHaveCount(0);
+});
+
+test('map: a flung map glides to the edge of the world and stops there', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse drag');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/map');
+  const svg = page.locator('svg[role="img"]');
+  await svg.waitFor();
+  for (let i = 0; i < 3; i++)
+    await page.locator('.mapview').getByRole('button', { name: 'Zoom in' }).click();
+  await page.waitForTimeout(600);
+  const x = () => svg.evaluate((el) => (el as unknown as { __zoom: { x: number } }).__zoom.x);
+  // Fast flings to the right (towards the date line in the west). After each glide, a slow drag the same way
+  // must never pull the map back: the glide stops at the edge of the world. (It used to overshoot into empty
+  // sea, and the next drag snapped the map back.)
+  for (let f = 0; f < 3; f++) {
+    await page.mouse.move(300, 450);
+    await page.mouse.down();
+    for (let i = 1; i <= 8; i++) {
+      await page.mouse.move(300 + i * 130, 450);
+      await page.waitForTimeout(12);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(1800);
+    const after = await x();
+    await page.mouse.move(600, 450);
+    await page.mouse.down();
+    await page.mouse.move(640, 450, { steps: 8 });
+    await page.waitForTimeout(300);
+    await page.mouse.up();
+    await page.waitForTimeout(200);
+    expect(await x()).toBeGreaterThanOrEqual(after - 1);
+  }
 });

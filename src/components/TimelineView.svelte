@@ -263,14 +263,19 @@
   // ---- opened events: the selected one and the one the mouse points at ------------------------------
   // An opened event gets a row of its own: the events that shared its row move to a new row just below,
   // which leaves room for its name and place right beside the bar, and its deadlines unfold from it.
-  // Both can be open at once. What the mouse points at stays open until it points at another event (or
-  // leaves the timeline), so moving across the gap left behind never makes the rows jump back and forth.
+  // Both can be open at once. What the mouse points at closes as soon as the mouse leaves it (its bar, deadline
+  // line, diamonds and name all count, with a short grace to cross the gaps between them). The pointed event
+  // keeps its place: its own row is the one it was on, and the others move down, so it never jumps away
+  // from under the mouse.
   let pointed: string | undefined = $state();
   let pointTimer = 0;
   function point(id: string | undefined) {
     clearTimeout(pointTimer);
-    pointTimer = window.setTimeout(() => (pointed = id), id ? 110 : 250);
+    pointTimer = window.setTimeout(() => (pointed = id), id ? 90 : 140);
   }
+  const keepOpen = (id: string) => (ev: PointerEvent) => {
+    if (ev.pointerType === 'mouse') point(id);
+  };
   const openSet = $derived(new Set([app.eventId, pointed].filter((v): v is string => !!v)));
   const layout = $derived.by(() => {
     const byRow: Placed[][] = Array.from({ length: placed.rows }, () => []);
@@ -283,7 +288,10 @@
       bandFirst[bi] = d;
       for (let r = band.firstRow; r < band.firstRow + band.rows; r++) {
         const items = byRow[r]!;
-        const own = items.filter((p) => openSet.has(p.e.id)).sort((a, b) => a.left - b.left);
+        // The selected event first, then the pointed one (which so stays where the mouse is).
+        const own = items
+          .filter((p) => openSet.has(p.e.id))
+          .sort((a, b) => Number(b.e.id === app.eventId) - Number(a.e.id === app.eventId));
         for (const p of own) {
           rowOf.set(p.e.id, d);
           bandOfRow[d++] = bi;
@@ -339,7 +347,20 @@
     const head = !!(ev.target as HTMLElement).closest('.head');
     pending = { x: localX(ev), id: ev.pointerId, head, add: ev.ctrlKey || ev.metaKey };
   }
+  // The row under the mouse gets a faint shade, so you can follow it along.
+  let hoverRow: number | undefined = $state();
+  function shadeRow(ev: PointerEvent) {
+    if (ev.pointerType !== 'mouse' || !canvas || drag) return void (hoverRow = undefined);
+    const y = ev.clientY - canvas.getBoundingClientRect().top;
+    let d = -1;
+    for (let r = 0; r < layout.rows; r++) {
+      const top = rowTop(r);
+      if (y >= top - 2 && y < top + rowH - 2) d = r;
+    }
+    hoverRow = d >= 0 ? d : undefined;
+  }
   function move(ev: PointerEvent) {
+    shadeRow(ev);
     if (drag) drag.x1 = localX(ev);
     else if (pending && Math.abs(localX(ev) - pending.x) > 6) {
       drag = { x0: pending.x, x1: localX(ev), head: pending.head, add: pending.add };
@@ -566,7 +587,10 @@
         onpointermove={move}
         onpointerup={up}
         onpointercancel={() => ((drag = undefined), (pending = undefined))}
-        onpointerleave={() => point(undefined)}
+        onpointerleave={() => {
+          point(undefined);
+          hoverRow = undefined;
+        }}
         onclick={clickBody}
         role="presentation"
       >
@@ -597,6 +621,9 @@
               style:top="{rowTop(layout.bandFirst[i]!) - LANE_GAP / 2 - 3}px"
             ></div>{/if}
         {/each}
+        {#if hoverRow !== undefined}
+          <div class="row-hl" style:top="{rowTop(hoverRow) - 3}px" style:height="{rowH}px"></div>
+        {/if}
         <div class="head">
           {#each months as m (m.key)}
             <button
@@ -670,6 +697,9 @@
               {#each p.deadlines as d, k (d.x)}
                 <span
                   class="link"
+                  role="presentation"
+                  onpointerenter={keepOpen(p.e.id)}
+                  onpointerleave={() => point(undefined)}
                   style:left="{d.x}px"
                   style:width="{p.left - d.x}px"
                   style:top="{top + itemH / 2 - 1}px"
@@ -685,8 +715,15 @@
                   style:--delay="{Math.min(0.5, 0.18 + (p.left - d.x) / 1600)}s"
                   style:z-index={20 - k}
                   aria-label="{d.label} ({p.e.name})"
-                  onpointerenter={(ev) => ev.pointerType === 'mouse' && hover(p.e.id)}
-                  onpointerleave={() => hover(undefined)}
+                  onpointerenter={(ev) => {
+                    if (ev.pointerType !== 'mouse') return;
+                    hover(p.e.id);
+                    point(p.e.id);
+                  }}
+                  onpointerleave={() => {
+                    hover(undefined);
+                    point(undefined);
+                  }}
                   onclick={() => {
                     openEvent(p.e.id);
                     flash(p.e.id, 'deadlines');
@@ -710,7 +747,10 @@
                 hover(p.e.id);
                 point(p.e.id);
               }}
-              onpointerleave={() => hover(undefined)}
+              onpointerleave={() => {
+                hover(undefined);
+                point(undefined);
+              }}
               onfocus={(ev) => ev.currentTarget.matches(':focus-visible') && hover(p.e.id)}
               onblur={() => hover(undefined)}
               aria-label="{p.e.name}, {formatRange(p.e.dates.start, p.e.dates.end)}, {statusLabel(
@@ -727,6 +767,10 @@
               {@const where = whereText(p.e)}
               <div
                 class="name-line"
+                role="presentation"
+                onclick={() => openEvent(p.e.id)}
+                onpointerenter={keepOpen(p.e.id)}
+                onpointerleave={() => point(undefined)}
                 class:hot={hot || picked}
                 style:left="{nameX(p)}px"
                 style:top="{top}px"
@@ -1006,6 +1050,14 @@
   .band-icon.on {
     box-shadow: 0 0 0 2px var(--accent);
   }
+  .row-hl {
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+    pointer-events: none;
+    transition: top 0.08s ease-out;
+  }
   .band-line {
     position: absolute;
     left: 0;
@@ -1027,7 +1079,7 @@
     font-size: 0.78rem;
     white-space: nowrap;
     color: var(--ink);
-    pointer-events: none;
+    cursor: pointer;
     animation: line-in 0.16s ease-out;
   }
   .name-line span {
@@ -1118,6 +1170,12 @@
     z-index: 2;
     transform-origin: right center;
     animation: grow var(--grow, 0.3s) ease-out both;
+  }
+  /* A taller target than the 2 px line, so the mouse can follow it to the diamonds. */
+  .link::before {
+    content: '';
+    position: absolute;
+    inset: -6px 0;
   }
   .diamond {
     position: absolute;

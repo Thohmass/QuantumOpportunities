@@ -21,7 +21,7 @@
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
-  import { loadLand } from '../lib/world';
+  import { loadLand, worldExtent } from '../lib/world';
 
   let {
     events,
@@ -163,10 +163,14 @@
   function setupZoom() {
     zoomer = d3zoom<SVGSVGElement, unknown>()
       .scaleExtent([K_MIN, K_MAX])
-      .translateExtent([
-        [0, 0],
-        [w, h],
-      ])
+      .translateExtent(
+        projection
+          ? worldExtent(projection, land)
+          : [
+              [0, 0],
+              [w, h],
+            ],
+      )
       .extent([
         [0, 0],
         [w, h],
@@ -239,15 +243,30 @@
       publishBounds();
     }
   }
-  /** Moves the view: scale by f around the screen point a, then shift by (dx, dy). */
-  function nudge(f: number, a: [number, number], dx: number, dy: number) {
-    if (!zoomer) return;
+  /** The same transform, moved back inside the world if it shows beyond its edges. */
+  function within(tr: ZoomTransform): ZoomTransform {
+    if (!zoomer) return tr;
+    return zoomer.constrain()(
+      tr,
+      [
+        [0, 0],
+        [w, h],
+      ],
+      zoomer.translateExtent(),
+    );
+  }
+  /** Moves the view: scale by f around the screen point a, then shift by (dx, dy), kept within the world.
+   * Returns which directions hit the edge of the world (so momentum stops there instead of piling up). */
+  function nudge(f: number, a: [number, number], dx: number, dy: number): [boolean, boolean] {
+    if (!zoomer) return [true, true];
     const k = Math.min(K_MAX, Math.max(K_MIN, t.k * f));
     const g = k / t.k;
-    const next = zoomIdentity
+    const want = zoomIdentity
       .translate(a[0] + dx + g * (t.x - a[0]), a[1] + dy + g * (t.y - a[1]))
       .scale(k);
+    const next = within(want);
     select(svg).call(zoomer.transform, next);
+    return [Math.abs(next.x - want.x) > 0.5, Math.abs(next.y - want.y) > 0.5];
   }
   function startCoast() {
     const s = samples;
@@ -273,9 +292,10 @@
       prev = now;
       const decay = Math.exp(-d / TAU);
       const travel = TAU * (1 - decay);
-      nudge(Math.exp(vz * travel), a, vx * travel, vy * travel);
-      vx *= decay;
-      vy *= decay;
+      const [edgeX, edgeY] = nudge(Math.exp(vz * travel), a, vx * travel, vy * travel);
+      // At the edge of the world the glide stops in that direction (no drifting off into empty sea).
+      vx = edgeX ? 0 : vx * decay;
+      vy = edgeY ? 0 : vy * decay;
       vz *= decay;
       if (Math.hypot(vx, vy) < 0.01 && Math.abs(vz) < 0.00005) return stopGlide();
       glideFrame = requestAnimationFrame(step);
@@ -396,7 +416,7 @@
       }
       last = { projection: p, w, h };
       setupZoom();
-      select(svg).call(zoomer!.transform, next);
+      select(svg).call(zoomer!.transform, within(next));
       publishBounds();
     });
   });
@@ -415,10 +435,12 @@
 
   function zoomTo(k: number, cx: number, cy: number, animate = true) {
     if (!zoomer) return;
-    const target = zoomIdentity
-      .translate(w / 2, h / 2)
-      .scale(k)
-      .translate(-cx, -cy);
+    const target = within(
+      zoomIdentity
+        .translate(w / 2, h / 2)
+        .scale(k)
+        .translate(-cx, -cy),
+    );
     const sel = select(svg);
     if (animate) sel.transition().duration(650).call(zoomer.transform, target);
     else sel.call(zoomer.transform, target);

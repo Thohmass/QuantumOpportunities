@@ -2,10 +2,16 @@
   import { FUNNEL } from '../lib/icons';
   import { activeCount } from '../lib/filters';
   import type { Suggestion } from '../lib/suggest';
+  import type { Meta } from '../lib/types';
   import SearchBox from './SearchBox.svelte';
   import { app, closeDrawer, prefs, setPref, type Theme } from '../lib/state.svelte';
 
-  let { shown, total, pool }: { shown: number; total: number; pool: Suggestion[] } = $props();
+  let {
+    shown,
+    total,
+    pool,
+    meta,
+  }: { shown: number; total: number; pool: Suggestion[]; meta?: Meta } = $props();
 
   const nActive = $derived(activeCount(app.filters));
   let box: SearchBox | undefined = $state();
@@ -66,7 +72,7 @@
       </svg>
       <span>Quantum <b>Opportunities</b></span>
     </a>
-    <div class="search"><SearchBox {pool} bind:this={box} /></div>
+    <div class="search"><SearchBox {pool} {meta} bind:this={box} /></div>
     <button
       class="btn filters-btn"
       aria-expanded={app.filtersOpen}
@@ -151,8 +157,9 @@
     align-items: center;
     gap: 10px;
   }
+  /* Wide: the active filters live in the search box too. */
   .search {
-    flex: 0 1 300px;
+    flex: 0 1 620px;
     min-width: 0;
   }
   .shown {
@@ -225,7 +232,7 @@
       display: none;
     }
     .search {
-      flex-basis: 220px;
+      flex-basis: 420px;
     }
   }
   @media (max-width: 959px) {

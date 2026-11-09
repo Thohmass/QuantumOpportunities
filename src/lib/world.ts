@@ -1,5 +1,6 @@
 // The land shape for our own map: Natural Earth 1:110m land (world-atlas, public domain), without Antarctica.
 // No country borders: the map shows only land and sea. Loaded with the map chunk.
+import { geoPath, type GeoProjection } from 'd3-geo';
 import { feature } from 'topojson-client';
 import type { GeometryCollection, Topology } from 'topojson-specification';
 import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
@@ -24,4 +25,20 @@ export function loadLand(): FeatureCollection<MultiPolygon> {
     ],
   };
   return cached;
+}
+
+/** The area the map view may show, in projected (unzoomed) pixels: the world from date line to date line, and
+ * the land from north to south. Not the map box: when the world is fitted by its height, the box is wider than
+ * the world, and zoomed in its margins would be a long way of empty sea. */
+export function worldExtent(
+  projection: GeoProjection,
+  land: FeatureCollection<MultiPolygon>,
+): [[number, number], [number, number]] {
+  const [[, y0], [, y1]] = geoPath(projection).bounds(land);
+  const [x0] = projection([-180, 0])!;
+  const [x1] = projection([180, 0])!;
+  return [
+    [x0, y0],
+    [x1, y1],
+  ];
 }
