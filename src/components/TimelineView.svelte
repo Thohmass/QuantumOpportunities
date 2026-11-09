@@ -6,8 +6,9 @@
 <script lang="ts">
   import { tick, untrack } from 'svelte';
   import ExpandButton from './ExpandButton.svelte';
+  import TypeIcon from './TypeIcon.svelte';
   import { bounds, formatRange, isoDay, monthName } from '../lib/dates';
-  import { statusLabel } from '../lib/format';
+  import { NOT_FOUND, statusLabel, whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
   import {
     clickSelect,
@@ -24,14 +25,14 @@
     today,
     dimmed = new Set<string>(),
     compact = false,
-    fit = false,
+    types = [],
   }: {
     events: Ev[];
     today: number;
     dimmed?: Set<string>;
     compact?: boolean;
-    /** Grow to show every row (phones, where the page scrolls) instead of scrolling inside. */
-    fit?: boolean;
+    /** Event types in their display order: one band of rows per type. */
+    types?: { id: string; name: string }[];
   } = $props();
 
   const DAY = 86_400_000;
@@ -43,9 +44,6 @@
   /** The visible part of the scroller, kept up to date (once per frame) while scrolling and resizing. */
   let view = $state({ left: 0, width: 800, height: 0 });
   const HEAD = 46;
-  const CHAR = 7;
-  /** Long names are cut short (full name on hover), so more events fit side by side on a row. */
-  const LABEL_MAX = 170;
 
   const range = $derived.by(() => {
     let lo = today - 21 * DAY;
@@ -141,50 +139,151 @@
     return out;
   });
 
-  // ---- rows ----------------------------------------------------------------
+  // ---- rows: one band per event type ------------------------------------------
+  // Each type gets its own band of rows (its icon at the left edge), so the colours sort themselves and a glance
+  // answers "what kinds of events, when". Within a band, bars are packed into as few rows as possible. A name is
+  // written inside its bar only where it fits at the current zoom; pointing at a bar (or selecting it) opens a
+  // line under it with the name and the place.
   interface Placed {
     e: Ev;
     left: number;
     barW: number;
-    lane: number;
+    row: number;
+    /** Width of the name in the full label size (it is scaled with the bar height). */
+    textW: number;
     deadlines: { x: number; label: string }[];
   }
+  interface Band {
+    type: string;
+    name: string;
+    firstRow: number;
+    rows: number;
+  }
+  const GAP = 6;
+  const LANE_GAP = 7;
+  // Text widths for "does the name fit in the bar", measured once per name in the label font.
+  let measure: CanvasRenderingContext2D | null | undefined;
+  const widths = new Map<string, number>();
+  let rem = 0;
+  function remPx(): number {
+    return (rem ||= parseFloat(getComputedStyle(document.documentElement).fontSize) || 16);
+  }
+  function textW(text: string): number {
+    let v = widths.get(text);
+    if (v !== undefined) return v;
+    measure ??= document.createElement('canvas').getContext('2d');
+    if (measure) {
+      measure.font = `600 ${0.72 * remPx()}px ${getComputedStyle(document.body).fontFamily}`;
+      v = measure.measureText(text).width;
+    } else v = text.length * 6.5;
+    widths.set(text, v);
+    return v;
+  }
   const placed = $derived.by(() => {
-    const lanes: number[] = [];
-    const out: Placed[] = [];
-    const sorted = [...events].sort(
-      (a, b) => a.display.span[0] - b.display.span[0] || a.name.localeCompare(b.name),
-    );
-    for (const e of sorted) {
-      const left = x(e.display.span[0]);
-      const barW = Math.max(10, x(e.display.span[1] + DAY) - left);
-      const deadlines = Array.isArray(e.deadlines)
-        ? e.deadlines
-            .map((d) => ({
-              x: x(bounds(d.date)[1]),
-              label: `${d.kind.replace('_', ' ')} deadline ${d.date}`,
-            }))
-            .filter((d) => d.x >= 0 && d.x < left)
-        : [];
-      const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
-      const label = e.name;
-      const end = left + barW + 8 + Math.min(LABEL_MAX, label.length * CHAR);
-      let lane = lanes.findIndex((r) => r + 12 < startX);
-      if (lane === -1) lane = lanes.push(end) - 1;
-      else lanes[lane] = end;
-      out.push({ e, left, barW, lane, deadlines });
+    const order = new Map(types.map((t, i) => [t.id, i]));
+    const byType = new Map<string, Ev[]>();
+    for (const e of events) {
+      const list = byType.get(e.type);
+      if (list) list.push(e);
+      else byType.set(e.type, [e]);
     }
-    return { items: out, lanes: Math.max(lanes.length, 1) };
+    const typeIds = [...byType.keys()].sort(
+      (a, b) => (order.get(a) ?? 99) - (order.get(b) ?? 99) || a.localeCompare(b),
+    );
+    const items: Placed[] = [];
+    const bands: Band[] = [];
+    let row = 0;
+    for (const type of typeIds) {
+      const list = byType
+        .get(type)!
+        .sort((a, b) => a.display.span[0] - b.display.span[0] || a.name.localeCompare(b.name));
+      const ends: number[] = [];
+      for (const e of list) {
+        const left = x(e.display.span[0]);
+        const barW = Math.max(10, x(e.display.span[1] + DAY) - left);
+        const deadlines = Array.isArray(e.deadlines)
+          ? e.deadlines
+              .map((d) => ({
+                x: x(bounds(d.date)[1]),
+                label: `${d.kind.replace('_', ' ')} deadline ${d.date}`,
+              }))
+              .filter((d) => d.x >= 0 && d.x < left)
+          : [];
+        const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
+        let r = ends.findIndex((end) => end + GAP <= startX);
+        if (r === -1) r = ends.push(left + barW) - 1;
+        else ends[r] = left + barW;
+        items.push({
+          e,
+          left,
+          barW,
+          row: row + r,
+          textW: textW(e.name),
+          deadlines,
+        });
+      }
+      bands.push({
+        type,
+        name: types.find((t) => t.id === type)?.name ?? type,
+        firstRow: row,
+        rows: Math.max(1, ends.length),
+      });
+      row += Math.max(1, ends.length);
+    }
+    return { items, bands, rows: Math.max(row, 1) };
   });
-  // Rows shrink (down to a minimum) so that all of them fit the box; on phones the box grows instead.
-  const ROW_MAX = 32;
-  const ROW_MIN = 19;
+  // Rows shrink (down to a minimum) so that all of them fit the box.
+  const ROW_MAX = 30;
+  const ROW_MIN = 20;
   const rowH = $derived(
-    fit || !view.height
+    !view.height
       ? ROW_MAX
-      : Math.max(ROW_MIN, Math.min(ROW_MAX, Math.floor((view.height - HEAD - 10) / placed.lanes))),
+      : Math.max(
+          ROW_MIN,
+          Math.min(
+            ROW_MAX,
+            Math.floor((view.height - HEAD - 12 - placed.bands.length * LANE_GAP) / placed.rows),
+          ),
+        ),
   );
   const itemH = $derived(rowH - 6);
+  const barH = $derived(Math.max(8, Math.min(18, itemH)));
+  /** Names inside bars: the text follows the bar height (down to a size that is still readable). */
+  const fontPx = $derived(Math.min(0.72 * remPx(), barH - 3));
+  const roomy = $derived(fontPx >= 10);
+
+  // The extra line with the name and place: under the bar the mouse rests on, or the selected one.
+  const LINE = 20;
+  let pointed: string | undefined = $state();
+  let pointTimer = 0;
+  function point(id: string | undefined) {
+    clearTimeout(pointTimer);
+    pointTimer = window.setTimeout(() => (pointed = id), 90);
+  }
+  const opened = $derived(pointed ?? app.eventId);
+  const openedRow = $derived(placed.items.find((p) => p.e.id === opened)?.row);
+  const bandOf = $derived.by(() => {
+    const out: number[] = [];
+    placed.bands.forEach((b, i) => {
+      for (let r = 0; r < b.rows; r++) out[b.firstRow + r] = i;
+    });
+    return out;
+  });
+  /** Top (px) of a row: rows above it, the gaps between bands, and the opened line if it is above. */
+  const rowTop = (r: number) =>
+    HEAD +
+    6 +
+    r * rowH +
+    (bandOf[r] ?? 0) * LANE_GAP +
+    (openedRow !== undefined && r > openedRow ? LINE : 0);
+  const canvasH = $derived(
+    HEAD +
+      6 +
+      placed.rows * rowH +
+      Math.max(0, placed.bands.length - 1) * LANE_GAP +
+      (openedRow !== undefined ? LINE : 0) +
+      12,
+  );
 
   // ---- selection (= the date filter): file-manager clicks and drags ---------
   const sel = $derived(currentIntervals(today));
@@ -244,7 +343,13 @@
     if (iv) setRanges(drag.add ? union(sel, iv) : [iv]);
     drag = undefined;
     suppressClick = true;
-    setTimeout(() => (suppressClick = false), 0);
+    // The click that ends a drag is not a click on the page either (it would deselect the event).
+    const stop = (e: Event) => e.stopPropagation();
+    window.addEventListener('click', stop, { capture: true, once: true });
+    setTimeout(() => {
+      suppressClick = false;
+      window.removeEventListener('click', stop, { capture: true });
+    }, 0);
   }
 
   // ---- scrolling and zooming ---------------------------------------------------
@@ -365,7 +470,7 @@
     if (!scroller) return;
     const p = placed.items.find((i) => i.e.id === id);
     if (!p) return;
-    const top = HEAD + p.lane * rowH;
+    const top = rowTop(p.row);
     const { scrollLeft, clientWidth, scrollTop, clientHeight } = scroller;
     const left =
       p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
@@ -386,162 +491,204 @@
   });
 </script>
 
-<section class="timeline" class:compact class:fit aria-label="Timeline">
+<section class="timeline" class:compact aria-label="Timeline">
   <!-- Controls float over the timeline: expand in the top-right corner (as on every panel), zoom bottom-left. -->
   <div class="corner"><ExpandButton panel="timeline" label="timeline" /></div>
-  <div class="zoom" role="group" aria-label="Zoom">
-    <button
-      type="button"
-      class="btn"
-      aria-label="Zoom out"
-      title="Zoom out (or mouse wheel, pinch)"
-      disabled={ppd <= MIN_PPD}
-      onclick={() => zoomTo(ppd / 1.5)}>−</button
-    >
-    <button
-      type="button"
-      class="btn"
-      aria-label="Zoom in"
-      title="Zoom in (or mouse wheel, pinch)"
-      disabled={ppd >= MAX_PPD}
-      onclick={() => zoomTo(ppd * 1.5)}>+</button
-    >
-    {#if sel.length}
-      <button class="btn clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
-    {/if}
-  </div>
-
-  <div class="scroller" bind:this={scroller} onscroll={onScroll}>
-    <div
-      class="canvas"
-      class:dragging={!!drag}
-      bind:this={canvas}
-      style:width="{width}px"
-      style:height="{HEAD + placed.lanes * rowH + 10}px"
-      style:--item-h="{itemH}px"
-      class:dense={rowH < 26}
-      onpointerdown={down}
-      onpointermove={move}
-      onpointerup={up}
-      onpointercancel={() => ((drag = undefined), (pending = undefined))}
-      role="presentation"
-    >
-      {#each months as m, i (m.key)}
-        <div
-          class="month-bg"
-          class:alt={i % 2 === 1}
-          style:left="{m.x}px"
-          style:width="{m.w}px"
-        ></div>
-        <div class="gridline" class:year={m.year} style:left="{m.x}px"></div>
-      {/each}
-      {#each selBands as b, i (i)}<div
-          class="band"
-          style:left="{b.left}px"
-          style:width="{b.w}px"
-        ></div>{/each}
-      {#if drag && !drag.head}
-        <div
-          class="band drag"
-          style:left="{Math.min(drag.x0, drag.x1)}px"
-          style:width="{Math.abs(drag.x1 - drag.x0)}px"
-        ></div>
+  <div class="stage">
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button
+        type="button"
+        class="btn"
+        aria-label="Zoom out"
+        title="Zoom out (or mouse wheel, pinch)"
+        disabled={ppd <= MIN_PPD}
+        onclick={() => zoomTo(ppd / 1.5)}>−</button
+      >
+      <button
+        type="button"
+        class="btn"
+        aria-label="Zoom in"
+        title="Zoom in (or mouse wheel, pinch)"
+        disabled={ppd >= MAX_PPD}
+        onclick={() => zoomTo(ppd * 1.5)}>+</button
+      >
+      {#if sel.length}
+        <button class="btn clear" type="button" onclick={() => setRanges([])}>Clear dates ×</button>
       {/if}
-      <div class="head">
-        {#each months as m (m.key)}
-          <button
-            type="button"
-            class="cell month"
-            class:on={covers(sel, m.iv)}
+    </div>
+    <div class="scroller" bind:this={scroller} onscroll={onScroll}>
+      <div
+        class="canvas"
+        class:dragging={!!drag}
+        bind:this={canvas}
+        style:width="{width}px"
+        style:height="{canvasH}px"
+        style:--item-h="{itemH}px"
+        style:--bar-h="{barH}px"
+        style:--in-font="{fontPx}px"
+        onpointerdown={down}
+        onpointermove={move}
+        onpointerup={up}
+        onpointercancel={() => ((drag = undefined), (pending = undefined))}
+        role="presentation"
+      >
+        {#each months as m, i (m.key)}
+          <div
+            class="month-bg"
+            class:alt={i % 2 === 1}
             style:left="{m.x}px"
             style:width="{m.w}px"
-            onclick={(ev) => !suppressClick && pickCell(m, ev)}
-            aria-label="Select {m.aria}"
-            aria-pressed={covers(sel, m.iv)}><span>{m.label}</span></button
-          >
+          ></div>
+          <div class="gridline" class:year={m.year} style:left="{m.x}px"></div>
         {/each}
-        <!-- The selection shows as one continuous band in the lower header row too, so a selected month is lit
-             to its exact first and last day, even where a week runs across two months. -->
         {#each selBands as b, i (i)}<div
-            class="head-band"
+            class="band"
             style:left="{b.left}px"
             style:width="{b.w}px"
           ></div>{/each}
-        {#each sub as s (s.key)}
-          {#if s.day}
+        {#if drag && !drag.head}
+          <div
+            class="band drag"
+            style:left="{Math.min(drag.x0, drag.x1)}px"
+            style:width="{Math.abs(drag.x1 - drag.x0)}px"
+          ></div>
+        {/if}
+        {#each placed.bands as b, i (b.type)}
+          {#if i > 0}<div
+              class="band-line"
+              style:top="{rowTop(b.firstRow) - LANE_GAP / 2 - 3}px"
+            ></div>{/if}
+        {/each}
+        <div class="head">
+          {#each months as m (m.key)}
             <button
               type="button"
-              class="cell sub"
-              style:left="{s.x}px"
-              style:width="{s.w}px"
-              onclick={(ev) => !suppressClick && pickCell(s, ev)}
-              aria-label="Select {s.aria}"
-              aria-pressed={covers(sel, s.iv)}
-              title={s.aria}>{s.label}</button
+              class="cell month"
+              class:on={covers(sel, m.iv)}
+              style:left="{m.x}px"
+              style:width="{m.w}px"
+              onclick={(ev) => !suppressClick && pickCell(m, ev)}
+              aria-label="Select {m.aria}"
+              aria-pressed={covers(sel, m.iv)}><span>{m.label}</span></button
             >
-          {:else}
-            <!-- Weeks are a reference only: select months, days, or drag. -->
-            <span class="cell sub ref" style:left="{s.x}px" style:width="{s.w}px" title={s.aria}
-              >{s.label}</span
+          {/each}
+          <!-- The selection shows as one continuous band in the lower header row too, so a selected month is lit
+             to its exact first and last day, even where a week runs across two months. -->
+          {#each selBands as b, i (i)}<div
+              class="head-band"
+              style:left="{b.left}px"
+              style:width="{b.w}px"
+            ></div>{/each}
+          {#each sub as s (s.key)}
+            {#if s.day}
+              <button
+                type="button"
+                class="cell sub"
+                style:left="{s.x}px"
+                style:width="{s.w}px"
+                onclick={(ev) => !suppressClick && pickCell(s, ev)}
+                aria-label="Select {s.aria}"
+                aria-pressed={covers(sel, s.iv)}
+                title={s.aria}>{s.label}</button
+              >
+            {:else}
+              <!-- Weeks are a reference only: select months, days, or drag. -->
+              <span class="cell sub ref" style:left="{s.x}px" style:width="{s.w}px" title={s.aria}
+                >{s.label}</span
+              >
+            {/if}
+          {/each}
+        </div>
+        <!-- The type of each band, pinned to the left edge while scrolling sideways. -->
+        <div class="band-icons" aria-hidden="true">
+          {#each placed.bands as b (b.type)}
+            <span
+              class="band-icon t-{b.type}"
+              style:top="{rowTop(b.firstRow) - HEAD}px"
+              title={b.name}><TypeIcon type={b.type} size={13} /></span
             >
-          {/if}
+          {/each}
+        </div>
+        <div class="today" style:left="{x(today)}px"><span>Today</span></div>
+        {#if !events.length}
+          <p class="empty">No events match these filters.</p>
+        {/if}
+        {#each placed.items as p (p.e.id)}
+          {@const top = rowTop(p.row)}
+          {@const hot = app.hoverId === p.e.id}
+          {@const picked = app.eventId === p.e.id}
+          {@const faded = !hot && !picked && (outside(p.e) || dimmed.has(p.e.id))}
+          <div class="t-{p.e.type}" class:faded class:past={p.e.isPast}>
+            {#each p.deadlines as d (d.x)}
+              <span
+                class="link"
+                style:left="{d.x}px"
+                style:width="{p.left - d.x}px"
+                style:top="{top + itemH / 2}px"
+                aria-hidden="true"
+              ></span>
+              <span
+                class="diamond"
+                style:left="{d.x - 5}px"
+                style:top="{top + itemH / 2 - 4.5}px"
+                title={d.label}
+                aria-hidden="true"
+              ></span>
+            {/each}
+            <button
+              type="button"
+              class="item {p.e.status}"
+              class:hot
+              class:picked
+              class:approx={p.e.display.approx}
+              style:left="{p.left}px"
+              style:top="{top}px"
+              style:width="{p.barW}px"
+              title={p.e.name}
+              onclick={() => !suppressClick && openEvent(p.e.id)}
+              onpointerenter={(ev) => {
+                if (ev.pointerType !== 'mouse') return;
+                hover(p.e.id);
+                point(p.e.id);
+              }}
+              onpointerleave={() => {
+                hover(undefined);
+                point(undefined);
+              }}
+              onfocus={(ev) => ev.currentTarget.matches(':focus-visible') && hover(p.e.id)}
+              onblur={() => hover(undefined)}
+              aria-label="{p.e.name}, {formatRange(p.e.dates.start, p.e.dates.end)}, {statusLabel(
+                p.e,
+              )}"
+            >
+              <span class="bar"
+                >{#if roomy && (p.textW * fontPx) / (0.72 * remPx()) + 14 <= p.barW}<span class="in"
+                    >{p.e.name}</span
+                  >{/if}</span
+              >
+            </button>
+            {#if opened === p.e.id}
+              {@const where = whereText(p.e)}
+              <div
+                class="name-line"
+                class:hot={hot || picked}
+                style:left="{Math.max(0, p.left)}px"
+                style:top="{top + itemH + 1}px"
+                aria-hidden="true"
+              >
+                <b>{p.e.name}</b>{#if where !== NOT_FOUND}<span>{where}</span>{/if}
+              </div>
+            {/if}
+          </div>
         {/each}
       </div>
-      <div class="today" style:left="{x(today)}px"><span>Today</span></div>
-      {#if !events.length}
-        <p class="empty">No events match these filters.</p>
-      {/if}
-      {#each placed.items as p (p.e.id)}
-        {@const top = HEAD + p.lane * rowH}
-        {@const hot = app.hoverId === p.e.id}
-        {@const picked = app.eventId === p.e.id}
-        {@const faded = !hot && !picked && (outside(p.e) || dimmed.has(p.e.id))}
-        <div class="t-{p.e.type}" class:faded class:past={p.e.isPast}>
-          {#each p.deadlines as d (d.x)}
-            <span
-              class="link"
-              style:left="{d.x}px"
-              style:width="{p.left - d.x}px"
-              style:top="{top + itemH / 2}px"
-              aria-hidden="true"
-            ></span>
-            <span
-              class="diamond"
-              style:left="{d.x - 5}px"
-              style:top="{top + itemH / 2 - 4.5}px"
-              title={d.label}
-              aria-hidden="true"
-            ></span>
-          {/each}
-          <button
-            type="button"
-            class="item {p.e.status}"
-            class:hot
-            class:picked
-            class:approx={p.e.display.approx}
-            style:left="{p.left}px"
-            style:top="{top}px"
-            title={p.e.name}
-            onclick={() => !suppressClick && openEvent(p.e.id)}
-            onmouseenter={() => hover(p.e.id)}
-            onmouseleave={() => hover(undefined)}
-            onfocus={() => hover(p.e.id)}
-            onblur={() => hover(undefined)}
-            aria-label="{p.e.name}, {formatRange(p.e.dates.start, p.e.dates.end)}, {statusLabel(
-              p.e,
-            )}"
-          >
-            <span class="bar" style:width="{p.barW}px"></span>
-            <span class="label">{p.e.name}</span>
-          </button>
-        </div>
-      {/each}
     </div>
   </div>
   {#if !compact}
     <p class="hint muted">
-      Colour = event type. Faint = expected, not announced yet. Fading bar = only the month or year
-      is known. Diamonds = deadlines.
+      One band of rows per event type. Faint = expected, not announced yet. Fading bar = only the
+      month or year is known. Diamonds = deadlines. Names appear where they fit: zoom in, or point
+      at a bar.
     </p>
   {/if}
 </section>
@@ -574,15 +721,10 @@
     display: flex;
     gap: 6px;
   }
-  .compact .zoom {
-    bottom: 8px;
-  }
-  /* Phones (the timeline grows with its rows, so its bottom can be far away): next to the expand button. */
-  .fit .zoom {
-    top: 4px;
-    bottom: auto;
-    left: auto;
-    right: 52px;
+  .stage {
+    position: relative;
+    display: grid;
+    min-height: 0;
   }
   .zoom .btn {
     min-width: 36px;
@@ -615,12 +757,6 @@
     min-height: 0;
     /* Pinch zooms the timeline, not the page. */
     touch-action: pan-x pan-y;
-  }
-  .timeline.fit {
-    height: auto;
-  }
-  .fit .scroller {
-    overflow-y: hidden;
   }
   .month-bg {
     position: absolute;
@@ -746,23 +882,103 @@
     position: absolute;
     display: flex;
     align-items: center;
-    gap: 6px;
     height: var(--item-h, 26px);
-    padding: 0 4px 0 0;
+    padding: 0;
     border: 0;
     background: transparent;
     white-space: nowrap;
     z-index: 3;
     border-radius: 3px;
-    transition: opacity 0.15s;
+    transition:
+      opacity 0.15s,
+      top 0.18s ease-out;
   }
   .bar {
-    display: block;
-    height: 14px;
-    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--bar-h, 14px);
+    overflow: hidden;
+    border-radius: 3px;
     background: var(--tc);
     box-shadow: inset 0 0 0 1px var(--tc-edge);
     flex: none;
+  }
+  /* A name inside its bar (only when it fits). */
+  .in {
+    padding: 0 7px;
+    font-size: var(--in-font, 0.72rem);
+    font-weight: 600;
+    color: var(--tc-on);
+    overflow: hidden;
+  }
+  .item.expected .in,
+  .item.approx .in {
+    color: var(--ink);
+  }
+  /* The type of each band, pinned to the left edge. */
+  .band-icons {
+    position: sticky;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 6;
+  }
+  .band-icon {
+    position: absolute;
+    left: 3px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    box-shadow: 0 0 0 1px var(--line);
+    transition: top 0.18s ease-out;
+  }
+  .band-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed color-mix(in srgb, var(--line) 80%, transparent);
+    transition: top 0.18s ease-out;
+  }
+  /* The opened line: name (and place) under the bar the mouse rests on, or the selected one. */
+  .name-line {
+    position: absolute;
+    z-index: 6;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    max-width: 520px;
+    padding: 1px 6px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    color: var(--ink);
+    pointer-events: none;
+    animation: line-in 0.16s ease-out;
+  }
+  .name-line span {
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+  .name-line.hot b {
+    color: var(--hot);
+  }
+  @keyframes line-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .item,
+    .band-icon,
+    .band-line,
+    .name-line {
+      transition: none;
+      animation: none;
+    }
   }
   .item.expected .bar,
   .item.approx .bar {
@@ -798,20 +1014,7 @@
     filter: grayscale(0.85);
     opacity: 0.6;
   }
-  .label {
-    font-size: 0.8rem;
-    color: var(--ink);
-    max-width: 170px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .dense .label {
-    font-size: 0.72rem;
-  }
-  .dense .bar {
-    height: 9px;
-  }
-  .item.expected .label {
+  .item.expected .in {
     font-style: italic;
   }
   /* Dimmed = uncertain: expected editions are drawn faint until you point at them. */
@@ -821,19 +1024,16 @@
   .faded {
     opacity: 0.25;
   }
-  .item.picked {
-    z-index: 6;
-    background: var(--surface);
-    box-shadow: 0 0 0 2px var(--tc);
-  }
+  /* One highlight for "this event": pointed at anywhere, or selected. */
+  .item.picked,
   .item.hot {
     z-index: 6;
-    background: var(--surface);
-    box-shadow: 0 0 0 2px var(--hot);
   }
-  .item.hot .label {
-    color: var(--hot);
-    font-weight: 700;
+  .item.picked .bar,
+  .item.hot .bar {
+    box-shadow:
+      0 0 0 2px var(--surface),
+      0 0 0 4px var(--hot);
   }
   .diamond {
     position: absolute;

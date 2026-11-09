@@ -19,7 +19,18 @@
   import { enrich, localToday, type Ev } from './lib/model';
   import { buildIndex, search } from './lib/search';
   import { suggestionPool } from './lib/suggest';
-  import { SPLIT, WIDTHS, app, prefs, setPref, setSplit, setWidth } from './lib/state.svelte';
+  import {
+    SPLIT,
+    WIDTHS,
+    app,
+    closeDrawer,
+    deselect,
+    prefs,
+    setPref,
+    setSplit,
+    setTab,
+    setWidth,
+  } from './lib/state.svelte';
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
@@ -205,38 +216,48 @@
   });
   const sidebarHidden = $derived(prefs.sidebar === 'hidden');
 
+  // Phones (< 760 px) keep the list drawer modal: it covers most of the screen, so a scrim catches taps
+  // outside it. Wider windows leave the rest of the app usable next to the open drawer.
+  const modalQ = matchMedia('(max-width: 759px)');
+  let modal = $state(modalQ.matches);
+  onMount(() => {
+    const on = () => (modal = modalQ.matches);
+    modalQ.addEventListener('change', on);
+    return () => modalQ.removeEventListener('change', on);
+  });
+
   // Lock page scroll behind the mobile filter and list drawers.
   $effect(() => {
     document.body.style.overflow =
-      (app.filtersOpen || app.listDrawer) && window.innerWidth < 960 ? 'hidden' : '';
+      (app.filtersOpen && window.innerWidth < 960) || (app.listDrawer && modal) ? 'hidden' : '';
   });
-  // Phones: the list drawer follows the finger. Drag the tab on the right edge to the left to pull it out;
-  // swipe the open drawer to the right to push it away. A short flick is enough; letting go part-way snaps.
+
+  // ---- the list drawer and its tab (phones) ----------------------------------------------------------
+  // The drawer stays in the page while it is closed (just moved off screen), so it keeps its scroll position.
+  // It opens from the edge the tab is on. Closing it also deselects the event: one selection, one way out.
   let drawerEl: HTMLDivElement | undefined = $state();
   let tabEl: HTMLButtonElement | undefined = $state();
+  /** +1 when the drawer is on the right (it closes towards the right), −1 on the left. */
+  const dir = $derived(prefs.tabSide === 'right' ? 1 : -1);
   let swipe:
     { x0: number; y0: number; t0: number; dx: number; opening: boolean; on: boolean } | undefined =
     $state();
+  /** How far (px) the drawer is pushed out of view while a finger moves it. */
   const drawerShift = $derived.by(() => {
     if (!swipe?.on) return undefined;
     const w = drawerEl?.offsetWidth ?? window.innerWidth;
-    return swipe.opening ? Math.max(0, w + swipe.dx) : Math.max(0, swipe.dx);
+    const out = swipe.dx * dir;
+    return swipe.opening ? Math.max(0, w + out) : Math.max(0, out);
   });
-  function swipeStart(ev: TouchEvent, opening: boolean) {
-    if (ev.touches.length !== 1) return;
-    const p = ev.touches[0]!;
-    swipe = { x0: p.clientX, y0: p.clientY, t0: performance.now(), dx: 0, opening, on: opening };
-    if (opening) app.listDrawer = true;
-  }
   function swipeMove(ev: TouchEvent) {
     if (!swipe || ev.touches.length !== 1) return;
     const p = ev.touches[0]!;
     const dx = p.clientX - swipe.x0;
     const dy = p.clientY - swipe.y0;
     if (!swipe.on) {
-      // Decide once: a mostly sideways move to the right closes; anything else is ordinary scrolling.
+      // Decide once: a mostly sideways move towards the edge closes; anything else is ordinary scrolling.
       if (Math.hypot(dx, dy) < 10) return;
-      if (Math.abs(dx) <= Math.abs(dy) || dx < 0) {
+      if (Math.abs(dx) <= Math.abs(dy) || dx * dir < 0) {
         swipe = undefined;
         return;
       }
@@ -251,31 +272,27 @@
     swipe = undefined;
     if (!s.on) return;
     const w = drawerEl?.offsetWidth ?? window.innerWidth;
-    const speed = s.dx / Math.max(1, performance.now() - s.t0); // px per ms
-    if (s.opening) app.listDrawer = -s.dx > w * 0.25 || speed < -0.4 || Math.abs(s.dx) < 6;
-    else app.listDrawer = !(s.dx > w * 0.25 || speed > 0.4);
+    const speed = (s.dx * dir) / Math.max(1, performance.now() - s.t0); // px per ms, towards the edge
+    const open = s.opening
+      ? -s.dx * dir > w * 0.25 || speed < -0.4
+      : !(s.dx * dir > w * 0.25 || speed > 0.4);
+    if (open) app.listDrawer = true;
+    else closeDrawer();
   }
-  $effect(() => {
-    const tab = tabEl;
-    if (!tab) return;
-    // The tab stays in the page (under the drawer) until the finger lifts, so it keeps getting the moves.
-    const start = (e: TouchEvent) => swipeStart(e, true);
-    tab.addEventListener('touchstart', start, { passive: true });
-    tab.addEventListener('touchmove', swipeMove, { passive: false });
-    tab.addEventListener('touchend', swipeEnd);
-    tab.addEventListener('touchcancel', swipeEnd);
-    return () => {
-      tab.removeEventListener('touchstart', start);
-      tab.removeEventListener('touchmove', swipeMove);
-      tab.removeEventListener('touchend', swipeEnd);
-      tab.removeEventListener('touchcancel', swipeEnd);
-    };
-  });
   $effect(() => {
     const el = drawerEl;
     if (!el) return;
-    const start = (e: TouchEvent) => {
-      if (!swipe) swipeStart(e, false);
+    const start = (ev: TouchEvent) => {
+      if (swipe || ev.touches.length !== 1 || !app.listDrawer) return;
+      const p = ev.touches[0]!;
+      swipe = {
+        x0: p.clientX,
+        y0: p.clientY,
+        t0: performance.now(),
+        dx: 0,
+        opening: false,
+        on: false,
+      };
     };
     el.addEventListener('touchstart', start, { passive: true });
     el.addEventListener('touchmove', swipeMove, { passive: false });
@@ -289,12 +306,99 @@
     };
   });
 
+  // The tab: tap it to open the list; drag it towards the middle to pull the list out; drag it up or down
+  // (or hold it, then drag anywhere) to move it, and let go nearer the other edge to move it there.
+  let carry: { x: number; y: number } | undefined = $state();
+  $effect(() => {
+    const tab = tabEl;
+    if (!tab) return;
+    let t:
+      { x0: number; y0: number; t0: number; moved: boolean; mode?: 'carry' | 'pull' } | undefined;
+    let hold = 0;
+    const pickUp = (x: number, y: number) => {
+      if (!t) return;
+      t.mode = 'carry';
+      carry = { x, y };
+      navigator.vibrate?.(8);
+    };
+    const start = (ev: TouchEvent) => {
+      if (ev.touches.length !== 1) return;
+      const p = ev.touches[0]!;
+      t = { x0: p.clientX, y0: p.clientY, t0: performance.now(), moved: false };
+      clearTimeout(hold);
+      hold = window.setTimeout(() => t && !t.moved && pickUp(p.clientX, p.clientY), 380);
+    };
+    const move = (ev: TouchEvent) => {
+      if (!t || ev.touches.length !== 1) return;
+      const p = ev.touches[0]!;
+      const dx = p.clientX - t.x0;
+      const dy = p.clientY - t.y0;
+      if (!t.mode) {
+        if (Math.hypot(dx, dy) < 10) return;
+        t.moved = true;
+        clearTimeout(hold);
+        if (Math.abs(dy) > Math.abs(dx)) pickUp(p.clientX, p.clientY);
+        else if (dx * dir < 0) {
+          // Pull the drawer out with the finger.
+          t.mode = 'pull';
+          swipe = { x0: t.x0, y0: t.y0, t0: t.t0, dx, opening: true, on: true };
+          app.listDrawer = true;
+        } else return;
+      }
+      ev.preventDefault();
+      if (t.mode === 'carry') carry = { x: p.clientX, y: p.clientY };
+      else if (swipe) swipe.dx = dx;
+    };
+    const end = (ev: TouchEvent) => {
+      clearTimeout(hold);
+      const s = t;
+      t = undefined;
+      if (!s) return;
+      if (s.mode === 'carry' && carry) {
+        ev.preventDefault(); // no click: moving the tab doesn't open the list
+        setTab(carry.x < window.innerWidth / 2 ? 'left' : 'right', carry.y / window.innerHeight);
+        carry = undefined;
+      } else if (s.mode === 'pull') swipeEnd();
+    };
+    const cancel = () => {
+      clearTimeout(hold);
+      t = undefined;
+      carry = undefined;
+      swipeEnd();
+    };
+    tab.addEventListener('touchstart', start, { passive: true });
+    tab.addEventListener('touchmove', move, { passive: false });
+    tab.addEventListener('touchend', end, { passive: false });
+    tab.addEventListener('touchcancel', cancel);
+    return () => {
+      clearTimeout(hold);
+      tab.removeEventListener('touchstart', start);
+      tab.removeEventListener('touchmove', move);
+      tab.removeEventListener('touchend', end);
+      tab.removeEventListener('touchcancel', cancel);
+    };
+  });
+
   function drawerKey(ev: KeyboardEvent) {
-    if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) app.listDrawer = false;
+    if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) closeDrawer();
+  }
+
+  // Clicking empty space (the map's sea or land, the timeline's background, the gaps between cards, the
+  // header) deselects the event. Outside a non-modal drawer, it also rolls the drawer back.
+  const INTERACTIVE =
+    'a, button, input, select, textarea, label, summary, [role="button"], [role="separator"], ' +
+    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab';
+  function clickAway(ev: MouseEvent) {
+    const t = ev.target;
+    if (!(t instanceof Element) || ev.button !== 0) return;
+    if (!t.closest('#main, .list-drawer, header.header') || t.closest(INTERACTIVE)) return;
+    if (String(getSelection() ?? '')) return; // selecting text is not clicking away
+    if (app.eventId) deselect();
+    if (app.listDrawer && !modal && !t.closest('.list-drawer')) app.listDrawer = false;
   }
 </script>
 
-<svelte:window onkeydown={drawerKey} />
+<svelte:window onkeydown={drawerKey} onclick={clickAway} />
 <Header shown={filtered.length} total={events.filter((e) => !e.isPast).length} pool={suggestPool} />
 
 {#if error}
@@ -333,9 +437,7 @@
     {/if}
     <main
       id="main"
-      class:workspace={(app.view === 'explore' && !narrow) ||
-        app.view === 'map' ||
-        app.view === 'timeline'}
+      class:workspace={app.view === 'explore' || app.view === 'map' || app.view === 'timeline'}
     >
       {#if app.view !== 'about'}
         <div class="bar">
@@ -423,8 +525,8 @@
               events={timelineEvents}
               {today}
               dimmed={expectedIds}
+              types={meta.types}
               compact
-              fit={narrow}
             />
           </div>
           {#if !listHidden && !narrow}
@@ -449,7 +551,7 @@
       {:else if app.view === 'list'}
         <ListView events={filtered} {meta} {today} dimmed={expectedIds} panel />
       {:else if app.view === 'timeline'}
-        <TimelineView events={timelineEvents} {today} dimmed={expectedIds} />
+        <TimelineView events={timelineEvents} {today} dimmed={expectedIds} types={meta.types} />
       {:else if app.view === 'map'}
         {#await mapModule}
           <p class="loading">Loading map…</p>
@@ -463,21 +565,28 @@
       {/if}
     </main>
   </div>
-  {#if drawerMode && narrow && (!app.listDrawer || swipe?.opening)}
-    <!-- Phones: a tab in thumb reach; tap it, or drag it to the left, to pull out the list. -->
+  {#if drawerMode && narrow}
+    <!-- Phones: a tab in thumb reach, on either edge. Tap it, or drag it towards the middle, to pull out the
+         list; drag it up or down (or hold it) to move it. It stays in the page under the open drawer, so a
+         finger pulling the drawer out keeps moving it. -->
     <button
-      class="pull-tab"
+      class="pull-tab {prefs.tabSide}"
+      class:gone={app.listDrawer && !swipe?.opening}
+      class:carried={!!carry}
       type="button"
       bind:this={tabEl}
       aria-label="Open the list ({filtered.length} events)"
+      title="Tap to open the list · drag up or down to move this tab"
+      style:top={carry ? `${carry.y}px` : `${prefs.tabY * 100}%`}
+      style:left={carry ? `${carry.x}px` : undefined}
       onclick={() => (app.listDrawer = true)}
     >
       <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
         ><path
-          d="M15 5l-7 7 7 7"
+          d={prefs.tabSide === 'right' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7'}
           fill="none"
           stroke="currentColor"
-          stroke-width="2.4"
+          stroke-width="2.6"
           stroke-linecap="round"
           stroke-linejoin="round"
         /></svg
@@ -485,30 +594,31 @@
       <span>{filtered.length}</span>
     </button>
   {/if}
-  {#if drawerMode && app.listDrawer}
+  {#if drawerMode}
+    {#if app.listDrawer && modal}
+      <div
+        class="drawer-scrim"
+        aria-hidden="true"
+        style:opacity={drawerShift !== undefined && drawerEl
+          ? 1 - drawerShift / drawerEl.offsetWidth
+          : undefined}
+        onclick={closeDrawer}
+      ></div>
+    {/if}
     <div
-      class="drawer-scrim"
-      aria-hidden="true"
-      style:opacity={drawerShift !== undefined && drawerEl
-        ? 1 - drawerShift / drawerEl.offsetWidth
-        : undefined}
-      onclick={() => (app.listDrawer = false)}
-    ></div>
-    <div
-      class="list-drawer"
+      class="list-drawer {prefs.tabSide}"
+      class:open={app.listDrawer}
       class:dragging={drawerShift !== undefined}
       role="dialog"
       aria-label="Events"
+      inert={!app.listDrawer}
       bind:this={drawerEl}
-      style:transform={drawerShift !== undefined ? `translateX(${drawerShift}px)` : undefined}
+      style:transform={drawerShift !== undefined ? `translateX(${dir * drawerShift}px)` : undefined}
     >
       <div class="drawer-head">
         <b>Events</b>
-        <button
-          class="btn ghost"
-          type="button"
-          aria-label="Close the list"
-          onclick={() => (app.listDrawer = false)}>✕</button
+        <button class="btn ghost" type="button" aria-label="Close the list" onclick={closeDrawer}
+          >✕</button
         >
       </div>
       <ListView events={filtered} {meta} {today} dimmed={expectedIds} compact />
@@ -520,7 +630,8 @@
 {/if}
 
 <style>
-  /* The list as a drawer (phones; expanded map or timeline): slides in from the right, below the header. */
+  /* The list as a drawer (phones; expanded map or timeline): slides in from the tab's edge, below the
+     header. Closed, it waits just off screen (keeping its scroll position). */
   .drawer-scrim {
     position: fixed;
     inset: var(--header-h) 0 0 0;
@@ -532,7 +643,8 @@
     top: var(--header-h);
     right: 0;
     bottom: 0;
-    width: min(460px, 100vw);
+    /* Phones: room for a thumb beside the open list. */
+    width: min(460px, calc(100vw - 64px));
     z-index: 45;
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -540,52 +652,88 @@
     border-left: 1px solid var(--line);
     box-shadow: var(--shadow);
     padding: 10px 14px max(20px, env(safe-area-inset-bottom));
-    animation: drawer-in 0.18s ease-out;
-  }
-  @keyframes drawer-in {
-    from {
-      transform: translateX(24px);
-      opacity: 0;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .list-drawer {
-      animation: none;
-    }
-  }
-  .list-drawer {
     /* Vertical scrolling stays native; sideways moves are ours (swipe to close). */
     touch-action: pan-y;
-    transition: transform 0.2s ease-out;
+    transform: translateX(calc(100% + 12px));
+    visibility: hidden;
+    transition:
+      transform 0.22s ease-out,
+      visibility 0s linear 0.22s;
+  }
+  .list-drawer.left {
+    right: auto;
+    left: 0;
+    border-left: 0;
+    border-right: 1px solid var(--line);
+    transform: translateX(calc(-100% - 12px));
+  }
+  .list-drawer.open {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.22s ease-out;
   }
   .list-drawer.dragging {
+    visibility: visible;
     transition: none;
-    animation: none;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .list-drawer,
+    .list-drawer.open {
+      transition: none;
+    }
+  }
+  /* The tab: a strong contrast to whatever is under it (light on the dark theme, dark on the light one). */
   .pull-tab {
     position: fixed;
     right: 0;
-    top: 62%;
-    z-index: 30;
+    z-index: 46;
     display: grid;
     justify-items: center;
     gap: 2px;
+    min-width: 34px;
     padding: 12px 6px 12px 8px;
-    border: 1px solid var(--line);
-    border-right: 0;
+    border: 0;
     border-radius: 12px 0 0 12px;
-    background: var(--surface);
-    color: var(--ink);
-    box-shadow: var(--shadow);
-    font-size: 0.78rem;
-    font-weight: 700;
+    background: var(--ink);
+    color: var(--bg);
+    box-shadow: 0 2px 10px rgb(0 0 0 / 35%);
+    font-size: 0.8rem;
+    font-weight: 800;
     touch-action: none;
+    transform: translateY(-50%);
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
   }
+  .pull-tab.left {
+    right: auto;
+    left: 0;
+    padding: 12px 8px 12px 6px;
+    border-radius: 0 12px 12px 0;
+  }
+  .pull-tab.gone {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pull-tab.carried {
+    right: auto;
+    border-radius: 12px;
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 6px 22px rgb(0 0 0 / 45%);
+    transition: none;
+  }
+  /* Stays at the top while the list scrolls, so closing never needs scrolling back up. */
   .drawer-head {
+    position: sticky;
+    top: -10px;
+    z-index: 2;
+    margin: -10px -14px 6px;
+    border-bottom: 1px solid var(--line);
+    padding: 8px 14px 6px;
+    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 6px;
   }
   .layout {
     display: grid;
@@ -660,6 +808,10 @@
     }
     main {
       padding: 0 20px;
+    }
+    /* Panels run edge to edge. */
+    main.workspace {
+      padding: 0;
     }
     .layout.single,
     .layout.nosidebar {
@@ -741,27 +893,31 @@
     min-height: 0;
     min-width: 0;
   }
-  /* Phones and tablets: map, then timeline, then the list in the page flow (scrolling the list scrolls the page). */
   .vsplit {
     grid-area: vsplit;
     display: flex;
     justify-content: center;
   }
+  /* Phones and tablets: the map above the timeline, filling the screen to its bottom edge, with the same
+     draggable bar between them (the list is a drawer). */
   @media (max-width: 1099px) {
     .explore,
     .explore.no-list {
       grid-template-columns: minmax(0, 1fr);
-      grid-template-rows: 40dvh auto auto;
+      grid-template-rows: minmax(0, var(--map-fr)) 16px minmax(0, var(--tl-fr));
       grid-template-areas:
         'map'
-        'timeline'
-        'list';
-      gap: 0;
-      height: auto;
-      min-height: 0;
+        'split'
+        'timeline';
     }
-    .split {
-      display: none;
+    main.workspace {
+      min-height: 420px;
+    }
+    /* A bigger target for a finger than the visible grip. */
+    .split::before {
+      content: '';
+      position: absolute;
+      inset: -8px 0;
     }
   }
   .map-pane {
@@ -772,6 +928,7 @@
     cursor: row-resize;
     touch-action: none;
     position: relative;
+    z-index: 13;
   }
   .split::after {
     content: '';
@@ -801,15 +958,6 @@
     overflow-y: auto;
     padding: 0 10px 0 0;
     overscroll-behavior: contain;
-  }
-  /* In the stacked page the list is part of the page: it must not be its own scroll box, or wheel and touch
-     scrolling over it would stop there instead of moving the page. */
-  @media (max-width: 1099px) {
-    .list-pane {
-      overflow: visible;
-      overscroll-behavior: auto;
-      padding-right: 0;
-    }
   }
   .loading,
   .error {

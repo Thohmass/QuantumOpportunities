@@ -76,9 +76,9 @@
   class:open
   class:compact
   class:dim={dim && !hot && !open}
-  onmouseenter={() => hover(e.id)}
-  onmouseleave={() => hover(undefined)}
-  onfocusin={() => hover(e.id)}
+  onpointerenter={(ev) => ev.pointerType === 'mouse' && hover(e.id)}
+  onpointerleave={() => hover(undefined)}
+  onfocusin={(ev) => (ev.target as Element).matches(':focus-visible') && hover(e.id)}
   onfocusout={() => hover(undefined)}
 >
   <div class="head">
@@ -190,14 +190,15 @@
     opacity: 0.72;
     filter: grayscale(0.4);
   }
-  .card.open {
-    box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--tc) 45%, transparent),
-      var(--shadow);
-  }
+  /* One highlight for "this event", the same in every view: selected = orange ring; pointed at = a lighter one. */
   .card.hot {
     box-shadow:
       0 0 0 2px color-mix(in srgb, var(--hot) 55%, transparent),
+      var(--shadow);
+  }
+  .card.open {
+    box-shadow:
+      0 0 0 2px var(--hot),
       var(--shadow);
   }
   /* Dimmed = uncertain (expected editions). */

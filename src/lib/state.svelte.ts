@@ -73,7 +73,18 @@ export const prefs = $state({
   /** Filter groups the user opened or closed this visit (others use their default). */
   toggled: [] as string[],
   split: loadNumber('qo-split', SPLIT.min, SPLIT.max, SPLIT.initial),
+  /** Phones: where the list tab sits (it can be dragged up and down, and to the other edge). */
+  tabSide: load<'left' | 'right'>('qo-tab-side', ['left', 'right'], 'right'),
+  /** The tab's height on the screen, as a share of the window height. */
+  tabY: loadNumber('qo-tab-y', 0.1, 0.9, 0.34),
 });
+
+export function setTab(side: 'left' | 'right', y: number): void {
+  prefs.tabSide = side;
+  prefs.tabY = Math.min(0.9, Math.max(0.1, y));
+  save('qo-tab-side', side);
+  save('qo-tab-y', prefs.tabY.toFixed(3));
+}
 
 export function setSplit(value: number): void {
   prefs.split = Math.min(SPLIT.max, Math.max(SPLIT.min, value));
@@ -129,5 +140,15 @@ export function toggleIn(list: string[], value: string): string[] {
 
 export function openEvent(id: string, focus = false): void {
   app.eventId = id;
+  if (app.drawerMode) app.listDrawer = true;
   if (focus) app.focusTick++;
+}
+
+/** One selection, one way out: deselecting and rolling the list drawer back go together. */
+export function deselect(): void {
+  app.eventId = undefined;
+}
+export function closeDrawer(): void {
+  app.listDrawer = false;
+  app.eventId = undefined;
 }

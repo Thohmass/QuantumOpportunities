@@ -291,3 +291,149 @@ test('selecting a visible card does not scroll the list', async ({ page, isMobil
   await page.waitForTimeout(500);
   expect(await pane.evaluate((el) => el.scrollTop)).toBe(0);
 });
+
+test('closing the list drawer deselects the event, so it can be selected again', async ({
+  page,
+}) => {
+  await page.goto('/#/timeline');
+  const item = page.locator('button.item').first();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await item.click();
+  await expect(drawer.locator('article.card.open')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Close the list' }).click();
+  await expect(drawer).toBeHidden();
+  await expect(page).not.toHaveURL(/e=/);
+  await expect(page.locator('button.item.picked')).toHaveCount(0);
+  await item.click();
+  await expect(drawer.locator('article.card.open')).toHaveCount(1);
+});
+
+test('wide windows: the drawer leaves the app usable; clicking empty space deselects and rolls it back', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Wide window');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/map');
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await page.locator('g.dot').first().click();
+  await expect(drawer).toBeVisible();
+  await expect(page.locator('.drawer-scrim')).toHaveCount(0);
+  // Another event can be picked straight away, with the drawer open.
+  await page.locator('g.dot').nth(10).click();
+  await expect(drawer.locator('article.card.open')).toHaveCount(1);
+  // Empty sea in the bottom-left corner of the map.
+  const box = (await page.locator('svg[role="img"]').boundingBox())!;
+  await page.mouse.click(box.x + 20, box.y + box.height - 20);
+  await expect(drawer).toBeHidden();
+  await expect(page).not.toHaveURL(/e=/);
+});
+
+test('explore: clicking empty timeline space deselects the event', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.locator('.list-pane article.card').first().click();
+  await expect(page.locator('.list-pane article.card.open')).toHaveCount(1);
+  const tl = (await page.locator('.timeline-pane .scroller').boundingBox())!;
+  await page.mouse.click(tl.x + tl.width - 60, tl.y + tl.height - 30);
+  await expect(page.locator('.list-pane article.card.open')).toHaveCount(0);
+});
+
+test('the list drawer keeps its scroll position when it is closed and opened again', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Wheel scrolling is a desktop gesture');
+  await page.setViewportSize({ width: 1000, height: 800 });
+  await page.goto('/#/explore');
+  const list = page.getByRole('button', { name: /^List/ });
+  await list.click();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await drawer.locator('article.card').first().waitFor();
+  await page.mouse.move(800, 500);
+  await page.mouse.wheel(0, 900);
+  await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(300);
+  const top = await drawer.evaluate((el) => el.scrollTop);
+  await page.keyboard.press('Escape');
+  await expect(drawer).toBeHidden();
+  await list.click();
+  await expect(drawer).toBeVisible();
+  expect(await drawer.evaluate((el) => el.scrollTop)).toBe(top);
+});
+
+test('timeline: one band of rows per event type; names only where they fit; pointing opens a name line', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/timeline');
+  expect(await page.locator('.band-icon').count()).toBeGreaterThanOrEqual(3);
+  // Every name drawn inside a bar fits there whole.
+  const cut = await page
+    .locator('.bar .in')
+    .evaluateAll((els) => els.filter((el) => el.scrollWidth > el.clientWidth + 1).length);
+  expect(cut).toBe(0);
+  const item = page.locator('button.item').nth(4);
+  const name = (await item.getAttribute('title'))!;
+  await item.hover();
+  await expect(page.locator('.name-line')).toContainText(name);
+});
+
+test('phones: map and timeline share the screen with a slider, down to its bottom edge', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phone layout');
+  await page.goto('/#/explore');
+  const split = page.getByRole('separator', { name: 'Resize map and timeline' });
+  await expect(split).toBeVisible();
+  const tl = (await page.locator('.timeline-pane').boundingBox())!;
+  expect(Math.abs(tl.y + tl.height - page.viewportSize()!.height)).toBeLessThan(3);
+  const before = Number(await split.getAttribute('aria-valuenow'));
+  await split.focus();
+  await page.keyboard.press('ArrowUp');
+  await expect(split).toHaveAttribute('aria-valuenow', String(before - 5));
+});
+
+test('phones: the list tab can be moved to the left edge, and the list then opens from there', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Touch gesture on phones');
+  await page.goto('/#/explore');
+  const tab = page.locator('.pull-tab');
+  await tab.waitFor();
+  const b = (await tab.boundingBox())!;
+  const [x0, y0] = [b.x + b.width / 2, b.y + b.height / 2];
+  await page.evaluate(
+    ({ x0, y0 }) => {
+      const el = document.querySelector('.pull-tab')!;
+      const touch = (x: number, y: number) =>
+        new Touch({ identifier: 1, target: el, clientX: x, clientY: y });
+      const fire = (type: string, x: number, y: number, list = true) =>
+        el.dispatchEvent(
+          new TouchEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            touches: list ? [touch(x, y)] : [],
+            changedTouches: [touch(x, y)],
+          }),
+        );
+      fire('touchstart', x0, y0);
+      // Up first (that picks the tab up), then across to the other edge.
+      fire('touchmove', x0, y0 - 30);
+      fire('touchmove', x0 - 150, y0 - 60);
+      fire('touchmove', 20, y0 - 80);
+      fire('touchend', 20, y0 - 80, false);
+    },
+    { x0, y0 },
+  );
+  await expect(page.locator('.pull-tab.left')).toBeVisible();
+  await expect(page.getByRole('dialog', { name: 'Events' })).toBeHidden();
+  await page.locator('.pull-tab').click();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await expect(drawer).toBeVisible();
+  await expect.poll(async () => (await drawer.boundingBox())!.x).toBeLessThan(1);
+});
