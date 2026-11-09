@@ -132,6 +132,7 @@ export function currentIntervals(today: number): Interval[] {
 
 export function resetFilters(): void {
   app.filters = { ...DEFAULT_FILTERS, sort: app.filters.sort };
+  app.mapOnly = false;
 }
 
 export function toggleIn(list: string[], value: string): string[] {

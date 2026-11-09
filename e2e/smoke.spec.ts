@@ -437,3 +437,11 @@ test('phones: the list tab can be moved to the left edge, and the list then open
   await expect(drawer).toBeVisible();
   await expect.poll(async () => (await drawer.boundingBox())!.x).toBeLessThan(1);
 });
+
+test('Clear all also turns off "Only map area"', async ({ page }) => {
+  await page.goto('/#/explore?type=hackathon');
+  await page.getByRole('checkbox', { name: 'Only map area' }).check();
+  await page.getByLabel('Active filters').getByRole('button', { name: 'Clear all' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Only map area' })).not.toBeChecked();
+  await expect(page.getByLabel('Active filters')).toHaveCount(0);
+});
