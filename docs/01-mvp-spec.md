@@ -217,3 +217,6 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - The row under the mouse gets a faint shade.
   - Clicking an open event's name selects it.
 - **Design rule:** desktop reads where you look (hover); phones read what you do (gestures, centre of view) (07-design-vision).
+- **Map edges:**
+  - The glide after a fling stops at the edge of the world. It used to drift past it and snap back on the next drag.
+  - The map can't be panned past the date line or past the land in the north and south, at any zoom. Before, zooming in let you wander far into empty sea on the left and right.

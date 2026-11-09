@@ -640,3 +640,39 @@ test('timeline: a pointed-at event closes as soon as the mouse leaves; its row i
   await expect(tl.locator('.name-line')).toHaveCount(0);
   await expect(tl.locator('.row-hl')).toHaveCount(0);
 });
+
+test('map: a flung map glides to the edge of the world and stops there', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse drag');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/map');
+  const svg = page.locator('svg[role="img"]');
+  await svg.waitFor();
+  for (let i = 0; i < 3; i++)
+    await page.locator('.mapview').getByRole('button', { name: 'Zoom in' }).click();
+  await page.waitForTimeout(600);
+  const x = () => svg.evaluate((el) => (el as unknown as { __zoom: { x: number } }).__zoom.x);
+  // Fast flings to the right (towards the date line in the west). After each glide, a slow drag the same way
+  // must never pull the map back: the glide stops at the edge of the world. (It used to overshoot into empty
+  // sea, and the next drag snapped the map back.)
+  for (let f = 0; f < 3; f++) {
+    await page.mouse.move(300, 450);
+    await page.mouse.down();
+    for (let i = 1; i <= 8; i++) {
+      await page.mouse.move(300 + i * 130, 450);
+      await page.waitForTimeout(12);
+    }
+    await page.mouse.up();
+    await page.waitForTimeout(1800);
+    const after = await x();
+    await page.mouse.move(600, 450);
+    await page.mouse.down();
+    await page.mouse.move(640, 450, { steps: 8 });
+    await page.waitForTimeout(300);
+    await page.mouse.up();
+    await page.waitForTimeout(200);
+    expect(await x()).toBeGreaterThanOrEqual(after - 1);
+  }
+});
