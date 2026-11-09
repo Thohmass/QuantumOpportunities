@@ -506,3 +506,14 @@ test('timeline: clicking inside a selected period removes it', async ({ page }) 
   await expect(page).not.toHaveURL(/when=custom/);
   await expect(page.getByRole('button', { name: 'Clear dates ×' })).toHaveCount(0);
 });
+
+test('timeline: a band icon filters to its event type, and back', async ({ page }) => {
+  await page.goto('/#/timeline');
+  const icon = page.getByRole('button', { name: 'Filter: Hackathon' });
+  await icon.click();
+  await expect(page).toHaveURL(/type=hackathon/);
+  await expect(page.locator('.band-icon')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Filter: Hackathon' }).click();
+  await expect(page).not.toHaveURL(/type=/);
+  expect(await page.locator('.band-icon').count()).toBeGreaterThan(1);
+});

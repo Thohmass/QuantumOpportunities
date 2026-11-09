@@ -18,7 +18,15 @@
     type ClickMode,
     type Interval,
   } from '../lib/ranges';
-  import { app, currentIntervals, flash, hover, openEvent, setRanges } from '../lib/state.svelte';
+  import {
+    app,
+    currentIntervals,
+    flash,
+    hover,
+    openEvent,
+    setRanges,
+    toggleIn,
+  } from '../lib/state.svelte';
 
   let {
     events,
@@ -630,12 +638,19 @@
           {/each}
         </div>
         <!-- The type of each band, pinned to the left edge while scrolling sideways. -->
-        <div class="band-icons" aria-hidden="true">
+        <div class="band-icons">
           {#each placed.bands as b, i (b.type)}
-            <span
+            {@const on = app.filters.types.includes(b.type)}
+            <button
+              type="button"
               class="band-icon t-{b.type}"
+              class:on
               style:top="{rowTop(layout.bandFirst[i]!) - HEAD}px"
-              title={b.name}><TypeIcon type={b.type} size={13} /></span
+              title={on ? `Show all types again` : `Show only: ${b.name}`}
+              aria-label="Filter: {b.name}"
+              aria-pressed={on}
+              onclick={() => (app.filters.types = toggleIn(app.filters.types, b.type))}
+              ><TypeIcon type={b.type} size={17} /></button
             >
           {/each}
         </div>
@@ -966,17 +981,30 @@
     height: 0;
     z-index: 6;
   }
+  /* Clickable: shows only that type (click again for all). */
   .band-icon {
     position: absolute;
-    left: 3px;
+    left: 4px;
     display: grid;
     place-items: center;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
     box-shadow: 0 0 0 1px var(--line);
-    transition: top 0.18s ease-out;
+    cursor: pointer;
+    transition:
+      top 0.18s ease-out,
+      box-shadow 0.12s;
+  }
+  .band-icon:hover,
+  .band-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--tc);
+  }
+  .band-icon.on {
+    box-shadow: 0 0 0 2px var(--accent);
   }
   .band-line {
     position: absolute;
