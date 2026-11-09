@@ -24,7 +24,7 @@
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
-  import { loadLand, worldExtent } from '../lib/world';
+  import { constrainWithRoom, loadLand, worldExtent } from '../lib/world';
 
   let {
     events,
@@ -209,6 +209,8 @@
         [0, 0],
         [w, h],
       ])
+      // Room past the edges, so every place can be brought to the middle of the screen.
+      .constrain(constrainWithRoom)
       // The wheel is handled below (smoothed); everything else as d3 does by default.
       .filter(
         (ev: Event) =>
