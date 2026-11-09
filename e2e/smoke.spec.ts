@@ -109,6 +109,7 @@ test('filter groups start folded, except the top ones', async ({ page, isMobile 
 });
 
 // Changed in v0.6 (owner's request): on narrow windows the list is a drawer, not part of the page.
+// Changed in v0.9: waits for the drawer to finish sliding in before scrolling it (the test was timing-dependent).
 test('narrow window: the list is a drawer that scrolls on its own', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Wheel scrolling is a desktop gesture');
   await page.setViewportSize({ width: 1000, height: 800 });
@@ -117,6 +118,7 @@ test('narrow window: the list is a drawer that scrolls on its own', async ({ pag
   await page.getByRole('button', { name: /^List/ }).click();
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await drawer.locator('article.card').first().waitFor();
+  await expect(drawer).toHaveCSS('transform', 'none');
   await page.mouse.move(800, 500);
   await page.mouse.wheel(0, 600);
   await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
@@ -351,6 +353,7 @@ test('the list drawer keeps its scroll position when it is closed and opened aga
   await list.click();
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await drawer.locator('article.card').first().waitFor();
+  await expect(drawer).toHaveCSS('transform', 'none');
   await page.mouse.move(800, 500);
   await page.mouse.wheel(0, 900);
   await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(300);
