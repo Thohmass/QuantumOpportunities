@@ -14,11 +14,14 @@
     counts,
     universe,
     shown,
+    onclose,
   }: {
     meta: Meta;
     counts: Record<FacetKey, Map<string, number>>;
     universe: Record<FacetKey, Set<string>>;
     shown: number;
+    /** The arrow in the top-right corner: hides the sidebar (closes the drawer on phones). */
+    onclose?: () => void;
   } = $props();
 
   const f = $derived(app.filters);
@@ -85,7 +88,27 @@
 <div class="panel" id="filters">
   <div class="head">
     <h2>Filters</h2>
-    <button class="btn ghost" type="button" onclick={resetFilters}>Clear all</button>
+    <button class="btn ghost clear-all" type="button" onclick={resetFilters}>Clear all</button>
+    {#if onclose}
+      <button
+        class="hide"
+        type="button"
+        aria-label="Hide filters"
+        title="Hide filters"
+        onclick={onclose}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+          ><path
+            d="M15 5l-7 7 7 7"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          /></svg
+        >
+      </button>
+    {/if}
   </div>
 
   <Section title="When" open active={f.when === 'any' ? 0 : 1}>
@@ -269,10 +292,35 @@
     gap: 18px;
     padding: 16px 16px 24px;
   }
+  /* Title left, Clear all in the middle, the hide arrow in the top-right corner. */
   .head {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
+  }
+  .clear-all {
+    justify-self: center;
+  }
+  .hide {
+    justify-self: end;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--muted);
+    transition:
+      background 0.12s,
+      color 0.12s;
+  }
+  .hide:hover,
+  .hide:focus-visible {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 0 0 1px var(--line);
   }
   h2 {
     font-size: 1.05rem;
