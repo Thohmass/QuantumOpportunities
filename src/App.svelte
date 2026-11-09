@@ -758,22 +758,26 @@
   .layout.single main {
     padding: 0 max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
   }
+  /* Phones and tablets: the filters slide in from the left (where their ‹ hides them again). */
   .sidebar {
     position: fixed;
-    inset: 0 0 0 auto;
+    inset: 0 auto 0 0;
     width: min(380px, 92vw);
     background: var(--surface);
     z-index: 45;
     overflow-y: auto;
     overscroll-behavior: contain;
-    transform: translateX(100%);
-    transition: transform 0.2s ease-out;
-    border-left: 1px solid var(--line);
+    transform: translateX(-100%);
+    transition:
+      transform 0.2s ease-out,
+      visibility 0s linear 0.2s;
+    border-right: 1px solid var(--line);
     visibility: hidden;
   }
   .sidebar.open {
     transform: none;
     visibility: visible;
+    transition: transform 0.2s ease-out;
   }
   .scrim {
     position: fixed;
