@@ -56,7 +56,7 @@ Discussed and wanted; not started. Each needs an issue approved by the owner fir
 - **Needs:**
   - **Owner decisions:** the hosting provider (leaning Cloudflare), a domain, and an email service account.
   - **Privacy (EU users):** a privacy page, double opt-in, deleting the account, and storing only email + watches + schedule.
-- **Shared with:** the interest signals (proposal 4) can use the same backend.
+- **Shared with:** anonymous interest signals for the agents (docs/04-data-pipeline.md, Scout improvements) can use the same backend.
 
 ### 2. Pictures for cities, countries and organisations
 - **Where:** in the opened card, the small card and the full details. Not on folded cards, so the list stays quick to scan.
