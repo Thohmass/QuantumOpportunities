@@ -65,6 +65,8 @@ export const prefs = $state({
   sidebar: load<'shown' | 'hidden'>('qo-sidebar', ['shown', 'hidden'], 'shown'),
   /** Explore on desktop: the list column can be hidden (remembered). */
   list: load<'shown' | 'hidden'>('qo-list', ['shown', 'hidden'], 'shown'),
+  /** The bar of active filter chips: all rows, or folded to one. */
+  chips: load<'open' | 'folded'>('qo-chips', ['open', 'folded'], 'open'),
   filtersW: loadNumber(
     'qo-filters-w',
     WIDTHS.filters.min,
@@ -101,7 +103,7 @@ export function setWidth(which: 'filters' | 'list', px: number): void {
   save(`qo-${which}-w`, String(v));
 }
 
-export function setPref<K extends 'theme' | 'sidebar' | 'list'>(
+export function setPref<K extends 'theme' | 'sidebar' | 'list' | 'chips'>(
   key: K,
   value: (typeof prefs)[K],
 ): void {

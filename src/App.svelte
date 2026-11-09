@@ -381,6 +381,30 @@
     };
   });
 
+  // The filter chips: when they take more than one row, they can be folded into one.
+  let chipsEl: HTMLDivElement | undefined = $state();
+  let chipsWrap = $state(false);
+  const chipsFolded = $derived(chipsWrap && prefs.chips === 'folded');
+  $effect(() => {
+    const el = chipsEl;
+    if (!el) return;
+    const measure = () => {
+      const items = el.querySelectorAll('button');
+      const first = items[0];
+      const last = items[items.length - 1];
+      chipsWrap = !!first && !!last && last.offsetTop > first.offsetTop + 4;
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    const mo = new MutationObserver(measure);
+    mo.observe(el, { childList: true, subtree: true });
+    measure();
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
+  });
+
   function drawerKey(ev: KeyboardEvent) {
     if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) closeDrawer();
   }
@@ -467,8 +491,31 @@
       class:workspace={app.view === 'explore' || app.view === 'map' || app.view === 'timeline'}
     >
       {#if app.view !== 'about'}
-        <div class="bar">
-          <div class="chips"><Chips {meta} /></div>
+        <div class="bar" class:folded={chipsFolded}>
+          <div class="chips" id="active-chips" bind:this={chipsEl}><Chips {meta} /></div>
+          {#if chipsWrap}
+            <!-- Many chips take several rows: an arrow hanging under the bar folds them into one. -->
+            <button
+              type="button"
+              class="fold"
+              aria-controls="active-chips"
+              aria-expanded={!chipsFolded}
+              aria-label={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
+              title={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
+              onclick={() => setPref('chips', chipsFolded ? 'open' : 'folded')}
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
+                ><path
+                  d={chipsFolded ? 'M5 9l7 7 7-7' : 'M5 15l7-7 7 7'}
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+              >
+            </button>
+          {/if}
         </div>
       {/if}
       {#if app.view === 'explore'}
@@ -833,6 +880,38 @@
     gap: 6px 10px;
     flex-wrap: wrap;
     padding: 4px 10px;
+  }
+  .bar {
+    position: relative;
+    z-index: 14;
+  }
+  /* Folded: one row of chips (the rest are a click away). */
+  .bar.folded .chips {
+    max-height: 44px;
+    overflow: hidden;
+  }
+  .fold {
+    position: absolute;
+    right: 14px;
+    bottom: -18px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    background: var(--bg);
+    color: var(--muted);
+    box-shadow: 0 3px 6px rgb(0 0 0 / 12%);
+  }
+  .fold:hover,
+  .fold:focus-visible {
+    color: var(--ink);
+  }
+  .bar:has(.fold) {
+    border-bottom: 1px solid var(--line);
   }
   /* The bar only holds filter chips; without any it takes no space. */
   .bar:not(:has(.chips :global(*))) {

@@ -540,3 +540,15 @@ test('desktop: arrows on the panel borders hide filters and list; tabs at the ed
   await showList.click();
   await expect(page.locator('.list-pane')).toHaveCount(1);
 });
+
+test('many filter chips can be folded into one row and unfolded again', async ({ page }) => {
+  await page.goto(
+    '/#/explore?type=hackathon,conference,workshop,summer_school,challenge,winter_school,programme',
+  );
+  const bar = page.locator('div.bar');
+  const tall = (await bar.boundingBox())!.height;
+  await page.getByRole('button', { name: 'Fold the filter chips' }).click();
+  await expect.poll(async () => (await bar.boundingBox())!.height).toBeLessThan(tall);
+  await page.getByRole('button', { name: 'Show all filter chips' }).click();
+  await expect.poll(async () => (await bar.boundingBox())!.height).toBe(tall);
+});
