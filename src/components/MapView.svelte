@@ -468,7 +468,7 @@
               onkeydown={(ev) => (ev.key === 'Enter' || ev.key === ' ') && openEvent(d.e.id, true)}
               onpointerenter={(ev) => ev.pointerType === 'mouse' && hover(d.e.id)}
               onpointerleave={() => hover(undefined)}
-              onfocus={() => hover(d.e.id)}
+              onfocus={(ev) => ev.currentTarget.matches(':focus-visible') && hover(d.e.id)}
               onblur={() => hover(undefined)}
             >
               <g class="shift" style:transform="translate({o[0]}px, {o[1]}px)">
@@ -664,16 +664,17 @@
     opacity: 0.45;
     filter: grayscale(0.9);
   }
-  .dot.picked .ring {
-    stroke: var(--tc);
-  }
+  /* One highlight for "this event": pointed at anywhere, or selected. */
+  .dot.picked .ring,
   .dot.hot .ring,
   .dot:focus-visible .ring {
     stroke: var(--hot);
   }
+  .dot.picked .bubble,
   .dot.hot .bubble {
     transform: scale(0.6);
   }
+  .dot.picked .bubble.big,
   .dot.hot .bubble.big {
     transform: scale(1.12);
   }

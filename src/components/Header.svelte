@@ -2,7 +2,7 @@
   import { activeCount } from '../lib/filters';
   import type { Suggestion } from '../lib/suggest';
   import SearchBox from './SearchBox.svelte';
-  import { app, prefs, setPref, type Theme } from '../lib/state.svelte';
+  import { app, closeDrawer, prefs, setPref, type Theme } from '../lib/state.svelte';
 
   let { shown, total, pool }: { shown: number; total: number; pool: Suggestion[] } = $props();
 
@@ -89,7 +89,7 @@
         class="btn list-btn"
         type="button"
         aria-expanded={app.listDrawer}
-        onclick={() => (app.listDrawer = !app.listDrawer)}
+        onclick={() => (app.listDrawer ? closeDrawer() : (app.listDrawer = true))}
       >
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
           ><path

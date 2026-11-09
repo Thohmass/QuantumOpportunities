@@ -160,3 +160,24 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - Only − / + remain, floating in the bottom-left corner (top-right on phones). The Week / Month / Quarter / Year / Today buttons and the selection hint are gone. A guided tour of less obvious features is planned just before v1.0.
 - **Expected events on the timeline** are easier to see: less transparent, with a stronger gradient.
 - **Selecting an event** scrolls the list only as much as needed to show the whole card: not at all if it is already fully visible, otherwise until it is the first or last card shown.
+
+## 15. v0.8 changes (9 Nov 2026, seventh review)
+
+- **One selection, one highlight.**
+  - A selected event has the same orange ring in every view; pointing at an event with the mouse gives a lighter orange ring. The second, type-coloured highlight is gone.
+  - On touch screens, tapping an event no longer leaves a "pointed at" highlight behind.
+  - **Closing the list drawer deselects the event,** so tapping the same event again selects it and opens the drawer again.
+  - **Clicking empty space deselects:** the map's sea or land, the timeline's background, the gaps between cards, the header. A drag (panning the map, picking dates on the timeline) is not a click.
+- **The list drawer:**
+  - On phones it leaves a thumb's width (64 px) free beside it.
+  - It keeps its scroll position when it is closed and opened again. Its title bar with ✕ stays at the top while the list scrolls.
+  - On windows 760 px and wider it no longer dims or blocks the rest of the app: the map and timeline stay usable next to it, and clicking empty space outside it rolls it back (and deselects).
+- **Phones: the list tab** sits higher by default (over the map, where it is easier to see) and contrasts with the page (light on the dark theme, dark on the light one).
+  - Tap it to open the list, or drag it towards the middle to pull the list out.
+  - Drag it up or down (or hold it, then drag anywhere) to move it. Let go nearer the other edge to move it there; the list then opens from that edge. The place is remembered.
+- **Phones: map and timeline fill the screen,** with the same draggable bar between them as on desktop. The timeline always reaches the bottom of the screen and scrolls inside itself.
+- **Timeline, less text:**
+  - **One band of rows per event type,** in the taxonomy's order, with the type's icon pinned to the left edge. Within a band, bars are packed into as few rows as possible.
+  - **Names only where they fit:** a name is written inside its bar when it fits whole at the current zoom (the text follows the bar height). Zooming in reveals more names.
+  - **A name line:** pointing at a bar with the mouse (or selecting it) opens a line under it with the full name and, in smaller grey text, the city and country. The rows below make room for it.
+- **Desktop: no side margins** around the workspace panels (left over from v0.7).
