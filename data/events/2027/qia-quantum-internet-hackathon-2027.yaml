@@ -1,0 +1,27 @@
+id: qia-quantum-internet-hackathon-2027
+series: qia-quantum-internet-hackathon
+name: QIA Pan-European Quantum Internet Hackathon 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-11
+location:
+  city: Amsterdam
+  country: NL
+organizers: [quantum-internet-alliance]
+topics: [communication, networks]
+url: https://quantuminternetalliance.org/qia-initiatives/
+expected:
+  basis: Annual series; previous edition November 2025
+  confidence: medium
+sources:
+  - url: https://quantuminternetalliance.org/qia-initiatives/
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-11-09
+  unchanged_streak: 0
+added:
+  date: 2026-11-09
+  by: expected-stub

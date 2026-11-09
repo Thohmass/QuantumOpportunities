@@ -6,6 +6,10 @@ format: in_person
 dates:
   start: 2027-03-22
   end: 2027-03-26
+deadlines:
+  - kind: abstract
+    date: 2026-12-11
+    note: Contributed talks and posters
 location:
   city: Pisa
   country: IT
@@ -18,9 +22,12 @@ description: Workshop on the path from noisy devices to large-scale fault-tolera
 sources:
   - url: https://indico.sns.it/event/152/
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-09
+  - url: https://liftconference.org/
+    kind: official
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-09
   unchanged_streak: 0
 added:
   date: 2026-11-08

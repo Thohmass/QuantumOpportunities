@@ -36,10 +36,10 @@ description: The eighth edition of MIT’s flagship student quantum hackathon, w
 sources:
   - url: https://iquhack.mit.edu/
     kind: official
-    accessed: 2026-10-23
+    accessed: 2026-11-09
 checks:
-  last_checked: 2026-10-23
-  unchanged_streak: 0
+  last_checked: 2026-11-09
+  unchanged_streak: 1
 added:
   date: 2026-10-23
   by: radar-import

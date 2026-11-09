@@ -27,8 +27,8 @@ sources:
     accessed: 2026-10-23
     note: 2026 edition page
 checks:
-  last_checked: 2026-10-23
-  unchanged_streak: 0
+  last_checked: 2026-11-09
+  unchanged_streak: 1
 added:
   date: 2026-10-23
   by: radar-import

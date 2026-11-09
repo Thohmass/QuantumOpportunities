@@ -24,8 +24,8 @@ sources:
     accessed: 2026-11-08
     note: seen in search results (403 to fetch); lists 18-22 Oct 2027
 checks:
-  last_checked: 2026-11-08
-  unchanged_streak: 0
+  last_checked: 2026-11-09
+  unchanged_streak: 1
 added:
   date: 2026-11-08
   by: scout-2026-11-08
