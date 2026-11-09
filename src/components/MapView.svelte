@@ -16,13 +16,30 @@
   import { whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
   import ExpandButton from './ExpandButton.svelte';
+  import PeekCard from './PeekCard.svelte';
   import { typeIcon } from '../lib/icons';
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
   import { loadLand } from '../lib/world';
 
-  let { events, meta, compact = false }: { events: Ev[]; meta: Meta; compact?: boolean } = $props();
+  let {
+    events,
+    meta,
+    compact = false,
+    peek = false,
+    today = 0,
+    onmore,
+  }: {
+    events: Ev[];
+    meta: Meta;
+    compact?: boolean;
+    /** Show a small card for the selected event, pinned to its dot (where the list isn't on screen). */
+    peek?: boolean;
+    today?: number;
+    /** The card's "all details" button. */
+    onmore?: () => void;
+  } = $props();
 
   /** Closest two dots may come, centre to centre (px): small dots, and the large bubbles shown from BIG_AT. */
   const SPACING = 15;
@@ -429,6 +446,33 @@
   const hotIndex = $derived(app.hoverId ? dots.findIndex((d) => d.e.id === app.hoverId) : -1);
   const hot = $derived(hotIndex >= 0 ? dots[hotIndex] : undefined);
   const hotOff = $derived<[number, number]>(offsets[hotIndex] ?? [0, 0]);
+
+  // ---- the selected event's card, pinned to its dot -------------------------------------------------------
+  const PEEK_W = 260;
+  let peekH = $state(160);
+  const peekEv = $derived(
+    peek && app.eventId ? events.find((e) => e.id === app.eventId) : undefined,
+  );
+  const peekPos = $derived.by(() => {
+    if (!peekEv) return undefined;
+    const cw = Math.min(PEEK_W, w - 16);
+    const i = dots.findIndex((d) => d.e.id === peekEv.id);
+    // Online-only events have no place on the map: the card sits at the bottom, without a pointer.
+    if (i < 0) return { left: Math.max(8, (w - cw) / 2), top: h - peekH - 14 };
+    const o = offsets[i] ?? [0, 0];
+    const x = t.applyX(dots[i]!.x) + o[0];
+    const y = t.applyY(dots[i]!.y) + o[1];
+    if (x < -20 || x > w + 20 || y < -20 || y > h + 20) return undefined;
+    const gap = (big ? 15 : 9) + 12;
+    const left = Math.min(Math.max(8, x - cw / 2), w - cw - 8);
+    const above = y - gap - peekH > 8;
+    return {
+      left,
+      top: above ? y - gap - peekH : y + gap,
+      above,
+      tail: Math.min(Math.max(x - left, 18), cw - 18),
+    };
+  });
 </script>
 
 <section class="mapview" class:compact aria-label="Map">
@@ -495,7 +539,7 @@
       </g>
     </svg>
 
-    {#if hot}
+    {#if hot && hot.e.id !== peekEv?.id}
       <div
         class="label event-label"
         style:left="{t.applyX(hot.x) + hotOff[0]}px"
@@ -503,6 +547,25 @@
       >
         <b>{hot.e.name}</b>
         <span>{formatRange(hot.e.dates.start, hot.e.dates.end)} · {whereText(hot.e)}</span>
+      </div>
+    {/if}
+
+    {#if peekEv && peekPos}
+      <div
+        class="peek-wrap"
+        style:left="{peekPos.left}px"
+        style:top="{peekPos.top}px"
+        bind:offsetHeight={peekH}
+      >
+        <PeekCard e={peekEv} {today} onmore={() => onmore?.()} />
+        {#if peekPos.tail !== undefined}
+          <span
+            class="tail"
+            class:above={peekPos.above}
+            style:left="{peekPos.tail}px"
+            aria-hidden="true"
+          ></span>
+        {/if}
       </div>
     {/if}
 
@@ -698,6 +761,28 @@
   .event-label span {
     color: var(--muted);
     font-size: 0.75rem;
+  }
+  .peek-wrap {
+    position: absolute;
+    z-index: 6;
+  }
+  /* The pointer from the card to its dot. */
+  .tail {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    background: var(--surface);
+    transform: rotate(45deg);
+    box-shadow: 1px 1px 0 var(--line);
+    top: -7px;
+  }
+  .tail.above {
+    top: auto;
+    bottom: -7px;
+  }
+  .tail:not(.above) {
+    box-shadow: -1px -1px 0 var(--line);
   }
   .overlay {
     position: absolute;

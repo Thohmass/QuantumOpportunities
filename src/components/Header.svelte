@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { FUNNEL } from '../lib/icons';
   import { activeCount } from '../lib/filters';
   import type { Suggestion } from '../lib/suggest';
   import SearchBox from './SearchBox.svelte';
@@ -74,11 +75,11 @@
     >
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
         ><path
-          d="M4 6h16M7 12h10M10 18h4"
+          d={FUNNEL}
           fill="none"
           stroke="currentColor"
           stroke-width="2"
-          stroke-linecap="round"
+          stroke-linejoin="round"
         /></svg
       >
       <span class="word">Filters</span>{#if nActive}<span class="count">{nActive}</span>{/if}

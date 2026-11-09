@@ -109,6 +109,7 @@ test('filter groups start folded, except the top ones', async ({ page, isMobile 
 });
 
 // Changed in v0.6 (owner's request): on narrow windows the list is a drawer, not part of the page.
+// Changed in v0.9: waits for the drawer to finish sliding in before scrolling it (the test was timing-dependent).
 test('narrow window: the list is a drawer that scrolls on its own', async ({ page, isMobile }) => {
   test.skip(isMobile, 'Wheel scrolling is a desktop gesture');
   await page.setViewportSize({ width: 1000, height: 800 });
@@ -117,12 +118,15 @@ test('narrow window: the list is a drawer that scrolls on its own', async ({ pag
   await page.getByRole('button', { name: /^List/ }).click();
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await drawer.locator('article.card').first().waitFor();
+  await expect(drawer).toHaveCSS('transform', 'none');
   await page.mouse.move(800, 500);
   await page.mouse.wheel(0, 600);
   await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
+// Changed in v0.9 (owner's request): with the list hidden, a click first shows a small card on the map;
+// its details button opens the pop-up.
 test('explore: a hidden list stays hidden; clicking the map opens the details pop-up', async ({
   page,
   isMobile,
@@ -133,6 +137,7 @@ test('explore: a hidden list stays hidden; clicking the map opens the details po
   await page.getByRole('button', { name: 'Hide list' }).click();
   await expect(page.locator('.list-pane')).toHaveCount(0);
   await page.locator('.map-pane g.dot').first().click();
+  await page.getByRole('button', { name: 'All details' }).click();
   await expect(page.getByRole('dialog')).toBeVisible();
   await expect(page.locator('.list-pane')).toHaveCount(0);
   await page.keyboard.press('Escape');
@@ -351,6 +356,7 @@ test('the list drawer keeps its scroll position when it is closed and opened aga
   await list.click();
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await drawer.locator('article.card').first().waitFor();
+  await expect(drawer).toHaveCSS('transform', 'none');
   await page.mouse.move(800, 500);
   await page.mouse.wheel(0, 900);
   await expect.poll(() => drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(300);
@@ -436,4 +442,152 @@ test('phones: the list tab can be moved to the left edge, and the list then open
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await expect(drawer).toBeVisible();
   await expect.poll(async () => (await drawer.boundingBox())!.x).toBeLessThan(1);
+});
+
+test('Clear all also turns off "Only map area"', async ({ page }) => {
+  await page.goto('/#/explore?type=hackathon');
+  await page.getByRole('checkbox', { name: 'Only map area' }).check();
+  await page.getByLabel('Active filters').getByRole('button', { name: 'Clear all' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Only map area' })).not.toBeChecked();
+  await expect(page.getByLabel('Active filters')).toHaveCount(0);
+});
+
+test('timeline: the wheel scrolls through the rows; Ctrl + wheel zooms', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse wheel is a desktop gesture');
+  await page.setViewportSize({ width: 1440, height: 450 });
+  await page.goto('/#/timeline');
+  const scroller = page.locator('.timeline .scroller');
+  const month = page.locator('.head .cell.month').first();
+  const width = (await month.boundingBox())!.width;
+  const box = (await scroller.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 400);
+  await expect.poll(() => scroller.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  expect((await month.boundingBox())!.width).toBe(width);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, -400);
+  await page.keyboard.up('Control');
+  await expect.poll(async () => (await month.boundingBox())!.width).toBeGreaterThan(width);
+});
+
+test('timeline: the selected and the pointed-at event both open, with deadlines on demand', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const tl = page.locator('.timeline-pane');
+  // Deadlines are drawn only for opened events.
+  await expect(tl.locator('button.diamond')).toHaveCount(0);
+  await tl.locator('button.item[aria-label^="MIT iQuHACK"]').click();
+  await expect(tl.locator('button.diamond').first()).toBeVisible();
+  // Point at another event: both stay open, each on its own row with its name.
+  const other = tl.locator('button.item:not([aria-label^="MIT iQuHACK"])').nth(3);
+  await other.hover();
+  await expect(tl.locator('.name-line')).toHaveCount(2);
+  await page.waitForTimeout(400);
+  await expect(tl.locator('.name-line')).toHaveCount(2);
+  // A deadline names itself and, clicked, lights up the deadlines in the event's card.
+  const diamond = tl.locator('button.diamond').first();
+  await diamond.hover();
+  await expect(diamond).toHaveAccessibleName(/Applications/);
+  await diamond.click();
+  await expect(page.locator('.list-pane article.card.open .dls.flash')).toBeVisible();
+});
+
+test('timeline: clicking inside a selected period removes it', async ({ page }) => {
+  await page.goto('/#/timeline');
+  await page
+    .getByRole('button', { name: /^Select February/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/when=custom/);
+  const band = (await page.locator('.timeline .band').first().boundingBox())!;
+  const sc = (await page.locator('.timeline .scroller').boundingBox())!;
+  await page.mouse.click(band.x + band.width / 2, sc.y + sc.height - 6);
+  await expect(page).not.toHaveURL(/when=custom/);
+  await expect(page.getByRole('button', { name: 'Clear dates ×' })).toHaveCount(0);
+});
+
+test('timeline: a band icon filters to its event type, and back', async ({ page }) => {
+  await page.goto('/#/timeline');
+  const icon = page.getByRole('button', { name: 'Filter: Hackathon' });
+  await icon.click();
+  await expect(page).toHaveURL(/type=hackathon/);
+  await expect(page.locator('.band-icon')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Filter: Hackathon' }).click();
+  await expect(page).not.toHaveURL(/type=/);
+  expect(await page.locator('.band-icon').count()).toBeGreaterThan(1);
+});
+
+test('desktop: arrows on the panel borders hide filters and list; tabs at the edges bring them back', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  // The list's arrow sits on the list's border (right side), not next to the filters.
+  const hideList = page.getByRole('button', { name: 'Hide list' });
+  expect((await hideList.boundingBox())!.x).toBeGreaterThan(720);
+  await hideList.click();
+  await expect(page.locator('.list-pane')).toHaveCount(0);
+  const showList = page.getByRole('button', { name: /^List \(/ });
+  const tab = (await showList.boundingBox())!;
+  expect(tab.x + tab.width).toBeGreaterThan(1438);
+  await page.getByRole('button', { name: 'Hide filters' }).click();
+  await expect(page.getByRole('complementary', { name: 'Filters' })).toBeHidden();
+  await page.getByRole('button', { name: 'Show filters' }).click();
+  await expect(page.getByRole('complementary', { name: 'Filters' })).toBeVisible();
+  await showList.click();
+  await expect(page.locator('.list-pane')).toHaveCount(1);
+});
+
+test('many filter chips can be folded into one row and unfolded again', async ({ page }) => {
+  await page.goto(
+    '/#/explore?type=hackathon,conference,workshop,summer_school,challenge,winter_school,programme',
+  );
+  const bar = page.locator('div.bar');
+  const tall = (await bar.boundingBox())!.height;
+  await page.getByRole('button', { name: 'Fold the filter chips' }).click();
+  await expect.poll(async () => (await bar.boundingBox())!.height).toBeLessThan(tall);
+  await page.getByRole('button', { name: 'Show all filter chips' }).click();
+  await expect.poll(async () => (await bar.boundingBox())!.height).toBe(tall);
+});
+
+test('phones: selecting an event shows a small card on the map first; its details button opens the list', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phone layout');
+  await page.goto('/#/explore');
+  await page.locator('.timeline-pane button.item[aria-label^="MIT iQuHACK"]').click();
+  const card = page.getByRole('group', { name: /MIT iQuHACK 2027: summary/ });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText('Apply by');
+  await expect(page.getByRole('dialog', { name: 'Events' })).toBeHidden();
+  await card.getByRole('button', { name: 'All details' }).click();
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await expect(drawer.locator('article.card.open')).toContainText('MIT iQuHACK 2027');
+});
+
+test('desktop with the list hidden: the small card closes with its ✕, which deselects', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  await page.getByRole('button', { name: 'Hide list' }).click();
+  await page.locator('.map-pane g.dot').nth(5).click();
+  const card = page.getByRole('group', { name: /: summary$/ });
+  await expect(card).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await card.getByRole('button', { name: 'Close' }).click();
+  await expect(card).toHaveCount(0);
+  await expect(page).not.toHaveURL(/e=/);
 });

@@ -373,3 +373,28 @@ h3 {
   height: 100%;
   object-fit: cover;
 }
+
+/* A part of an event's details lit up briefly (e.g. its deadlines, after clicking one on the timeline). */
+.flashable {
+  border-radius: 8px;
+}
+.flashable.flash {
+  animation: qo-flash 1.5s ease-out;
+}
+@keyframes qo-flash {
+  0%,
+  35% {
+    background: color-mix(in srgb, var(--hot) 22%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--hot) 22%, transparent);
+  }
+  100% {
+    background: transparent;
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flashable.flash {
+    animation: none;
+    outline: 2px solid var(--hot);
+  }
+}

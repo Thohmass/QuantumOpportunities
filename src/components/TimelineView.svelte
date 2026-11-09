@@ -7,8 +7,8 @@
   import { tick, untrack } from 'svelte';
   import ExpandButton from './ExpandButton.svelte';
   import TypeIcon from './TypeIcon.svelte';
-  import { bounds, formatRange, isoDay, monthName } from '../lib/dates';
-  import { NOT_FOUND, statusLabel, whereText } from '../lib/format';
+  import { bounds, formatPartial, formatRange, isoDay, monthName } from '../lib/dates';
+  import { KIND_LABEL, NOT_FOUND, statusLabel, whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
   import {
     clickSelect,
@@ -18,7 +18,15 @@
     type ClickMode,
     type Interval,
   } from '../lib/ranges';
-  import { app, currentIntervals, hover, openEvent, setRanges } from '../lib/state.svelte';
+  import {
+    app,
+    currentIntervals,
+    flash,
+    hover,
+    openEvent,
+    setRanges,
+    toggleIn,
+  } from '../lib/state.svelte';
 
   let {
     events,
@@ -36,7 +44,7 @@
   } = $props();
 
   const DAY = 86_400_000;
-  // Zoom is continuous (pixels per day): the mouse wheel, trackpad or touch pinch, or the − / + buttons.
+  // Zoom is continuous (pixels per day): Ctrl/⌘ + wheel, trackpad or touch pinch, or the − / + buttons.
   const DEFAULT_PPD = 3.2;
   const MIN_PPD = 0.45;
   const MAX_PPD = 48;
@@ -205,12 +213,12 @@
           ? e.deadlines
               .map((d) => ({
                 x: x(bounds(d.date)[1]),
-                label: `${d.kind.replace('_', ' ')} deadline ${d.date}`,
+                label: `${KIND_LABEL[d.kind] ?? 'Deadline'} · ${formatPartial(d.date)}`,
               }))
               .filter((d) => d.x >= 0 && d.x < left)
           : [];
-        const startX = Math.min(left, ...deadlines.map((d) => d.x - 6));
-        let r = ends.findIndex((end) => end + GAP <= startX);
+        // Deadlines are drawn only for opened events (which get a row of their own), so only bars are packed.
+        let r = ends.findIndex((end) => end + GAP <= left);
         if (r === -1) r = ends.push(left + barW) - 1;
         else ends[r] = left + barW;
         items.push({
@@ -252,38 +260,53 @@
   const fontPx = $derived(Math.min(0.72 * remPx(), barH - 3));
   const roomy = $derived(fontPx >= 10);
 
-  // The extra line with the name and place: under the bar the mouse rests on, or the selected one.
-  const LINE = 20;
+  // ---- opened events: the selected one and the one the mouse points at ------------------------------
+  // An opened event gets a row of its own: the events that shared its row move to a new row just below,
+  // which leaves room for its name and place right beside the bar, and its deadlines unfold from it.
+  // Both can be open at once. What the mouse points at stays open until it points at another event (or
+  // leaves the timeline), so moving across the gap left behind never makes the rows jump back and forth.
   let pointed: string | undefined = $state();
   let pointTimer = 0;
   function point(id: string | undefined) {
     clearTimeout(pointTimer);
-    pointTimer = window.setTimeout(() => (pointed = id), 90);
+    pointTimer = window.setTimeout(() => (pointed = id), id ? 110 : 250);
   }
-  const opened = $derived(pointed ?? app.eventId);
-  const openedRow = $derived(placed.items.find((p) => p.e.id === opened)?.row);
-  const bandOf = $derived.by(() => {
-    const out: number[] = [];
-    placed.bands.forEach((b, i) => {
-      for (let r = 0; r < b.rows; r++) out[b.firstRow + r] = i;
+  const openSet = $derived(new Set([app.eventId, pointed].filter((v): v is string => !!v)));
+  const layout = $derived.by(() => {
+    const byRow: Placed[][] = Array.from({ length: placed.rows }, () => []);
+    for (const p of placed.items) byRow[p.row]!.push(p);
+    const rowOf = new Map<string, number>();
+    const bandOfRow: number[] = [];
+    const bandFirst: number[] = [];
+    let d = 0;
+    placed.bands.forEach((band, bi) => {
+      bandFirst[bi] = d;
+      for (let r = band.firstRow; r < band.firstRow + band.rows; r++) {
+        const items = byRow[r]!;
+        const own = items.filter((p) => openSet.has(p.e.id)).sort((a, b) => a.left - b.left);
+        for (const p of own) {
+          rowOf.set(p.e.id, d);
+          bandOfRow[d++] = bi;
+        }
+        const rest = items.filter((p) => !openSet.has(p.e.id));
+        if (rest.length || !own.length) {
+          for (const p of rest) rowOf.set(p.e.id, d);
+          bandOfRow[d++] = bi;
+        }
+      }
     });
-    return out;
+    return { rowOf, bandOfRow, bandFirst, rows: d };
   });
-  /** Top (px) of a row: rows above it, the gaps between bands, and the opened line if it is above. */
-  const rowTop = (r: number) =>
-    HEAD +
-    6 +
-    r * rowH +
-    (bandOf[r] ?? 0) * LANE_GAP +
-    (openedRow !== undefined && r > openedRow ? LINE : 0);
+  /** Top (px) of a displayed row: the rows above it plus the gaps between bands. */
+  const rowTop = (d: number) => HEAD + 6 + d * rowH + (layout.bandOfRow[d] ?? 0) * LANE_GAP;
   const canvasH = $derived(
-    HEAD +
-      6 +
-      placed.rows * rowH +
-      Math.max(0, placed.bands.length - 1) * LANE_GAP +
-      (openedRow !== undefined ? LINE : 0) +
-      12,
+    HEAD + 6 + layout.rows * rowH + Math.max(0, placed.bands.length - 1) * LANE_GAP + 12,
   );
+  /** Where an opened event's name goes: after its bar, or over the bar when that runs off the right. */
+  function nameX(p: Placed): number {
+    const after = p.left + p.barW + 8;
+    return after < view.left + view.width - 140 ? after : Math.max(p.left, view.left + 28) + 8;
+  }
 
   // ---- selection (= the date filter): file-manager clicks and drags ---------
   const sel = $derived(currentIntervals(today));
@@ -350,6 +373,19 @@
       suppressClick = false;
       window.removeEventListener('click', stop, { capture: true });
     }, 0);
+  }
+
+  // A click (not a drag) inside a selected period removes that period. It is a click on the selection, so it
+  // doesn't also count as clicking empty space (which deselects the event).
+  function clickBody(ev: MouseEvent) {
+    if (suppressClick || !canvas || !sel.length) return;
+    const t = ev.target as Element;
+    if (t.closest('.head, button, .name-line')) return;
+    const day = dayAt(ev.clientX - canvas.getBoundingClientRect().left);
+    const hit = sel.find(([a, b]) => day >= a && day <= b);
+    if (!hit) return;
+    ev.stopPropagation();
+    setRanges(sel.filter((iv) => iv !== hit));
   }
 
   // ---- scrolling and zooming ---------------------------------------------------
@@ -425,10 +461,10 @@
     const el = scroller;
     if (!el) return;
     const left = (clientX: number) => clientX - el.getBoundingClientRect().left;
-    // The mouse wheel (and a trackpad pinch, reported as Ctrl + wheel) zooms around the pointer. Sideways
-    // scrolling (trackpad swipe, Shift + wheel) still moves along the timeline.
+    // The wheel scrolls (up/down through the rows; Shift or a sideways swipe moves along the dates).
+    // Ctrl/⌘ + wheel zooms around the pointer; a trackpad pinch arrives as Ctrl + wheel too.
     const onWheel = (ev: WheelEvent) => {
-      if (ev.shiftKey || Math.abs(ev.deltaX) > Math.abs(ev.deltaY)) return;
+      if (!ev.ctrlKey && !ev.metaKey) return;
       ev.preventDefault();
       const dy = ev.deltaMode === 1 ? ev.deltaY * 16 : ev.deltaY;
       queueZoom(Math.exp(-dy * 0.004), left(ev.clientX));
@@ -470,7 +506,7 @@
     if (!scroller) return;
     const p = placed.items.find((i) => i.e.id === id);
     if (!p) return;
-    const top = rowTop(p.row);
+    const top = rowTop(layout.rowOf.get(id) ?? 0);
     const { scrollLeft, clientWidth, scrollTop, clientHeight } = scroller;
     const left =
       p.left < scrollLeft + 20 || p.left > scrollLeft + clientWidth - 80
@@ -500,7 +536,7 @@
         type="button"
         class="btn"
         aria-label="Zoom out"
-        title="Zoom out (or mouse wheel, pinch)"
+        title="Zoom out (or Ctrl/⌘ + wheel, pinch)"
         disabled={ppd <= MIN_PPD}
         onclick={() => zoomTo(ppd / 1.5)}>−</button
       >
@@ -508,7 +544,7 @@
         type="button"
         class="btn"
         aria-label="Zoom in"
-        title="Zoom in (or mouse wheel, pinch)"
+        title="Zoom in (or Ctrl/⌘ + wheel, pinch)"
         disabled={ppd >= MAX_PPD}
         onclick={() => zoomTo(ppd * 1.5)}>+</button
       >
@@ -530,6 +566,8 @@
         onpointermove={move}
         onpointerup={up}
         onpointercancel={() => ((drag = undefined), (pending = undefined))}
+        onpointerleave={() => point(undefined)}
+        onclick={clickBody}
         role="presentation"
       >
         {#each months as m, i (m.key)}
@@ -556,7 +594,7 @@
         {#each placed.bands as b, i (b.type)}
           {#if i > 0}<div
               class="band-line"
-              style:top="{rowTop(b.firstRow) - LANE_GAP / 2 - 3}px"
+              style:top="{rowTop(layout.bandFirst[i]!) - LANE_GAP / 2 - 3}px"
             ></div>{/if}
         {/each}
         <div class="head">
@@ -600,12 +638,19 @@
           {/each}
         </div>
         <!-- The type of each band, pinned to the left edge while scrolling sideways. -->
-        <div class="band-icons" aria-hidden="true">
-          {#each placed.bands as b (b.type)}
-            <span
+        <div class="band-icons">
+          {#each placed.bands as b, i (b.type)}
+            {@const on = app.filters.types.includes(b.type)}
+            <button
+              type="button"
               class="band-icon t-{b.type}"
-              style:top="{rowTop(b.firstRow) - HEAD}px"
-              title={b.name}><TypeIcon type={b.type} size={13} /></span
+              class:on
+              style:top="{rowTop(layout.bandFirst[i]!) - HEAD}px"
+              title={on ? `Show all types again` : `Show only: ${b.name}`}
+              aria-label="Filter: {b.name}"
+              aria-pressed={on}
+              onclick={() => (app.filters.types = toggleIn(app.filters.types, b.type))}
+              ><TypeIcon type={b.type} size={17} /></button
             >
           {/each}
         </div>
@@ -614,27 +659,41 @@
           <p class="empty">No events match these filters.</p>
         {/if}
         {#each placed.items as p (p.e.id)}
-          {@const top = rowTop(p.row)}
+          {@const top = rowTop(layout.rowOf.get(p.e.id) ?? 0)}
           {@const hot = app.hoverId === p.e.id}
           {@const picked = app.eventId === p.e.id}
-          {@const faded = !hot && !picked && (outside(p.e) || dimmed.has(p.e.id))}
+          {@const open = openSet.has(p.e.id)}
+          {@const faded = !hot && !open && (outside(p.e) || dimmed.has(p.e.id))}
           <div class="t-{p.e.type}" class:faded class:past={p.e.isPast}>
-            {#each p.deadlines as d (d.x)}
-              <span
-                class="link"
-                style:left="{d.x}px"
-                style:width="{p.left - d.x}px"
-                style:top="{top + itemH / 2}px"
-                aria-hidden="true"
-              ></span>
-              <span
-                class="diamond"
-                style:left="{d.x - 5}px"
-                style:top="{top + itemH / 2 - 4.5}px"
-                title={d.label}
-                aria-hidden="true"
-              ></span>
-            {/each}
+            {#if open}
+              <!-- Deadlines unfold from the bar: a line grows back to each date, then the diamond appears. -->
+              {#each p.deadlines as d, k (d.x)}
+                <span
+                  class="link"
+                  style:left="{d.x}px"
+                  style:width="{p.left - d.x}px"
+                  style:top="{top + itemH / 2 - 1}px"
+                  style:--grow="{Math.min(0.5, 0.18 + (p.left - d.x) / 1600)}s"
+                  aria-hidden="true"
+                ></span>
+                <button
+                  type="button"
+                  class="diamond"
+                  class:hot={app.flash?.id === p.e.id}
+                  style:left="{d.x - 7}px"
+                  style:top="{top + itemH / 2 - 7}px"
+                  style:--delay="{Math.min(0.5, 0.18 + (p.left - d.x) / 1600)}s"
+                  style:z-index={20 - k}
+                  aria-label="{d.label} ({p.e.name})"
+                  onpointerenter={(ev) => ev.pointerType === 'mouse' && hover(p.e.id)}
+                  onpointerleave={() => hover(undefined)}
+                  onclick={() => {
+                    openEvent(p.e.id);
+                    flash(p.e.id, 'deadlines');
+                  }}><span class="tip">{d.label}</span></button
+                >
+              {/each}
+            {/if}
             <button
               type="button"
               class="item {p.e.status}"
@@ -644,17 +703,14 @@
               style:left="{p.left}px"
               style:top="{top}px"
               style:width="{p.barW}px"
-              title={p.e.name}
+              title={open ? undefined : p.e.name}
               onclick={() => !suppressClick && openEvent(p.e.id)}
               onpointerenter={(ev) => {
                 if (ev.pointerType !== 'mouse') return;
                 hover(p.e.id);
                 point(p.e.id);
               }}
-              onpointerleave={() => {
-                hover(undefined);
-                point(undefined);
-              }}
+              onpointerleave={() => hover(undefined)}
               onfocus={(ev) => ev.currentTarget.matches(':focus-visible') && hover(p.e.id)}
               onblur={() => hover(undefined)}
               aria-label="{p.e.name}, {formatRange(p.e.dates.start, p.e.dates.end)}, {statusLabel(
@@ -662,18 +718,19 @@
               )}"
             >
               <span class="bar"
-                >{#if roomy && (p.textW * fontPx) / (0.72 * remPx()) + 14 <= p.barW}<span class="in"
-                    >{p.e.name}</span
+                >{#if !open && roomy && (p.textW * fontPx) / (0.72 * remPx()) + 14 <= p.barW}<span
+                    class="in">{p.e.name}</span
                   >{/if}</span
               >
             </button>
-            {#if opened === p.e.id}
+            {#if open}
               {@const where = whereText(p.e)}
               <div
                 class="name-line"
                 class:hot={hot || picked}
-                style:left="{Math.max(0, p.left)}px"
-                style:top="{top + itemH + 1}px"
+                style:left="{nameX(p)}px"
+                style:top="{top}px"
+                style:height="{itemH}px"
                 aria-hidden="true"
               >
                 <b>{p.e.name}</b>{#if where !== NOT_FOUND}<span>{where}</span>{/if}
@@ -687,8 +744,8 @@
   {#if !compact}
     <p class="hint muted">
       One band of rows per event type. Faint = expected, not announced yet. Fading bar = only the
-      month or year is known. Diamonds = deadlines. Names appear where they fit: zoom in, or point
-      at a bar.
+      month or year is known. Names appear where they fit: zoom in, or point at a bar to see its
+      name, place and deadlines.
     </p>
   {/if}
 </section>
@@ -924,17 +981,30 @@
     height: 0;
     z-index: 6;
   }
+  /* Clickable: shows only that type (click again for all). */
   .band-icon {
     position: absolute;
-    left: 3px;
+    left: 4px;
     display: grid;
     place-items: center;
-    width: 20px;
-    height: 20px;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
     border-radius: 50%;
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
     box-shadow: 0 0 0 1px var(--line);
-    transition: top 0.18s ease-out;
+    cursor: pointer;
+    transition:
+      top 0.18s ease-out,
+      box-shadow 0.12s;
+  }
+  .band-icon:hover,
+  .band-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--tc);
+  }
+  .band-icon.on {
+    box-shadow: 0 0 0 2px var(--accent);
   }
   .band-line {
     position: absolute;
@@ -948,10 +1018,12 @@
     position: absolute;
     z-index: 6;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 8px;
-    max-width: 520px;
-    padding: 1px 6px;
+    max-width: 560px;
+    padding: 0 6px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--surface) 70%, transparent);
     font-size: 0.78rem;
     white-space: nowrap;
     color: var(--ink);
@@ -1035,19 +1107,79 @@
       0 0 0 2px var(--surface),
       0 0 0 4px var(--hot);
   }
-  .diamond {
-    position: absolute;
-    width: 9px;
-    height: 9px;
-    background: var(--tc);
-    transform: rotate(45deg);
-    border-radius: 1px;
-    z-index: 3;
-  }
+  /* Deadlines of an opened event: a solid line grows from the bar back to the date, then the diamond pops
+     up on its tail. The diamond is a button: pointing shows what it is; clicking opens the event's card
+     with its deadlines lit up. */
   .link {
     position: absolute;
-    height: 0;
-    border-top: 1.5px dotted var(--tc);
+    height: 2px;
+    background: var(--tc);
+    border-radius: 1px;
     z-index: 2;
+    transform-origin: right center;
+    animation: grow var(--grow, 0.3s) ease-out both;
+  }
+  .diamond {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    animation: pop 0.22s cubic-bezier(0.3, 1.6, 0.5, 1) var(--delay, 0.3s) both;
+  }
+  .diamond::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: var(--tc);
+    box-shadow: 0 0 0 1px var(--tc-edge);
+    border-radius: 1px;
+    transform: rotate(45deg);
+    transition: transform 0.12s;
+  }
+  .diamond:hover::before,
+  .diamond:focus-visible::before,
+  .diamond.hot::before {
+    box-shadow:
+      0 0 0 2px var(--surface),
+      0 0 0 4px var(--hot);
+    transform: rotate(45deg) scale(1.15);
+  }
+  .tip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: var(--ink);
+    color: var(--bg);
+    font-size: 0.74rem;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+  }
+  .diamond:hover .tip,
+  .diamond:focus-visible .tip {
+    opacity: 1;
+  }
+  @keyframes grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes pop {
+    from {
+      transform: scale(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .link,
+    .diamond {
+      animation: none;
+    }
   }
 </style>

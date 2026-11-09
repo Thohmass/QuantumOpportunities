@@ -10,6 +10,8 @@ export const app = $state({
   /** The list is a drawer (phones, and the expanded map or timeline); is it open? */
   listDrawer: false,
   drawerMode: false,
+  /** The map shows a small card for the selected event, so selecting doesn't open the list or details. */
+  peekMode: false,
   /** Event under the pointer (or keyboard focus) in any view: highlighted everywhere. */
   hoverId: undefined as string | undefined,
   /** Visible map area [south, west, north, east], set by the map. */
@@ -18,6 +20,8 @@ export const app = $state({
   mapOnly: false,
   /** Bumped when an event is selected from a list card, so the map and timeline focus on it. */
   focusTick: 0,
+  /** A part of an event's details to light up briefly (e.g. its deadlines, after clicking one). */
+  flash: undefined as { id: string; what: 'deadlines'; tick: number } | undefined,
   /** The full details pop-up is open for the selected event (the list card shows only the essentials). */
   detailOpen: false,
 });
@@ -63,6 +67,8 @@ export const prefs = $state({
   sidebar: load<'shown' | 'hidden'>('qo-sidebar', ['shown', 'hidden'], 'shown'),
   /** Explore on desktop: the list column can be hidden (remembered). */
   list: load<'shown' | 'hidden'>('qo-list', ['shown', 'hidden'], 'shown'),
+  /** The bar of active filter chips: all rows, or folded to one. */
+  chips: load<'open' | 'folded'>('qo-chips', ['open', 'folded'], 'open'),
   filtersW: loadNumber(
     'qo-filters-w',
     WIDTHS.filters.min,
@@ -99,7 +105,7 @@ export function setWidth(which: 'filters' | 'list', px: number): void {
   save(`qo-${which}-w`, String(v));
 }
 
-export function setPref<K extends 'theme' | 'sidebar' | 'list'>(
+export function setPref<K extends 'theme' | 'sidebar' | 'list' | 'chips'>(
   key: K,
   value: (typeof prefs)[K],
 ): void {
@@ -132,6 +138,7 @@ export function currentIntervals(today: number): Interval[] {
 
 export function resetFilters(): void {
   app.filters = { ...DEFAULT_FILTERS, sort: app.filters.sort };
+  app.mapOnly = false;
 }
 
 export function toggleIn(list: string[], value: string): string[] {
@@ -140,8 +147,16 @@ export function toggleIn(list: string[], value: string): string[] {
 
 export function openEvent(id: string, focus = false): void {
   app.eventId = id;
-  if (app.drawerMode) app.listDrawer = true;
+  if (app.drawerMode && !app.peekMode) app.listDrawer = true;
   if (focus) app.focusTick++;
+}
+
+export function flash(id: string, what: 'deadlines'): void {
+  app.flash = { id, what, tick: (app.flash?.tick ?? 0) + 1 };
+  const tick = app.flash.tick;
+  setTimeout(() => {
+    if (app.flash?.tick === tick) app.flash = undefined;
+  }, 1600);
 }
 
 /** One selection, one way out: deselecting and rolling the list drawer back go together. */

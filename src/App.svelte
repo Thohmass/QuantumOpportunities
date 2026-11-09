@@ -2,6 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import About from './components/About.svelte';
   import Chips from './components/Chips.svelte';
+  import EdgeToggle from './components/EdgeToggle.svelte';
   import EventDetail from './components/EventDetail.svelte';
   import FilterPanel from './components/FilterPanel.svelte';
   import Header from './components/Header.svelte';
@@ -34,6 +35,7 @@
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
+  import { FUNNEL } from './lib/icons';
 
   const today = localToday();
   let meta: Meta | undefined = $state();
@@ -165,9 +167,19 @@
     app.drawerMode = drawerMode;
     if (!drawerMode) app.listDrawer = false;
   });
+  // Where the list isn't on screen but the map is (phones; desktop with the list hidden), selecting an event
+  // first shows a small card on the map; its details button opens the list (phones) or the pop-up (desktop).
+  const peekMode = $derived(app.view === 'explore' && (narrow || listHidden));
   $effect(() => {
-    if (app.eventId && untrack(() => drawerMode)) app.listDrawer = true;
+    app.peekMode = peekMode;
   });
+  $effect(() => {
+    if (app.eventId && untrack(() => drawerMode && !peekMode)) app.listDrawer = true;
+  });
+  function peekMore() {
+    if (drawerMode) app.listDrawer = true;
+    else app.detailOpen = true;
+  }
   const listOnScreen = $derived(
     app.view === 'list' ||
       (app.view === 'explore' && !narrow && !listHidden) ||
@@ -176,7 +188,9 @@
   // Details: with a list on screen, the card unfolds and "More details" opens everything. Without one, the
   // details open directly: in the centred pop-up on Explore, in the side panel in the Map and Timeline views.
   const panelEvent = $derived(
-    selected && (app.detailOpen || (!listOnScreen && !drawerMode)) ? selected : undefined,
+    selected && (app.detailOpen || (!listOnScreen && !drawerMode && !peekMode))
+      ? selected
+      : undefined,
   );
   // Details always open as the centred pop-up (a bottom sheet on phones).
   const popup = true;
@@ -185,7 +199,7 @@
     app.detailOpen = false;
   });
   function closeDetail() {
-    if (listOnScreen) app.detailOpen = false;
+    if (listOnScreen || peekMode) app.detailOpen = false;
     else app.eventId = undefined;
   }
 
@@ -379,6 +393,30 @@
     };
   });
 
+  // The filter chips: when they take more than one row, they can be folded into one.
+  let chipsEl: HTMLDivElement | undefined = $state();
+  let chipsWrap = $state(false);
+  const chipsFolded = $derived(chipsWrap && prefs.chips === 'folded');
+  $effect(() => {
+    const el = chipsEl;
+    if (!el) return;
+    const measure = () => {
+      const items = el.querySelectorAll('button');
+      const first = items[0];
+      const last = items[items.length - 1];
+      chipsWrap = !!first && !!last && last.offsetTop > first.offsetTop + 4;
+    };
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    const mo = new MutationObserver(measure);
+    mo.observe(el, { childList: true, subtree: true });
+    measure();
+    return () => {
+      ro.disconnect();
+      mo.disconnect();
+    };
+  });
+
   function drawerKey(ev: KeyboardEvent) {
     if (ev.key === 'Escape' && app.listDrawer && !app.detailOpen) closeDrawer();
   }
@@ -387,7 +425,7 @@
   // header) deselects the event. Outside a non-modal drawer, it also rolls the drawer back.
   const INTERACTIVE =
     'a, button, input, select, textarea, label, summary, [role="button"], [role="separator"], ' +
-    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab';
+    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap';
   function clickAway(ev: MouseEvent) {
     const t = ev.target;
     if (!(t instanceof Element) || ev.button !== 0) return;
@@ -427,6 +465,31 @@
             onresize={(v) => setWidth('filters', v)}
             onreset={() => setWidth('filters', WIDTHS.filters.initial)}
           />
+          <EdgeToggle
+            edge="left"
+            open
+            label="Hide filters"
+            onclick={() => setPref('sidebar', 'hidden')}
+          />
+        </div>
+      {:else}
+        <div class="desk-only">
+          <EdgeToggle
+            edge="left"
+            open={false}
+            label="Show filters"
+            onclick={() => setPref('sidebar', 'shown')}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
+              ><path
+                d={FUNNEL}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              /></svg
+            >
+          </EdgeToggle>
         </div>
       {/if}
       {#if app.filtersOpen}<div
@@ -440,44 +503,29 @@
       class:workspace={app.view === 'explore' || app.view === 'map' || app.view === 'timeline'}
     >
       {#if app.view !== 'about'}
-        <div class="bar">
-          <button
-            class="btn ghost side-toggle"
-            type="button"
-            onclick={() => setPref('sidebar', sidebarHidden ? 'shown' : 'hidden')}
-            aria-pressed={!sidebarHidden}
-            title={sidebarHidden ? 'Show filters' : 'Hide filters'}
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
-              ><path
-                d="M4 5h16v14H4zM9 5v14"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linejoin="round"
-              /></svg
-            >
-            {sidebarHidden ? 'Filters' : 'Hide filters'}
-          </button>
-          <div class="chips"><Chips {meta} /></div>
-          {#if app.view === 'explore' && !narrow}
+        <div class="bar" class:folded={chipsFolded}>
+          <div class="chips" id="active-chips" bind:this={chipsEl}><Chips {meta} /></div>
+          {#if chipsWrap}
+            <!-- Many chips take several rows: an arrow hanging under the bar folds them into one. -->
             <button
-              class="btn ghost side-toggle"
               type="button"
-              aria-pressed={!listHidden}
-              onclick={() => setPref('list', listHidden ? 'shown' : 'hidden')}
-              title={listHidden ? 'Show the list' : 'Hide the list'}
+              class="fold"
+              aria-controls="active-chips"
+              aria-expanded={!chipsFolded}
+              aria-label={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
+              title={chipsFolded ? 'Show all filter chips' : 'Fold the filter chips'}
+              onclick={() => setPref('chips', chipsFolded ? 'open' : 'folded')}
             >
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"
                 ><path
-                  d="M4 5h16v14H4zM15 5v14"
+                  d={chipsFolded ? 'M5 9l7 7 7-7' : 'M5 15l7-7 7 7'}
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="2"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
                   stroke-linejoin="round"
                 /></svg
               >
-              {listHidden ? `List (${filtered.length})` : 'Hide list'}
             </button>
           {/if}
         </div>
@@ -496,7 +544,14 @@
             {#await mapModule}
               <p class="loading">Loading map…</p>
             {:then M}
-              {#if M}<M.default events={all} {meta} compact />{/if}
+              {#if M}<M.default
+                  events={all}
+                  {meta}
+                  compact
+                  peek={peekMode}
+                  {today}
+                  onmore={peekMore}
+                />{/if}
             {:catch}
               <p class="error">The map could not be loaded.</p>
             {/await}
@@ -541,11 +596,27 @@
                   onresize={(v) => setWidth('list', v)}
                   onreset={() => setWidth('list', WIDTHS.list.initial)}
                 />
+                <EdgeToggle
+                  edge="right"
+                  open
+                  label="Hide list"
+                  onclick={() => setPref('list', 'hidden')}
+                />
               </div>
             {/if}
             <div class="pane list-pane">
               <ListView events={filtered} {meta} {today} dimmed={expectedIds} compact panel />
             </div>
+          {/if}
+          {#if listHidden}
+            <EdgeToggle
+              edge="right"
+              open={false}
+              label="List ({filtered.length}): show the list"
+              onclick={() => setPref('list', 'shown')}
+            >
+              <span>{filtered.length}</span>
+            </EdgeToggle>
           {/if}
         </div>
       {:else if app.view === 'list'}
@@ -829,26 +900,51 @@
     flex-wrap: wrap;
     padding: 4px 10px;
   }
-  .bar:not(:has(.chips :global(*))) .chips {
-    display: none;
+  .bar {
+    position: relative;
+    z-index: 14;
   }
-  @media (max-width: 959px) {
-    /* Phones: the bar only holds filter chips; without any it takes no space. */
-    .bar:not(:has(.chips :global(*))) {
-      display: none;
-    }
+  /* Folded: one row of chips (the rest are a click away). */
+  .bar.folded .chips {
+    max-height: 44px;
+    overflow: hidden;
+  }
+  .fold {
+    position: absolute;
+    right: 14px;
+    bottom: -18px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 18px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    background: var(--bg);
+    color: var(--muted);
+    box-shadow: 0 3px 6px rgb(0 0 0 / 12%);
+  }
+  .fold:hover,
+  .fold:focus-visible {
+    color: var(--ink);
+  }
+  .bar:has(.fold) {
+    border-bottom: 1px solid var(--line);
+  }
+  /* The bar only holds filter chips; without any it takes no space. */
+  .bar:not(:has(.chips :global(*))) {
+    display: none;
   }
   .chips {
     flex: 1;
     min-width: 0;
   }
-  .side-toggle {
-    min-height: 34px;
-    padding: 4px 10px;
-    font-size: 0.85rem;
+  .desk-only {
+    display: contents;
   }
   @media (max-width: 959px) {
-    .side-toggle {
+    .desk-only {
       display: none;
     }
   }
@@ -897,6 +993,7 @@
     grid-area: vsplit;
     display: flex;
     justify-content: center;
+    position: relative;
   }
   /* Phones and tablets: the map above the timeline, filling the screen to its bottom edge, with the same
      draggable bar between them (the list is a drawer). */

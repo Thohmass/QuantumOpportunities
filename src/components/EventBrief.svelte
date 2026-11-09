@@ -1,7 +1,7 @@
 <script lang="ts">
   // The essentials shown when a list card unfolds; everything else is one click away in the details pop-up.
   import { formatPartial } from '../lib/dates';
-  import { orgName, safeUrl } from '../lib/format';
+  import { KIND_LABEL, orgName, safeUrl } from '../lib/format';
   import type { Ev } from '../lib/model';
   import { app } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
@@ -34,6 +34,17 @@
 
   {#if e.description}<p class="desc">{e.description}</p>{/if}
   {#if organisers}<p class="org"><span class="muted">By</span> {organisers}</p>{/if}
+  {#if Array.isArray(e.deadlines) && e.deadlines.length}
+    <!-- Lit up briefly when one of the event's deadlines is clicked on the timeline. -->
+    <p class="dls flashable" class:flash={app.flash?.id === e.id}>
+      <span class="muted">Deadlines</span>
+      {#each e.deadlines as d (d.kind + d.date)}
+        <span class:passed={d.date.length === 10 && Date.parse(d.date) < Date.now()}
+          >{KIND_LABEL[d.kind] ?? 'Deadline'} <b>{formatPartial(d.date)}</b></span
+        >
+      {/each}
+    </p>
+  {/if}
 
   <div class="actions">
     {#if safeUrl(e.url)}<a class="btn primary" href={e.url} target="_blank" rel="noopener"
@@ -57,6 +68,15 @@
 </div>
 
 <style>
+  .dls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .dls .passed {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
   .brief {
     display: grid;
     gap: 10px;

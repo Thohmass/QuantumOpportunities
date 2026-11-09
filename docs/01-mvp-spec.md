@@ -181,3 +181,25 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - **Names only where they fit:** a name is written inside its bar when it fits whole at the current zoom (the text follows the bar height). Zooming in reveals more names.
   - **A name line:** pointing at a bar with the mouse (or selecting it) opens a line under it with the full name and, in smaller grey text, the city and country. The rows below make room for it.
 - **Desktop: no side margins** around the workspace panels (left over from v0.7).
+
+## 16. v0.9 changes (9 Nov 2026, eighth review)
+
+- **Fixes:**
+  - On the timeline, the mouse wheel scrolls (through the rows; Shift or a sideways swipe moves along the dates). Ctrl/⌘ + wheel or a trackpad pinch zooms.
+  - *Clear all* also turns off *Only map area*.
+  - The *Hide list* button no longer sits on the left when no filters are active (it is now an arrow on the list's border).
+- **Timeline: opened events.**
+  - The selected event and the one the mouse points at are both "open" at the same time. An open event gets a row of its own, with its name and place right beside the bar. The events that shared its row move to a new row just below.
+  - What the mouse points at stays open until it points at another event or leaves the timeline, so the rows no longer jump back and forth.
+  - **Deadlines on demand:** they are drawn only for open events. A solid line grows from the bar back to each deadline, then the diamond pops up on its tail. Pointing at a diamond names it (e.g. "Applications · 18 Nov 2026"). Clicking it selects the event and briefly lights up the deadlines in its card.
+  - **Click inside a selected period** to remove it.
+  - **Band icons** are bigger, and clicking one shows only that event type (click again for all).
+- **Desktop panels:** an arrow on the border of the filters and of the list hides them. A tab peeking from that screen edge brings them back (the list's tab shows the number of events).
+- **Filters:**
+  - The Filters button has the classic funnel icon.
+  - When the active filter chips take more than one row, an arrow hanging under the bar folds them into one row and back (remembered).
+- **A small card on the map** for the selected event, where the list isn't on screen (phones; desktop Explore with the list hidden):
+  - It is pinned to the event's dot with a pointer. Online-only events have it at the bottom of the map.
+  - It shows the name, dates, city and country, and the next deadline.
+  - Its buttons: ⓘ for all details (the list drawer on phones, the pop-up on desktop) and ↗ for the official page. ✕ or clicking empty space closes it and deselects.
+- **Design rule:** icons before words (07-design-vision).
