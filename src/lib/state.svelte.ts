@@ -18,6 +18,8 @@ export const app = $state({
   mapOnly: false,
   /** Bumped when an event is selected from a list card, so the map and timeline focus on it. */
   focusTick: 0,
+  /** A part of an event's details to light up briefly (e.g. its deadlines, after clicking one). */
+  flash: undefined as { id: string; what: 'deadlines'; tick: number } | undefined,
   /** The full details pop-up is open for the selected event (the list card shows only the essentials). */
   detailOpen: false,
 });
@@ -143,6 +145,14 @@ export function openEvent(id: string, focus = false): void {
   app.eventId = id;
   if (app.drawerMode) app.listDrawer = true;
   if (focus) app.focusTick++;
+}
+
+export function flash(id: string, what: 'deadlines'): void {
+  app.flash = { id, what, tick: (app.flash?.tick ?? 0) + 1 };
+  const tick = app.flash.tick;
+  setTimeout(() => {
+    if (app.flash?.tick === tick) app.flash = undefined;
+  }, 1600);
 }
 
 /** One selection, one way out: deselecting and rolling the list drawer back go together. */

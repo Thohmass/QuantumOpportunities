@@ -125,7 +125,11 @@
     <span class="when">{whenText(e)}</span>
   </div>
   {#if dl && dlDays !== undefined}
-    <p class="dl" class:urgent={dlDays <= 14}>
+    <p
+      class="dl flashable"
+      class:urgent={dlDays <= 14}
+      class:flash={app.flash?.id === e.id && !open}
+    >
       {dl.kind === 'early_bird' ? 'Early bird' : dl.kind === 'abstract' ? 'Submissions' : 'Apply'} by
       <b>{formatPartial(dl.date)}</b> · {dlDays === 0
         ? 'today'

@@ -466,3 +466,29 @@ test('timeline: the wheel scrolls through the rows; Ctrl + wheel zooms', async (
   await page.keyboard.up('Control');
   await expect.poll(async () => (await month.boundingBox())!.width).toBeGreaterThan(width);
 });
+
+test('timeline: the selected and the pointed-at event both open, with deadlines on demand', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const tl = page.locator('.timeline-pane');
+  // Deadlines are drawn only for opened events.
+  await expect(tl.locator('button.diamond')).toHaveCount(0);
+  await tl.locator('button.item[aria-label^="MIT iQuHACK"]').click();
+  await expect(tl.locator('button.diamond').first()).toBeVisible();
+  // Point at another event: both stay open, each on its own row with its name.
+  const other = tl.locator('button.item:not([aria-label^="MIT iQuHACK"])').nth(3);
+  await other.hover();
+  await expect(tl.locator('.name-line')).toHaveCount(2);
+  await page.waitForTimeout(400);
+  await expect(tl.locator('.name-line')).toHaveCount(2);
+  // A deadline names itself and, clicked, lights up the deadlines in the event's card.
+  const diamond = tl.locator('button.diamond').first();
+  await diamond.hover();
+  await expect(diamond).toHaveAccessibleName(/Applications/);
+  await diamond.click();
+  await expect(page.locator('.list-pane article.card.open .dls.flash')).toBeVisible();
+});
