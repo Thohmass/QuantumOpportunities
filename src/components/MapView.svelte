@@ -18,6 +18,7 @@
   import ExpandButton from './ExpandButton.svelte';
   import PeekCard from './PeekCard.svelte';
   import LensPanel from './LensPanel.svelte';
+  import { LAB } from '../lib/lab';
   import { LENS_DEFAULTS, lensPoint, lensScale, makeLens, type LensSettings } from '../lib/lens';
   import { typeIcon } from '../lib/icons';
   import { hexPack } from '../lib/pack';
@@ -510,6 +511,7 @@
       return { ...LENS_DEFAULTS };
     }
   }
+  const lab = LAB;
   let lensSettings = $state(loadLens());
   let lensPanel = $state(false);
   $effect(() => {
@@ -546,6 +548,7 @@
     if (settled) lensPrev = 0;
   }
   function wakeLens() {
+    if (!lab) return;
     if (!lensFrame) lensFrame = requestAnimationFrame(lensTick);
   }
   function onLensMove(ev: PointerEvent) {
@@ -571,7 +574,7 @@
   });
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lens = $derived(
-    lensSettings.on && !reducedMotion && focus.s > 0.002
+    lab && lensSettings.on && !reducedMotion && focus.s > 0.002
       ? makeLens(lensSettings, focus.x, focus.y, focus.s, big)
       : undefined,
   );
@@ -725,7 +728,9 @@
       </div>
     {/if}
 
-    {#if lensPanel}
+    {#if !lab}
+      <!-- The lens is a lab experiment (see "lab" above). -->
+    {:else if lensPanel}
       <div class="lens-panel-wrap">
         <LensPanel bind:s={lensSettings} onclose={() => (lensPanel = false)} />
       </div>

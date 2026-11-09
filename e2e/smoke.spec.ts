@@ -683,7 +683,7 @@ test('map lens: bubbles near the mouse grow, and settle back when it leaves; it 
 }) => {
   test.skip(isMobile, 'Mouse lens');
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/#/map');
+  await page.goto('/#/map?lab');
   const dot = page.locator('g.dot').nth(10);
   const b = (await dot.boundingBox())!;
   await page.mouse.move(b.x + b.width / 2 + 3, b.y + b.height / 2 + 3);
@@ -705,7 +705,15 @@ test('map lens on phones: bubbles in the middle of the map are the big ones', as
   isMobile,
 }) => {
   test.skip(!isMobile, 'Phones');
-  await page.goto('/#/explore');
+  await page.goto('/#/explore?lab');
   await expect(page.locator('.bubble.lensing').first()).toBeAttached();
   await expect(page.locator('.bubble.iconic').first()).toBeAttached();
+});
+
+test('map lens is a lab experiment: off unless the site is opened with ?lab', async ({ page }) => {
+  await page.goto('/#/explore');
+  await page.locator('g.dot').first().waitFor();
+  await page.waitForTimeout(400);
+  await expect(page.getByRole('button', { name: 'Lens settings' })).toHaveCount(0);
+  await expect(page.locator('.bubble.lensing')).toHaveCount(0);
 });
