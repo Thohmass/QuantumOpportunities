@@ -203,3 +203,17 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
   - It shows the name, dates, city and country, and the next deadline.
   - Its buttons: ⓘ for all details (the list drawer on phones, the pop-up on desktop) and ↗ for the official page. ✕ or clicking empty space closes it and deselects.
 - **Design rule:** icons before words (07-design-vision).
+
+## 17. v0.10 changes (9 Nov 2026, ninth review)
+
+- **Filters in the search box (no second bar):**
+  - The active filters are chips inside the search box. The ones that don't fit are counted (+N). Pointing at the box unfolds all of them under it; on phones, tap +N (the box opens across the header when tapped).
+  - ✕ in the box clears all filters. A funnel at its right end, a round button fitted into the box's rounded end, shows or hides the filters (the drawer on phones).
+  - The bar of chips under the header and its fold arrow are gone.
+- **Filter panel header:** *Filters* on the left, *Clear all* in the middle, and a minimal ‹ in the top-right corner that hides the panel (closes the drawer on phones). On hover it becomes a rounded square slightly lighter than the panel. The tab that brought the filters back from the screen edge is replaced by the funnel.
+- **Timeline:**
+  - A pointed-at event closes as soon as the mouse leaves it. Its bar, deadline line, diamonds and name all keep it open, with a short grace period to cross the gaps between them.
+  - The pointed event keeps its row and the others move down, so nothing jumps from under the mouse.
+  - The row under the mouse gets a faint shade.
+  - Clicking an open event's name selects it.
+- **Design rule:** desktop reads where you look (hover); phones read what you do (gestures, centre of view) (07-design-vision).

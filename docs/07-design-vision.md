@@ -39,6 +39,7 @@ The point of the site is **connecting information in one picture**: where, when 
 - **Layers of detail:** hover or tap shows a little (a name on the timeline, a small card on the map), a click opens more, and *All details* opens everything. Nothing jumps straight to the heaviest view.
 - **Information on demand:** secondary marks (deadlines, names that don't fit) appear for the event you point at or select, not for every event at once.
 - **Design rule: icons before words.** When an icon alone says clearly what a button does (an arrow to hide a panel, a funnel for filters, ✕ to close, ↗ for an outside link), use the icon without a label. A specific icon is read faster than text, and repeating it in words is redundant. Every icon-only button still has an accessible name and a tooltip. Use words when no icon is unambiguous.
+- **Desktop reads where you look; phones read what you do (v0.10, Tomáš).** On a big screen every area holds different information, so the app follows the pointer: hover reveals, highlights and unfolds, and clicking commits. On a phone the screen is small and whatever is in the middle is in focus, so the app follows gestures (swipe, drag, pinch, hold) and the centre of the view. It doesn't add buttons. Every hover effect needs a gesture or centre-of-view equivalent on phones, and the other way round.
 
 ## 2. Visual identity (after the MVP, Tomáš leads)
 
