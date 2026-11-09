@@ -492,3 +492,17 @@ test('timeline: the selected and the pointed-at event both open, with deadlines 
   await diamond.click();
   await expect(page.locator('.list-pane article.card.open .dls.flash')).toBeVisible();
 });
+
+test('timeline: clicking inside a selected period removes it', async ({ page }) => {
+  await page.goto('/#/timeline');
+  await page
+    .getByRole('button', { name: /^Select February/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/when=custom/);
+  const band = (await page.locator('.timeline .band').first().boundingBox())!;
+  const sc = (await page.locator('.timeline .scroller').boundingBox())!;
+  await page.mouse.click(band.x + band.width / 2, sc.y + sc.height - 6);
+  await expect(page).not.toHaveURL(/when=custom/);
+  await expect(page.getByRole('button', { name: 'Clear dates ×' })).toHaveCount(0);
+});

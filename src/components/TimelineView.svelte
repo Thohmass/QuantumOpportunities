@@ -367,6 +367,19 @@
     }, 0);
   }
 
+  // A click (not a drag) inside a selected period removes that period. It is a click on the selection, so it
+  // doesn't also count as clicking empty space (which deselects the event).
+  function clickBody(ev: MouseEvent) {
+    if (suppressClick || !canvas || !sel.length) return;
+    const t = ev.target as Element;
+    if (t.closest('.head, button, .name-line')) return;
+    const day = dayAt(ev.clientX - canvas.getBoundingClientRect().left);
+    const hit = sel.find(([a, b]) => day >= a && day <= b);
+    if (!hit) return;
+    ev.stopPropagation();
+    setRanges(sel.filter((iv) => iv !== hit));
+  }
+
   // ---- scrolling and zooming ---------------------------------------------------
   let scroller: HTMLDivElement | undefined = $state();
   let viewFrame = 0;
@@ -546,6 +559,7 @@
         onpointerup={up}
         onpointercancel={() => ((drag = undefined), (pending = undefined))}
         onpointerleave={() => point(undefined)}
+        onclick={clickBody}
         role="presentation"
       >
         {#each months as m, i (m.key)}
