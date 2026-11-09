@@ -2,6 +2,7 @@
   import { onMount, untrack } from 'svelte';
   import About from './components/About.svelte';
   import Chips from './components/Chips.svelte';
+  import EdgeToggle from './components/EdgeToggle.svelte';
   import EventDetail from './components/EventDetail.svelte';
   import FilterPanel from './components/FilterPanel.svelte';
   import Header from './components/Header.svelte';
@@ -34,6 +35,7 @@
   import type { EventOut, Meta } from './lib/types';
   import { fromHash, toHash } from './lib/url';
   import type MiniSearch from 'minisearch';
+  import { FUNNEL } from './lib/icons';
 
   const today = localToday();
   let meta: Meta | undefined = $state();
@@ -427,6 +429,31 @@
             onresize={(v) => setWidth('filters', v)}
             onreset={() => setWidth('filters', WIDTHS.filters.initial)}
           />
+          <EdgeToggle
+            edge="left"
+            open
+            label="Hide filters"
+            onclick={() => setPref('sidebar', 'hidden')}
+          />
+        </div>
+      {:else}
+        <div class="desk-only">
+          <EdgeToggle
+            edge="left"
+            open={false}
+            label="Show filters"
+            onclick={() => setPref('sidebar', 'shown')}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"
+              ><path
+                d={FUNNEL}
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linejoin="round"
+              /></svg
+            >
+          </EdgeToggle>
         </div>
       {/if}
       {#if app.filtersOpen}<div
@@ -441,45 +468,7 @@
     >
       {#if app.view !== 'about'}
         <div class="bar">
-          <button
-            class="btn ghost side-toggle"
-            type="button"
-            onclick={() => setPref('sidebar', sidebarHidden ? 'shown' : 'hidden')}
-            aria-pressed={!sidebarHidden}
-            title={sidebarHidden ? 'Show filters' : 'Hide filters'}
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
-              ><path
-                d="M4 5h16v14H4zM9 5v14"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linejoin="round"
-              /></svg
-            >
-            {sidebarHidden ? 'Filters' : 'Hide filters'}
-          </button>
           <div class="chips"><Chips {meta} /></div>
-          {#if app.view === 'explore' && !narrow}
-            <button
-              class="btn ghost side-toggle"
-              type="button"
-              aria-pressed={!listHidden}
-              onclick={() => setPref('list', listHidden ? 'shown' : 'hidden')}
-              title={listHidden ? 'Show the list' : 'Hide the list'}
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
-                ><path
-                  d="M4 5h16v14H4zM15 5v14"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linejoin="round"
-                /></svg
-              >
-              {listHidden ? `List (${filtered.length})` : 'Hide list'}
-            </button>
-          {/if}
         </div>
       {/if}
       {#if app.view === 'explore'}
@@ -541,11 +530,27 @@
                   onresize={(v) => setWidth('list', v)}
                   onreset={() => setWidth('list', WIDTHS.list.initial)}
                 />
+                <EdgeToggle
+                  edge="right"
+                  open
+                  label="Hide list"
+                  onclick={() => setPref('list', 'hidden')}
+                />
               </div>
             {/if}
             <div class="pane list-pane">
               <ListView events={filtered} {meta} {today} dimmed={expectedIds} compact panel />
             </div>
+          {/if}
+          {#if listHidden}
+            <EdgeToggle
+              edge="right"
+              open={false}
+              label="List ({filtered.length}): show the list"
+              onclick={() => setPref('list', 'shown')}
+            >
+              <span>{filtered.length}</span>
+            </EdgeToggle>
           {/if}
         </div>
       {:else if app.view === 'list'}
@@ -829,26 +834,19 @@
     flex-wrap: wrap;
     padding: 4px 10px;
   }
-  .bar:not(:has(.chips :global(*))) .chips {
+  /* The bar only holds filter chips; without any it takes no space. */
+  .bar:not(:has(.chips :global(*))) {
     display: none;
-  }
-  @media (max-width: 959px) {
-    /* Phones: the bar only holds filter chips; without any it takes no space. */
-    .bar:not(:has(.chips :global(*))) {
-      display: none;
-    }
   }
   .chips {
     flex: 1;
     min-width: 0;
   }
-  .side-toggle {
-    min-height: 34px;
-    padding: 4px 10px;
-    font-size: 0.85rem;
+  .desk-only {
+    display: contents;
   }
   @media (max-width: 959px) {
-    .side-toggle {
+    .desk-only {
       display: none;
     }
   }
@@ -897,6 +895,7 @@
     grid-area: vsplit;
     display: flex;
     justify-content: center;
+    position: relative;
   }
   /* Phones and tablets: the map above the timeline, filling the screen to its bottom edge, with the same
      draggable bar between them (the list is a drawer). */

@@ -517,3 +517,26 @@ test('timeline: a band icon filters to its event type, and back', async ({ page 
   await expect(page).not.toHaveURL(/type=/);
   expect(await page.locator('.band-icon').count()).toBeGreaterThan(1);
 });
+
+test('desktop: arrows on the panel borders hide filters and list; tabs at the edges bring them back', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'The workspace is the desktop layout');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  // The list's arrow sits on the list's border (right side), not next to the filters.
+  const hideList = page.getByRole('button', { name: 'Hide list' });
+  expect((await hideList.boundingBox())!.x).toBeGreaterThan(720);
+  await hideList.click();
+  await expect(page.locator('.list-pane')).toHaveCount(0);
+  const showList = page.getByRole('button', { name: /^List \(/ });
+  const tab = (await showList.boundingBox())!;
+  expect(tab.x + tab.width).toBeGreaterThan(1438);
+  await page.getByRole('button', { name: 'Hide filters' }).click();
+  await expect(page.getByRole('complementary', { name: 'Filters' })).toBeHidden();
+  await page.getByRole('button', { name: 'Show filters' }).click();
+  await expect(page.getByRole('complementary', { name: 'Filters' })).toBeVisible();
+  await showList.click();
+  await expect(page.locator('.list-pane')).toHaveCount(1);
+});
