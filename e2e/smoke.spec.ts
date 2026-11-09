@@ -591,3 +591,19 @@ test('desktop with the list hidden: the small card closes with its ✕, which de
   await expect(card).toHaveCount(0);
   await expect(page).not.toHaveURL(/e=/);
 });
+
+test('timeline: a pointed-at event closes as soon as the mouse leaves; its row is shaded', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Pointing is a mouse gesture');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/explore');
+  const tl = page.locator('.timeline-pane');
+  await tl.locator('button.item').nth(6).hover();
+  await expect(tl.locator('.name-line')).toHaveCount(1);
+  await expect(tl.locator('.row-hl')).toHaveCount(1);
+  await page.mouse.move(700, 120); // over the map
+  await expect(tl.locator('.name-line')).toHaveCount(0);
+  await expect(tl.locator('.row-hl')).toHaveCount(0);
+});

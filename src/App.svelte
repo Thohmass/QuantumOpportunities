@@ -425,7 +425,7 @@
   // header) deselects the event. Outside a non-modal drawer, it also rolls the drawer back.
   const INTERACTIVE =
     'a, button, input, select, textarea, label, summary, [role="button"], [role="separator"], ' +
-    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap';
+    '[role="option"], [role="listbox"], [role="combobox"], article.card, .head, .pull-tab, .peek-wrap, .name-line, .link';
   function clickAway(ev: MouseEvent) {
     const t = ev.target;
     if (!(t instanceof Element) || ev.button !== 0) return;
