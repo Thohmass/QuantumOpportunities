@@ -23,8 +23,10 @@ test('in the list, a selected event unfolds in place', async ({ page }) => {
   await expect(page.locator('article.card.open')).toHaveCount(0);
 });
 
-test('on the timeline, a deep link opens the details panel', async ({ page }) => {
+// Changed in v0.11: on phones the expanded timeline shows the small card first; its ⓘ opens the details.
+test('on the timeline, a deep link opens the details panel', async ({ page, isMobile }) => {
   await page.goto('/#/timeline?e=mit-iquhack-2027');
+  if (isMobile) await page.getByRole('button', { name: 'All details' }).click();
   const dialog = page.getByRole('dialog');
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole('heading', { name: 'MIT iQuHACK 2027' })).toBeVisible();
@@ -33,9 +35,14 @@ test('on the timeline, a deep link opens the details panel', async ({ page }) =>
   await expect(dialog).toBeHidden();
 });
 
-test('unknown values say "Not found yet"', async ({ page }) => {
-  await page.goto('/#/timeline?e=sesame-quantum-hackathon-2026');
-  await expect(page.getByRole('dialog').getByText('Not found yet').first()).toBeVisible();
+// Changed in v0.11: cards no longer show the cost chip ("Cost not found yet"), so this checks the full details.
+test('unknown values say "Not found yet"', async ({ page, isMobile }) => {
+  // An upcoming event whose cost is not known (the old version of this test passed on other cards' chips).
+  await page.goto('/#/timeline?e=dtu-qst-hack-2027');
+  if (isMobile) await page.getByRole('button', { name: 'All details' }).click();
+  await page.getByRole('button', { name: 'More details' }).click();
+  const details = page.locator('.detail[role="dialog"]');
+  await expect(details.getByText('Not found yet').first()).toBeVisible();
 });
 
 test('clicking a month on the timeline selects it as the date filter', async ({ page }) => {
@@ -223,8 +230,13 @@ test('panels expand and shrink back into Explore', async ({ page, isMobile }) =>
   await expect(page.locator('section.list.columns')).toHaveCount(1);
 });
 
-test('expanded map: selecting an event opens the list drawer with its card', async ({ page }) => {
+// Changed in v0.11: on phones the expanded map shows the small card first; its ⓘ opens the list.
+test('expanded map: selecting an event opens the list drawer with its card', async ({
+  page,
+  isMobile,
+}) => {
   await page.goto('/#/map?e=saarland-qit-summer-school-2027');
+  if (isMobile) await page.getByRole('button', { name: 'All details' }).click();
   const drawer = page.getByRole('dialog', { name: 'Events' });
   await expect(drawer.locator('article.card.open')).toContainText('Saarland');
   await expect(page.locator('g.dot .bubble.big').first()).toBeAttached();
@@ -297,19 +309,25 @@ test('selecting a visible card does not scroll the list', async ({ page, isMobil
   expect(await pane.evaluate((el) => el.scrollTop)).toBe(0);
 });
 
+// Changed in v0.11: on phones the expanded timeline shows the small card first; its ⓘ opens the list.
 test('closing the list drawer deselects the event, so it can be selected again', async ({
   page,
+  isMobile,
 }) => {
   await page.goto('/#/timeline');
   const item = page.locator('button.item').first();
   const drawer = page.getByRole('dialog', { name: 'Events' });
-  await item.click();
+  const open = async () => {
+    await item.click();
+    if (isMobile) await page.getByRole('button', { name: 'All details' }).click();
+  };
+  await open();
   await expect(drawer.locator('article.card.open')).toHaveCount(1);
   await page.getByRole('button', { name: 'Close the list' }).click();
   await expect(drawer).toBeHidden();
   await expect(page).not.toHaveURL(/e=/);
   await expect(page.locator('button.item.picked')).toHaveCount(0);
-  await item.click();
+  await open();
   await expect(drawer.locator('article.card.open')).toHaveCount(1);
 });
 
@@ -716,4 +734,73 @@ test('map lens is a lab experiment: off unless the site is opened with ?lab', as
   await page.waitForTimeout(400);
   await expect(page.getByRole('button', { name: 'Lens settings' })).toHaveCount(0);
   await expect(page.locator('.bubble.lensing')).toHaveCount(0);
+});
+
+test('phones: the Filters button opens the filters wherever it is tapped, from the left edge', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phone header');
+  await page.goto('/#/explore');
+  const btn = page.locator('header button.filters-btn');
+  const b = (await btn.boundingBox())!;
+  // Its left end sits right next to the search magnifier, which used to catch these taps.
+  await btn.tap({ position: { x: 4, y: b.height / 2 } });
+  const panel = page.getByRole('complementary', { name: 'Filters' });
+  await expect(panel).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Search events' })).not.toBeFocused();
+  await expect.poll(async () => (await panel.boundingBox())!.x).toBeLessThan(1);
+});
+
+test('phones: on the expanded map and timeline, selecting shows the small card, not the list', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phones');
+  const drawer = page.getByRole('dialog', { name: 'Events' });
+  await page.goto('/#/map?e=saarland-qit-summer-school-2027');
+  await expect(page.getByRole('group', { name: /Saarland.*: summary$/ })).toBeVisible();
+  await expect(drawer).toBeHidden();
+  await page.goto('/#/timeline');
+  await page.locator('.timeline button.item[aria-label^="MIT iQuHACK"]').click();
+  const card = page.getByRole('group', { name: /MIT iQuHACK 2027: summary/ });
+  await expect(card).toBeVisible();
+  await expect(drawer).toBeHidden();
+  await card.getByRole('button', { name: 'All details' }).click();
+  await expect(drawer.locator('article.card.open')).toContainText('MIT iQuHACK 2027');
+});
+
+test('cards name their type on the colour edge, without the type, cost and expected chips', async ({
+  page,
+}) => {
+  await page.goto('/#/list');
+  const card = page.locator('article.card').first();
+  await expect(card.locator('.stripe')).toHaveText(/\w+/);
+  await expect(card.locator('.type-chip')).toHaveCount(0);
+  const w = (await card.locator('.stripe').boundingBox())!.width;
+  expect(w).toBeGreaterThanOrEqual(20);
+});
+
+test('map: room past the edge of the world, so its corner can be brought to the middle', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse drag');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/map');
+  const svg = page.locator('svg[role="img"]');
+  await svg.waitFor();
+  const box = (await svg.boundingBox())!;
+  // Drag the map far right and down, slowly (no glide).
+  await page.mouse.move(box.x + 60, box.y + 60);
+  await page.mouse.down();
+  await page.mouse.move(1400, 880, { steps: 20 });
+  await page.waitForTimeout(200);
+  await page.mouse.up();
+  const t = await svg.evaluate(
+    (el) => (el as unknown as { __zoom: { x: number; y: number } }).__zoom,
+  );
+  // The world's top-left corner (≈ 0, 0 before zooming) can reach the middle, but not beyond.
+  expect(t.x).toBeGreaterThan(box.width / 2 - 40);
+  expect(t.x).toBeLessThanOrEqual(box.width / 2 + 1);
 });

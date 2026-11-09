@@ -7,6 +7,7 @@
   import { tick, untrack } from 'svelte';
   import ExpandButton from './ExpandButton.svelte';
   import TypeIcon from './TypeIcon.svelte';
+  import PeekCard from './PeekCard.svelte';
   import { bounds, formatPartial, formatRange, isoDay, monthName } from '../lib/dates';
   import { KIND_LABEL, NOT_FOUND, statusLabel, whereText } from '../lib/format';
   import type { Ev } from '../lib/model';
@@ -34,10 +35,16 @@
     dimmed = new Set<string>(),
     compact = false,
     types = [],
+    peek = false,
+    onmore,
   }: {
     events: Ev[];
     today: number;
     dimmed?: Set<string>;
+    /** Show the small card of the selected event under its bar (phones, where the list isn't on screen). */
+    peek?: boolean;
+    /** The card's "all details" button. */
+    onmore?: () => void;
     compact?: boolean;
     /** Event types in their display order: one band of rows per type. */
     types?: { id: string; name: string }[];
@@ -50,7 +57,7 @@
   const MAX_PPD = 48;
   let ppd = $state<number>(remembered?.ppd ?? DEFAULT_PPD);
   /** The visible part of the scroller, kept up to date (once per frame) while scrolling and resizing. */
-  let view = $state({ left: 0, width: 800, height: 0 });
+  let view = $state({ left: 0, top: 0, width: 800, height: 0 });
   const HEAD = 46;
 
   const range = $derived.by(() => {
@@ -310,6 +317,19 @@
   const canvasH = $derived(
     HEAD + 6 + layout.rows * rowH + Math.max(0, placed.bands.length - 1) * LANE_GAP + 12,
   );
+  // The selected event's small card: under its bar (or above, near the bottom), kept inside the visible part.
+  let peekH = $state(170);
+  const peekAt = $derived.by(() => {
+    if (!peek || !app.eventId) return undefined;
+    const p = placed.items.find((q) => q.e.id === app.eventId);
+    if (!p) return undefined;
+    const top = rowTop(layout.rowOf.get(p.e.id) ?? 0);
+    const cw = Math.min(260, view.width - 16);
+    const left = Math.min(Math.max(p.left, view.left + 8), view.left + view.width - cw - 8);
+    const below = top + itemH + 8;
+    const fits = below + peekH <= view.top + view.height - 4;
+    return { e: p.e, left, top: fits ? below : Math.max(view.top + HEAD + 4, top - peekH - 8) };
+  });
   /** Where an opened event's name goes: after its bar, or over the bar when that runs off the right. */
   function nameX(p: Placed): number {
     const after = p.left + p.barW + 8;
@@ -344,6 +364,7 @@
   const localX = (ev: PointerEvent) => ev.clientX - canvas!.getBoundingClientRect().left;
   function down(ev: PointerEvent) {
     if (ev.pointerType !== 'mouse' || ev.button !== 0) return;
+    if ((ev.target as HTMLElement).closest('.peek-wrap')) return;
     const head = !!(ev.target as HTMLElement).closest('.head');
     pending = { x: localX(ev), id: ev.pointerId, head, add: ev.ctrlKey || ev.metaKey };
   }
@@ -401,7 +422,7 @@
   function clickBody(ev: MouseEvent) {
     if (suppressClick || !canvas || !sel.length) return;
     const t = ev.target as Element;
-    if (t.closest('.head, button, .name-line')) return;
+    if (t.closest('.head, button, .name-line, .peek-wrap')) return;
     const day = dayAt(ev.clientX - canvas.getBoundingClientRect().left);
     const hit = sel.find(([a, b]) => day >= a && day <= b);
     if (!hit) return;
@@ -417,6 +438,7 @@
     if (scroller) {
       view = {
         left: scroller.scrollLeft,
+        top: scroller.scrollTop,
         width: scroller.clientWidth,
         height: scroller.clientHeight,
       };
@@ -782,6 +804,16 @@
             {/if}
           </div>
         {/each}
+        {#if peekAt}
+          <div
+            class="peek-wrap"
+            style:left="{peekAt.left}px"
+            style:top="{peekAt.top}px"
+            bind:offsetHeight={peekH}
+          >
+            <PeekCard e={peekAt.e} {today} onmore={() => onmore?.()} />
+          </div>
+        {/if}
       </div>
     </div>
   </div>
@@ -1049,6 +1081,10 @@
   }
   .band-icon.on {
     box-shadow: 0 0 0 2px var(--accent);
+  }
+  .peek-wrap {
+    position: absolute;
+    z-index: 9;
   }
   .row-hl {
     position: absolute;
