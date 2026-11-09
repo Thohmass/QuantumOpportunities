@@ -676,3 +676,44 @@ test('map: a flung map glides to the edge of the world and stops there', async (
     expect(await x()).toBeGreaterThanOrEqual(after - 1);
   }
 });
+
+test('map lens: bubbles near the mouse grow, and settle back when it leaves; it can be switched off', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, 'Mouse lens');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#/map?lab');
+  const dot = page.locator('g.dot').nth(10);
+  const b = (await dot.boundingBox())!;
+  await page.mouse.move(b.x + b.width / 2 + 3, b.y + b.height / 2 + 3);
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 3 });
+  const lensed = page.locator('.bubble.lensing');
+  await expect(lensed.first()).toBeAttached();
+  await page.mouse.move(700, 30); // the header: off the map
+  await expect(lensed).toHaveCount(0);
+  await page.getByRole('button', { name: 'Lens settings' }).click();
+  await page.getByRole('checkbox', { name: 'Lens', exact: true }).uncheck();
+  await page.getByRole('button', { name: 'Close the lens settings' }).click();
+  await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 3 });
+  await page.waitForTimeout(300);
+  await expect(lensed).toHaveCount(0);
+});
+
+test('map lens on phones: bubbles in the middle of the map are the big ones', async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, 'Phones');
+  await page.goto('/#/explore?lab');
+  await expect(page.locator('.bubble.lensing').first()).toBeAttached();
+  await expect(page.locator('.bubble.iconic').first()).toBeAttached();
+});
+
+test('map lens is a lab experiment: off unless the site is opened with ?lab', async ({ page }) => {
+  await page.goto('/#/explore');
+  await page.locator('g.dot').first().waitFor();
+  await page.waitForTimeout(400);
+  await expect(page.getByRole('button', { name: 'Lens settings' })).toHaveCount(0);
+  await expect(page.locator('.bubble.lensing')).toHaveCount(0);
+});

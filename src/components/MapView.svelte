@@ -8,7 +8,7 @@
   // geometry. The land is painted on a canvas, redrawn sharply at most once per frame while panning and zooming;
   // event dots are drawn on top at a constant size. Dots that would overlap snap onto a small hexagonal pattern.
   import { onMount, untrack } from 'svelte';
-  import { geoMercator, geoPath, type GeoProjection } from 'd3-geo';
+  import { geoMercator, geoPath, type GeoProjection, type GeoStream } from 'd3-geo';
   import { select } from 'd3-selection';
   import 'd3-transition';
   import { zoom as d3zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
@@ -17,6 +17,9 @@
   import type { Ev } from '../lib/model';
   import ExpandButton from './ExpandButton.svelte';
   import PeekCard from './PeekCard.svelte';
+  import LensPanel from './LensPanel.svelte';
+  import { LAB } from '../lib/lab';
+  import { LENS_DEFAULTS, lensPoint, lensScale, makeLens, type LensSettings } from '../lib/lens';
   import { typeIcon } from '../lib/icons';
   import { hexPack } from '../lib/pack';
   import { app, hover, openEvent, prefs } from '../lib/state.svelte';
@@ -89,6 +92,36 @@
     // The sea is painted here too, so land and sea always come from the same theme.
     ctx.fillStyle = colors.sea;
     ctx.fillRect(0, 0, w, h);
+    const L = lens;
+    if (L && L.c > 0.01 && lensSettings.land && projection) {
+      // The land through the lens: every coastline point is projected, zoomed, then moved by the lens (slower
+      // than the ready-made path below, so only while the lens is on).
+      const p = projection;
+      const tr = t;
+      const lensed = {
+        stream: (out: GeoStream) =>
+          p.stream({
+            point: (x: number, y: number) => {
+              const [a, b] = lensPoint(L, tr.applyX(x), tr.applyY(y));
+              out.point(a, b);
+            },
+            lineStart: () => out.lineStart(),
+            lineEnd: () => out.lineEnd(),
+            polygonStart: () => out.polygonStart(),
+            polygonEnd: () => out.polygonEnd(),
+            sphere: () => out.sphere?.(),
+          }),
+      };
+      ctx.beginPath();
+      geoPath(lensed, ctx)(land);
+      ctx.fillStyle = colors.land;
+      ctx.fill();
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = 1.1;
+      ctx.strokeStyle = colors.coast;
+      ctx.stroke();
+      return;
+    }
     ctx.translate(t.x, t.y);
     ctx.scale(t.k, t.k);
     ctx.fillStyle = colors.land;
@@ -105,6 +138,7 @@
     void dpr;
     void landPath;
     void t;
+    if (lensSettings.land) void lens;
     draw();
   });
   // Theme switches change the colours.
@@ -469,6 +503,89 @@
   const hot = $derived(hotIndex >= 0 ? dots[hotIndex] : undefined);
   const hotOff = $derived<[number, number]>(offsets[hotIndex] ?? [0, 0]);
 
+  // ---- the lens (experiment): bubbles near the focus grow, neighbours make room -----------------------------
+  function loadLens(): LensSettings {
+    try {
+      return { ...LENS_DEFAULTS, ...JSON.parse(localStorage.getItem('qo-lens') ?? '{}') };
+    } catch {
+      return { ...LENS_DEFAULTS };
+    }
+  }
+  const lab = LAB;
+  let lensSettings = $state(loadLens());
+  let lensPanel = $state(false);
+  $effect(() => {
+    const json = JSON.stringify(lensSettings);
+    try {
+      localStorage.setItem('qo-lens', json);
+    } catch {
+      /* private mode: not remembered */
+    }
+  });
+  // Phones (no hover) always use the middle of the map; so does desktop with "Map centre" chosen.
+  const touchOnly = matchMedia('(hover: none)').matches;
+  const atCentre = $derived(touchOnly || lensSettings.focus === 'centre');
+  // The focus glides after its target (the mouse), and the effect fades in and out, once per frame.
+  let aim = { x: 0, y: 0, on: false };
+  let focus = $state({ x: 0, y: 0, s: 0 });
+  let lensFrame = 0;
+  let lensPrev = 0;
+  function lensTick(now: number) {
+    const dt = lensPrev ? now - lensPrev : 16;
+    lensPrev = now;
+    const tx = atCentre ? w / 2 : aim.x;
+    const ty = atCentre ? h / 2 : aim.y;
+    const ts = atCentre || aim.on ? 1 : 0;
+    const a = lensSettings.follow ? 1 - Math.exp(-dt / lensSettings.follow) : 1;
+    const b = 1 - Math.exp(-dt / 120); // fade in/out
+    const f = focus;
+    const nx = f.s < 0.01 ? tx : f.x + (tx - f.x) * a; // appear where the mouse is, not glide in from afar
+    const ny = f.s < 0.01 ? ty : f.y + (ty - f.y) * a;
+    const ns = f.s + (ts - f.s) * b;
+    const settled = Math.abs(nx - tx) < 0.3 && Math.abs(ny - ty) < 0.3 && Math.abs(ns - ts) < 0.005;
+    focus = settled ? { x: tx, y: ty, s: ts } : { x: nx, y: ny, s: ns };
+    lensFrame = settled ? 0 : requestAnimationFrame(lensTick);
+    if (settled) lensPrev = 0;
+  }
+  function wakeLens() {
+    if (!lab) return;
+    if (!lensFrame) lensFrame = requestAnimationFrame(lensTick);
+  }
+  function onLensMove(ev: PointerEvent) {
+    if (ev.pointerType !== 'mouse') return;
+    const [x, y] = local(ev.clientX, ev.clientY);
+    aim = {
+      x,
+      y,
+      on: !(ev.target as Element).closest('.overlay, .zoom-btns, .lens-panel, .peek-wrap'),
+    };
+    wakeLens();
+  }
+  function onLensLeave() {
+    aim = { ...aim, on: false };
+    wakeLens();
+  }
+  $effect(() => {
+    void atCentre;
+    void w;
+    void h;
+    void lensSettings.on;
+    wakeLens();
+  });
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lens = $derived(
+    lab && lensSettings.on && !reducedMotion && focus.s > 0.002
+      ? makeLens(lensSettings, focus.x, focus.y, focus.s, big)
+      : undefined,
+  );
+  /** A dot's place on screen: projected, zoomed, moved off its neighbours, then through the lens. */
+  function placeOf(i: number): [number, number] {
+    const d = dots[i]!;
+    const o = offsets[i] ?? [0, 0];
+    const p: [number, number] = [t.applyX(d.x) + o[0], t.applyY(d.y) + o[1]];
+    return lens ? lensPoint(lens, p[0], p[1]) : p;
+  }
+
   // ---- the selected event's card, pinned to its dot -------------------------------------------------------
   const PEEK_W = 260;
   let peekH = $state(160);
@@ -481,9 +598,7 @@
     const i = dots.findIndex((d) => d.e.id === peekEv.id);
     // Online-only events have no place on the map: the card sits at the bottom, without a pointer.
     if (i < 0) return { left: Math.max(8, (w - cw) / 2), top: h - peekH - 14 };
-    const o = offsets[i] ?? [0, 0];
-    const x = t.applyX(dots[i]!.x) + o[0];
-    const y = t.applyY(dots[i]!.y) + o[1];
+    const [x, y] = placeOf(i);
     if (x < -20 || x > w + 20 || y < -20 || y > h + 20) return undefined;
     const gap = (big ? 15 : 9) + 12;
     const left = Math.min(Math.max(8, x - cw / 2), w - cw - 8);
@@ -498,7 +613,14 @@
 </script>
 
 <section class="mapview" class:compact aria-label="Map">
-  <div class="box" bind:this={box} class:moving>
+  <div
+    class="box"
+    bind:this={box}
+    class:moving
+    onpointermove={onLensMove}
+    onpointerleave={onLensLeave}
+    role="presentation"
+  >
     <canvas
       bind:this={canvas}
       width={Math.round(w * dpr)}
@@ -521,6 +643,10 @@
           {@const o = offsets[i] ?? [0, 0]}
           {#if x > -30 && x < w + 30 && y > -30 && y < h + 30}
             {@const isHot = app.hoverId === d.e.id}
+            {@const lp = lens ? lensPoint(lens, x + o[0], y + o[1]) : undefined}
+            {@const ls = lens ? lensScale(lens, x + o[0], y + o[1]) : 1}
+            {@const grow =
+              (big ? 1 : 0.5) * ls * (isHot || app.eventId === d.e.id ? (big ? 1.12 : 1.2) : 1)}
             <g
               class="dot t-{d.e.type} {d.e.status}"
               class:past={d.e.isPast}
@@ -543,16 +669,27 @@
                   <line class="tether" x1="0" y1="0" x2={-o[0]} y2={-o[1]} />
                   <circle class="origin" cx={-o[0]} cy={-o[1]} r="2.2" />
                 {/if}
-                <circle class="hit" r={spacing / 2 + 1} />
-                <circle class="ring" r={big ? 14.5 : 8.5} />
-                <!-- One bubble, drawn at full size and scaled down to a dot below BIG_AT. -->
-                <g class="bubble" class:big>
-                  <circle class="pin" r="11" />
-                  <path
-                    class="icon"
-                    d={typeIcon(d.e.type)}
-                    transform="translate(-6.6 -6.6) scale(0.55)"
-                  />
+                <g
+                  class="lensed"
+                  transform={lp ? `translate(${lp[0] - x - o[0]} ${lp[1] - y - o[1]})` : undefined}
+                >
+                  <circle class="hit" r={(spacing / 2 + 1) * ls} />
+                  <circle class="ring" r={(big ? 14.5 : 8.5) * ls} />
+                  <!-- One bubble, drawn at full size and scaled down to a dot below BIG_AT. -->
+                  <g
+                    class="bubble"
+                    class:big
+                    class:lensing={!!lens}
+                    class:iconic={lens && grow >= 0.8}
+                    style:transform={lens ? `scale(${grow})` : undefined}
+                  >
+                    <circle class="pin" r="11" />
+                    <path
+                      class="icon"
+                      d={typeIcon(d.e.type)}
+                      transform="translate(-6.6 -6.6) scale(0.55)"
+                    />
+                  </g>
                 </g>
               </g>
             </g>
@@ -564,8 +701,8 @@
     {#if hot && hot.e.id !== peekEv?.id}
       <div
         class="label event-label"
-        style:left="{t.applyX(hot.x) + hotOff[0]}px"
-        style:top="{t.applyY(hot.y) + hotOff[1]}px"
+        style:left="{lens ? placeOf(hotIndex)[0] : t.applyX(hot.x) + hotOff[0]}px"
+        style:top="{lens ? placeOf(hotIndex)[1] : t.applyY(hot.y) + hotOff[1]}px"
       >
         <b>{hot.e.name}</b>
         <span>{formatRange(hot.e.dates.start, hot.e.dates.end)} · {whereText(hot.e)}</span>
@@ -589,6 +726,39 @@
           ></span>
         {/if}
       </div>
+    {/if}
+
+    {#if !lab}
+      <!-- The lens is a lab experiment (see "lab" above). -->
+    {:else if lensPanel}
+      <div class="lens-panel-wrap">
+        <LensPanel bind:s={lensSettings} onclose={() => (lensPanel = false)} />
+      </div>
+    {:else}
+      <button
+        type="button"
+        class="btn lens-btn"
+        class:on={lensSettings.on}
+        aria-label="Lens settings"
+        title="Lens settings (experiment)"
+        onclick={() => (lensPanel = true)}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+          ><circle
+            cx="10.5"
+            cy="10.5"
+            r="6.5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          /><circle cx="10.5" cy="10.5" r="2.6" fill="currentColor" /><path
+            d="m16 16 4.5 4.5"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+          /></svg
+        >
+      </button>
     {/if}
 
     <div class="overlay">
@@ -711,8 +881,30 @@
     opacity: 0;
     transition: opacity 0.2s;
   }
-  .bubble.big .icon {
+  .bubble.big .icon,
+  .bubble.iconic .icon {
     opacity: 1;
+  }
+  /* Under the lens the size follows the focus every frame: no easing of its own. */
+  .bubble.lensing {
+    transition: none;
+  }
+  .lens-btn {
+    position: absolute;
+    left: 10px;
+    bottom: 34px;
+    z-index: 5;
+  }
+  .lens-btn.on {
+    color: var(--accent);
+  }
+  .lens-panel-wrap {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    z-index: 7;
+    max-height: calc(100% - 20px);
+    display: flex;
   }
   @media (prefers-reduced-motion: reduce) {
     .bubble,

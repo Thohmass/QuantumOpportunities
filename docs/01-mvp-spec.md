@@ -220,3 +220,13 @@ Accounts, notifications, a submission form with its own backend, newsletter/chan
 - **Map edges:**
   - The glide after a fling stops at the edge of the world. It used to drift past it and snap back on the next drag.
   - The map can't be panned past the date line or past the land in the north and south, at any zoom. Before, zooming in let you wander far into empty sea on the left and right.
+
+## Lab: map lens (experiment, branch `lens`)
+
+- **Off for everyone** until the site is opened with `?lab` in the address, e.g. `…/#/explore?lab`. That browser remembers it; `?nolab` turns it off.
+- **Desktop:** bubbles near the mouse grow and neighbours move aside to make room. The lens glides after the mouse and fades in and out.
+- **Phones:** the lens sits in the middle of the map, so bubbles grow as they pass the centre while you pan, like the Apple Watch app grid.
+- **Two zoom levels:** zoomed out, a small dot near the mouse grows to icon size and shows its icon. At icon zoom the lens is wider and gentler.
+- **The maths:** a smooth fisheye (`src/lib/lens.ts`). It has no hard rim. Space is squeezed slightly in a ring around the focus, and bubbles there shrink a little so they don't pile up.
+- **Optional:** magnify the land too. The coastline bends, but nothing leaves its true place.
+- **Tuning panel:** the magnifier button at the bottom-left of the map. It has reach and size for dots and for icons, make room, follow lag, focus (mouse or map centre) and land, and the values are remembered.
