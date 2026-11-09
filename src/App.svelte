@@ -167,7 +167,11 @@
   });
   // Where the list isn't on screen but the map is (phones; desktop with the list hidden), selecting an event
   // first shows a small card on the map; its details button opens the list (phones) or the pop-up (desktop).
-  const peekMode = $derived(app.view === 'explore' && (narrow || listHidden));
+  // Phones also get it on the expanded map, and on the expanded timeline (pinned to the event's bar there).
+  const peekMode = $derived(
+    (app.view === 'explore' && (narrow || listHidden)) ||
+      ((app.view === 'map' || app.view === 'timeline') && narrow),
+  );
   $effect(() => {
     app.peekMode = peekMode;
   });
@@ -557,12 +561,19 @@
       {:else if app.view === 'list'}
         <ListView events={filtered} {meta} {today} dimmed={expectedIds} panel />
       {:else if app.view === 'timeline'}
-        <TimelineView events={timelineEvents} {today} dimmed={expectedIds} types={meta.types} />
+        <TimelineView
+          events={timelineEvents}
+          {today}
+          dimmed={expectedIds}
+          types={meta.types}
+          peek={peekMode}
+          onmore={peekMore}
+        />
       {:else if app.view === 'map'}
         {#await mapModule}
           <p class="loading">Loading map…</p>
         {:then M}
-          {#if M}<M.default events={all} {meta} />{/if}
+          {#if M}<M.default events={all} {meta} peek={peekMode} {today} onmore={peekMore} />{/if}
         {:catch}
           <p class="error">The map could not be loaded.</p>
         {/await}
