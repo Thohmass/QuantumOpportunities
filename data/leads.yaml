@@ -38,8 +38,8 @@
   found: 2026-11-08
   hint: Official QuSpin page confirms 8–10 Jun 2027 but names no 2027 venue (series is usually Trondheim); create once the venue is stated
   url: https://www.ntnu.edu/quspin/workshops
-  tries: 1
-  last_tried: 2026-11-08
+  tries: 2
+  last_tried: 2026-11-11
 - title: Workshop on Phases of Open Quantum Systems – complexity, learnability and error correction, Les Diablerets, 13–18 Jun 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027 (SwissMAP Research Station)
@@ -65,12 +65,6 @@
 - title: Single Photon Workshop (SPW 2027), Singapore, 15–19 Nov 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027 without a link; search for the official page
-- title: unitaryHACK 2027 (Unitary Foundation, online open-source quantum hackathon)
-  found: 2026-11-08
-  hint: Recurring every year (usually late May – June); unitary.foundation shows no 2027 dates, try unitaryhack.dev If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
-  url: https://unitaryhack.dev
-  tries: 3
-  last_tried: 2026-11-08
 - title: Qiskit Global Summer School 2027 (IBM, online)
   found: 2026-11-08
   hint: Recurring every summer (usually July); check IBM Quantum events / Qiskit for the 2027 edition If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
@@ -118,10 +112,6 @@
   found: 2026-11-08
   hint: Seen in a search; check quantumconsortium.org for the 2027 edition
   url: https://quantumconsortium.org/current-plenary
-- title: IPAM Quantum Winter School 2027 – Quantum Research in the Age of AI (CIQC/IPAM/QCSA), 20–22 Jan 2027
-  found: 2026-11-08
-  hint: Official IPAM page gives dates but the text read names no venue or deadline (a search snippet says applications due 30 Nov 2026); likely UCLA, Los Angeles
-  url: https://www.ipam.ucla.edu/programs/workshops/quantum-winter-school-2027/
 - title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
   found: 2026-11-08
   hint: Probably 2027; no dates or place announced as of 2026-11-08

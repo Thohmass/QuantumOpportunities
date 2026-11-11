@@ -18,3 +18,4 @@
 - { date: 2026-11-08, job: scout, checked: 2, updated: 0, created: 0, note: "2 searches (Asia conferences, Europe hackathons) found nothing new; Les Houches fetch timed out" }
 - { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 1, note: "GRC Quantum Biology 2027 created from official page; GRC Quantum Control 404; 6 queries run; PQCrypto, Quantum Education Summit, QuNeW already known; sources not reached" }
 - { date: 2026-11-09, job: refresher, checked: 25, updated: 5, created: 0, note: "SAMOP fees, IHP free, LIFT and PQCrypto deadlines, Tennessee venue; most 2027 hackathons still unannounced; APS, GRC, GQAI pages 403 or empty" }
+- { date: 2026-11-11, job: scout, checked: 9, updated: 0, created: 2, note: "IPAM Quantum Winter School 2027 and unitaryHACK 2027 (expected) created from leads; 6 queries found only known events; sources not scanned" }
