@@ -1,0 +1,24 @@
+id: ipam-quantum-winter-school-2027
+name: "IPAM Quantum Winter School 2027: Quantum Research in the Age of AI"
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-20
+  end: 2027-01-22
+organizers: [ipam]
+topics: [computing, qc-algorithms, qc-software]
+audience: [msc, phd, postdoc]
+url: https://www.ipam.ucla.edu/programs/workshops/quantum-winter-school-2027/
+description: Three-day school run by IPAM with CIQC and QCSA on LLM-based agentic systems in quantum information science, with hands-on sessions on circuit discovery, simulation and lab automation, plus verifying and benchmarking AI output.
+sources:
+  - url: https://www.ipam.ucla.edu/programs/workshops/quantum-winter-school-2027/
+    kind: official
+    accessed: 2026-11-11
+    note: Dates, organisers, topics and audience; venue, fee and deadline not on the page text read
+checks:
+  last_checked: 2026-11-11
+  unchanged_streak: 0
+added:
+  date: 2026-11-11
+  by: scout-2026-11-11
