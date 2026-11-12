@@ -22,13 +22,13 @@ description: Workshop on the path from noisy devices to large-scale fault-tolera
 sources:
   - url: https://indico.sns.it/event/152/
     kind: official
-    accessed: 2026-11-09
+    accessed: 2026-11-12
   - url: https://liftconference.org/
     kind: official
-    accessed: 2026-11-09
+    accessed: 2026-11-12
 checks:
-  last_checked: 2026-11-09
-  unchanged_streak: 0
+  last_checked: 2026-11-12
+  unchanged_streak: 1
 added:
   date: 2026-11-08
   by: scout-2026-11-08

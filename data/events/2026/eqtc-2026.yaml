@@ -4,7 +4,7 @@ type: conference
 status: confirmed
 format: in_person
 dates:
-  start: 2026-11-29
+  start: 2026-11-30
   end: 2026-12-03
 location:
   city: Dublin
@@ -18,8 +18,12 @@ sources:
   - url: https://qt.eu/events/eqtc-2026-european-quantum-technologies-conference
     kind: official
     accessed: 2026-11-08
+  - url: https://www.eqtc2026.eu/
+    kind: official
+    accessed: 2026-11-12
+    note: Organiser site gives 30 Nov – 3 Dec; the Quantum Flagship listing was read earlier with 29 Nov start
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-12
   unchanged_streak: 0
 added:
   date: 2026-11-08

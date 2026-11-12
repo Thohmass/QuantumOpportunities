@@ -22,10 +22,10 @@ description: Regional quantum hackathon in Chattanooga for college students from
 sources:
   - url: https://thecompanylab.org/event/tennessee-quantum-hackathon/
     kind: official
-    accessed: 2026-11-09
+    accessed: 2026-11-12
 checks:
-  last_checked: 2026-11-09
-  unchanged_streak: 0
+  last_checked: 2026-11-12
+  unchanged_streak: 1
 added:
   date: 2026-10-23
   by: radar-import
