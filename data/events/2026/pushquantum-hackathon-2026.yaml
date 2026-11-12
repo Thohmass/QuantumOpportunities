@@ -37,10 +37,10 @@ description: A one-day conference followed by a 24-hour team hackathon near Muni
 sources:
   - url: https://www.pushquantum.tech/hackathon
     kind: official
-    accessed: 2026-11-04
+    accessed: 2026-11-12
 checks:
-  last_checked: 2026-11-04
-  unchanged_streak: 0
+  last_checked: 2026-11-12
+  unchanged_streak: 1
 added:
   date: 2026-11-04
   by: radar-import

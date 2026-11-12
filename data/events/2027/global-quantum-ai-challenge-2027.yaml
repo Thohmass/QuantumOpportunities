@@ -22,8 +22,8 @@ sources:
     kind: official
     accessed: 2026-10-23
 checks:
-  last_checked: 2026-11-09
-  unchanged_streak: 1
+  last_checked: 2026-11-12
+  unchanged_streak: 2
 added:
   date: 2026-10-23
   by: radar-import

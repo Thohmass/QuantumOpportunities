@@ -26,10 +26,10 @@ description: "Second edition of the student-run EPFL quantum hackathon: an overn
 sources:
   - url: https://qpflhackathon.github.io/
     kind: official
-    accessed: 2026-10-23
+    accessed: 2026-11-12
 checks:
-  last_checked: 2026-10-23
-  unchanged_streak: 0
+  last_checked: 2026-11-12
+  unchanged_streak: 1
 added:
   date: 2026-10-23
   by: radar-import

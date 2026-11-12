@@ -21,11 +21,11 @@ description: IEEE-format conference on quantum communications, networking and co
 sources:
   - url: https://easychair.org/cfp/qcnc2027
     kind: official
-    accessed: 2026-11-09
+    accessed: 2026-11-12
     note: location given only as Hokkaido
 checks:
-  last_checked: 2026-11-09
-  unchanged_streak: 1
+  last_checked: 2026-11-12
+  unchanged_streak: 2
 added:
   date: 2026-11-08
   by: scout-2026-11-08
