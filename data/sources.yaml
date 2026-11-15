@@ -233,3 +233,30 @@
     url: https://bsky.app/profile/quantiki.bsky.social/rss
     all_quantum: true
   note: Public profile RSS of the quantum information portal. Posts are hints, not sources.
+- id: google-alert-devpost
+  name: "Google Alert: quantum site:devpost.com"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/1892997390614593091
+  kind: other
+  covers: [Devpost hackathons]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/1892997390614593091
+  note: Google's index of Devpost pages, so nothing reads devpost.com itself. Items are hints, not sources; Devpost-only events become leads.
+- id: google-alert-linkedin
+  name: "Google Alert: quantum hackathon site:linkedin.com"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/379107984869301091
+  kind: other
+  covers: [LinkedIn posts and events]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/379107984869301091
+  note: Google's index of public LinkedIn pages; nothing reads linkedin.com itself. Items are hints, not sources.
+- id: devpost-on-dev-to
+  name: Devpost on DEV (monthly hackathon roundups)
+  url: https://dev.to/devpost
+  kind: aggregator
+  covers: [hackathons]
+  feed:
+    format: rss
+    url: https://dev.to/feed/devpost
+  note: Devpost's own posts on dev.to, read from dev.to's RSS. Only posts mentioning quantum pass the filter.
