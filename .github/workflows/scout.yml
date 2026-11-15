@@ -114,6 +114,10 @@ jobs:
             Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
             Append your section "## Phase 1: leads, suggestions and feeds" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
+            Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
+            only the npm scripts listed in the playbook; every other Bash command is refused and wastes a turn.
+            When a page returns an error (403, timeout) or loads without its content, open it with the browser tools
+            before you call it unreachable (not on devpost.com, linkedin.com or x.com).
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
@@ -146,6 +150,10 @@ jobs:
             Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
             Append your section "## Phase 2: sources" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
+            Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
+            only the npm scripts listed in the playbook; every other Bash command is refused and wastes a turn.
+            When a page returns an error (403, timeout) or loads without its content, open it with the browser tools
+            before you call it unreachable (not on devpost.com, linkedin.com or x.com).
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
@@ -179,6 +187,10 @@ jobs:
             Append your section "## Phase 3: searches and Devpost" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
             As the last phase, also add the single data/runs.yaml line for the whole run.
+            Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
+            only the npm scripts listed in the playbook; every other Bash command is refused and wastes a turn.
+            When a page returns an error (403, timeout) or loads without its content, open it with the browser tools
+            before you call it unreachable (not on devpost.com, linkedin.com or x.com).
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5

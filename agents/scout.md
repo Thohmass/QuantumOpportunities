@@ -61,7 +61,7 @@ to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in ever
 
 ## Browser (only when fetching fails)
 
-Use `WebFetch` first. Only when it fails (HTTP 403, a timeout) or the page comes back without its content (an
+Use `WebFetch` first. Before you report a page or feed as unreachable or empty, you must have tried it in the browser (except on the sites below where the browser is never used); say so in the report. Only when it fails (HTTP 403, a timeout) or the page comes back without its content (an
 empty list that a browser would fill with JavaScript), open the page with the browser tools:
 `browser_navigate` → `browser_snapshot` (or `Read` the snapshot file it names) → `browser_close`. Use
 `browser_wait_for` (a few seconds) when the list loads late.
@@ -82,6 +82,8 @@ website itself stays off limits (see Browser).
 
 - Step 7: search for upcoming and open quantum hackathons: 2–4 searches (e.g. "quantum", "qiskit", "quantum
   computing"), at most 20 results looked at in all.
+- A hackathon page on Devpost written by its organiser counts as `organiser_social` (the organiser's own
+  announcement on a platform); a Devpost listing of many hackathons is `aggregator`.
 - Treat results like source candidates: `find-similar` first, then the organiser's own page as the official
   source. Use the Devpost page as the source only when the organiser has no page of their own; say so in `notes`.
 - Read only: never register, submit, join a team or message anyone, even if a tool seems to allow it.
