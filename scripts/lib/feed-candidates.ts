@@ -15,6 +15,17 @@ export interface FeedIO {
   robots(url: string): Promise<string>;
 }
 
+/**
+ * Feeds that our own project account created for feed readers, so robots.txt (written for crawlers) is not
+ * consulted for them. Only the Google Alerts of the project account (agentomass); every other feed honours
+ * robots.txt. Decided by the owner on 2026-11-15.
+ */
+export const OWN_FEED_PREFIXES = ['https://www.google.com/alerts/feeds/06639093261592533807/'];
+
+export function isOwnFeed(url: string): boolean {
+  return OWN_FEED_PREFIXES.some((p) => url.startsWith(p));
+}
+
 /** At most this many items per feed and in total, so one noisy feed can't flood the Scout's turns. */
 export const PER_FEED = 15;
 export const TOTAL = 60;
@@ -38,7 +49,7 @@ export async function feedCandidates(
     const { url, format, all_quantum } = s.feed;
     try {
       const path = new URL(url).pathname + new URL(url).search;
-      if (!robotsAllows(await io.robots(url), path)) {
+      if (!isOwnFeed(url) && !robotsAllows(await io.robots(url), path)) {
         out.push({
           source: s.id,
           text: `${s.id} | SKIPPED: robots.txt disallows ${url}`,
