@@ -110,7 +110,7 @@ describe('Scout workflow phases', () => {
 
   it('keeps each phase short and lets the next phase run when one fails', () => {
     for (const p of phases) {
-      expect(p.with?.claude_args).toMatch(/--max-turns 60\b/);
+      expect(p.with?.claude_args).toMatch(/--max-turns 80\b/);
       expect(p['continue-on-error']).toBe(true);
     }
   });
@@ -160,5 +160,16 @@ describe('Scout workflow GitHub access', () => {
       'pull-requests': 'read',
       issues: 'read',
     });
+  });
+});
+
+describe('Scout workflow data guard', () => {
+  const guard = steps.find((s) => s.name?.startsWith('Only data/ changed')) as Step & {
+    run: string;
+  };
+  it('removes only new files the agent emptied, before validating', () => {
+    expect(guard.run).toContain('git ls-files --others --exclude-standard -z -- data');
+    expect(guard.run.indexOf('rm -- "$f"')).toBeLessThan(guard.run.indexOf('npm run data:check'));
+    expect(guard.run).not.toMatch(/git rm|rm -r|rm -rf/);
   });
 });
