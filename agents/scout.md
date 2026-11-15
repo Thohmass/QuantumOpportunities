@@ -31,8 +31,10 @@ to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in ever
 - End each phase by appending to `.run/phases.md` (the log file, candidates processed, new events, fetches used,
   anything left over) and running `npm run data:check`. Only phase 3 adds the `data/runs.yaml` line, for the whole
   run.
-- Each phase has up to 60 turns. Saving turns is not a reason to stop: finish every item of your phase unless a
-  cap is reached or you are past turn 50. Anything under "Not done" needs its reason (cap reached, past turn 50,
+- You can't delete files. To get rid of a file you created in this run by mistake (a wrong id, say), empty it
+  with `Write`: the workflow removes new files left empty. Never empty a file that existed before the run.
+- Each phase has about 60 turns. Saving turns is not a reason to stop: finish every item of your phase unless a
+  cap is reached or you are past turn 55. Anything under "Not done" needs its reason (cap reached, past turn 55,
   error). Look at files with `Read`, `Grep` and
   `Glob` and create them with `Write`/`Edit`: `Bash` only runs the npm scripts you are allowed.
 
