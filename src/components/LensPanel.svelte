@@ -1,8 +1,45 @@
 <script lang="ts">
-  // Tuning panel for the map lens (experiment): every value can be changed live and is remembered in this browser.
+  // Map lab (?lab): tune the bubble sizes and the lens live. Every value is remembered in this browser.
   import { LENS_DEFAULTS, type LensSettings } from '../lib/lens';
+  import { CURVES, SIZE_DEFAULTS, type Curve, type SizeSettings } from '../lib/size';
 
-  let { s = $bindable(), onclose }: { s: LensSettings; onclose: () => void } = $props();
+  let {
+    s = $bindable(),
+    size = $bindable(),
+    radius,
+    zoom,
+    onclose,
+  }: {
+    s: LensSettings;
+    size: SizeSettings;
+    /** Current bubble radius and zoom, as a read-out while tuning. */
+    radius: number;
+    zoom: number;
+    onclose: () => void;
+  } = $props();
+
+  interface SizeSlider {
+    key: 'fromRadius' | 'toRadius' | 'fromZoom' | 'toZoom' | 'iconAt' | 'gap';
+    label: string;
+    min: number;
+    max: number;
+    step: number;
+    unit: string;
+  }
+  const SIZES: SizeSlider[] = [
+    { key: 'fromRadius', label: 'Smallest', min: 1.5, max: 12, step: 0.5, unit: 'px' },
+    { key: 'toRadius', label: 'Largest', min: 4, max: 28, step: 0.5, unit: 'px' },
+    { key: 'fromZoom', label: 'Grow from', min: 1, max: 16, step: 0.5, unit: '×' },
+    { key: 'toZoom', label: 'Grow until', min: 2, max: 60, step: 1, unit: '×' },
+    { key: 'iconAt', label: 'Icon from', min: 3, max: 24, step: 0.5, unit: 'px' },
+    { key: 'gap', label: 'Gap', min: 0, max: 14, step: 0.5, unit: 'px' },
+  ];
+  const CURVE_LABEL: Record<Curve, string> = {
+    linear: 'Linear',
+    'ease-in': 'Slow, then fast',
+    'ease-out': 'Fast, then slow',
+    smooth: 'S-curve (slow ends)',
+  };
 
   interface Slider {
     key: 'dotRadius' | 'dotScale' | 'iconRadius' | 'iconScale' | 'push' | 'follow';
@@ -40,9 +77,31 @@
 
 <div class="lens-panel" role="group" aria-label="Lens settings">
   <div class="top">
-    <label class="switch"><input type="checkbox" bind:checked={s.on} /> <b>Lens</b></label>
+    <b>Map lab</b>
     <button type="button" class="x" aria-label="Close the lens settings" onclick={onclose}>✕</button
     >
+  </div>
+  <p class="h">Bubble size by zoom</p>
+  <p class="note">Now: zoom {zoom.toFixed(1)}×, radius {radius.toFixed(1)} px</p>
+  {#each SIZES as sl (sl.key)}
+    <label class="row">
+      <span>{sl.label}</span>
+      <input type="range" min={sl.min} max={sl.max} step={sl.step} bind:value={size[sl.key]} />
+      <output>{size[sl.key]} {sl.unit}</output>
+    </label>
+  {/each}
+  <label class="row">
+    <span>Growth</span>
+    <select class="curve" bind:value={size.curve}>
+      {#each Object.keys(CURVES) as c (c)}<option value={c}>{CURVE_LABEL[c as Curve]}</option
+        >{/each}
+    </select>
+  </label>
+  <button type="button" class="btn ghost" onclick={() => (size = { ...SIZE_DEFAULTS })}
+    >Reset sizes</button
+  >
+  <div class="top lens-top">
+    <label class="switch"><input type="checkbox" bind:checked={s.on} /> <b>Lens</b></label>
   </div>
   <fieldset disabled={!s.on}>
     <p class="h">Small dots (zoomed out)</p>
@@ -63,7 +122,7 @@
   </fieldset>
   <p class="note">Phones always use the map centre.</p>
   <button type="button" class="btn ghost" onclick={() => (s = { ...LENS_DEFAULTS })}
-    >Reset to defaults</button
+    >Reset lens</button
   >
 </div>
 
@@ -140,6 +199,15 @@
     align-items: center;
     gap: 6px;
     min-height: 30px;
+  }
+  .curve {
+    grid-column: 2 / 4;
+    min-height: 30px;
+  }
+  .lens-top {
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
   }
   .note {
     margin: 6px 0;

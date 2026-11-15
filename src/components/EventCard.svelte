@@ -1,12 +1,11 @@
 <script lang="ts">
   import EventBrief from './EventBrief.svelte';
   import { daysBetween, formatPartial } from '../lib/dates';
-  import { NOT_FOUND, costBadge, costText, statusLabel, whenText, whereText } from '../lib/format';
+  import { NOT_FOUND, statusLabel, whenText, whereText } from '../lib/format';
   import { flag } from '../lib/geo';
   import type { Ev } from '../lib/model';
   import { app, hover, openEvent } from '../lib/state.svelte';
   import type { Meta } from '../lib/types';
-  import TypeIcon from './TypeIcon.svelte';
 
   let {
     e,
@@ -63,7 +62,6 @@
   const topics = $derived(
     (e.topics ?? []).slice(0, 3).map((id) => meta.topics.find((t) => t.id === id)?.name ?? id),
   );
-  const cb = $derived(costBadge(e));
   const where = $derived(whereText(e));
 </script>
 
@@ -109,11 +107,14 @@
       </button>
     {/if}
   </div>
-  <div class="meta">
-    <span class="type-chip"><TypeIcon type={e.type} />{typeName}</span>
-    {#if statusClass !== 'confirmed'}<span class="badge {statusClass}">{statusLabel(e)}</span>{/if}
-    <span class="badge {cb}">{cb === 'unknown' ? 'Cost not found yet' : costText(e)}</span>
-  </div>
+  <!-- The colour edge names the type, quietly: bold capitals in a shade of the edge itself. -->
+  <span class="stripe" aria-hidden="true" style:--chars={typeName.length}
+    ><span>{typeName}</span></span
+  >
+  <span class="sr-only">{typeName}{statusClass === 'expected' ? ', expected' : ''}</span>
+  {#if statusClass !== 'confirmed' && statusClass !== 'expected'}
+    <div class="meta"><span class="badge {statusClass}">{statusLabel(e)}</span></div>
+  {/if}
   <div class="facts">
     <span class="place">
       {#if e.country}<span class="flag" aria-hidden="true">{flag(e.country)}</span
@@ -157,13 +158,9 @@
     gap: 6px;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-left: 5px solid var(--tc);
-    /* A thin darker line inside the colour edge keeps white and yellow visible. */
-    background-image: linear-gradient(var(--tc-edge), var(--tc-edge));
-    background-size: 1px 100%;
-    background-repeat: no-repeat;
     border-radius: var(--radius);
-    padding: 12px 14px 12px 14px;
+    padding: 12px 14px 12px 36px;
+    overflow: hidden;
     transition:
       border-color 0.15s,
       box-shadow 0.15s,
@@ -176,19 +173,44 @@
   .card:hover {
     box-shadow: var(--shadow);
   }
+  /* The type's colour edge, wide enough to carry its name, read from bottom to top. */
+  .stripe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    container-type: size;
+    background: var(--tc);
+    /* A thin darker line keeps white and yellow edges visible. */
+    box-shadow: inset -1px 0 0 var(--tc-edge);
+  }
+  .stripe span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    /* Shrinks to fit a short card's height. */
+    font-size: min(0.64rem, calc(92cqh / (var(--chars) * 0.95)));
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--tc-on) 42%, var(--tc));
+  }
   .card.expected {
     border-style: dashed;
-    border-left-style: solid;
-    border-left-color: transparent;
-    background:
-      linear-gradient(var(--surface), var(--surface)) padding-box,
-      linear-gradient(
-          180deg,
-          color-mix(in srgb, var(--tc) 15%, transparent),
-          var(--tc) 50%,
-          color-mix(in srgb, var(--tc) 15%, transparent)
-        )
-        border-box;
+  }
+  /* Uncertain = a fading edge (expected editions). */
+  .card.expected .stripe {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--tc) 18%, transparent),
+      var(--tc) 50%,
+      color-mix(in srgb, var(--tc) 18%, transparent)
+    );
   }
   .card.past {
     opacity: 0.72;
@@ -296,7 +318,7 @@
     padding-top: 12px;
   }
   .compact {
-    padding: 10px 12px;
+    padding: 10px 12px 10px 34px;
   }
   .compact h3 {
     font-size: 0.98rem;
