@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: "41 4 * * 3" # Wednesday, 04:41 UTC
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Test run: no data PR; the report and the data diff go to the log and the run summary"
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -38,12 +43,17 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
 
+      # A run is a test run (dry) when asked for, and always when it isn't on main: it never opens a data PR, so
+      # nothing from a branch can reach main. A dry run also ignores open data PRs.
       - name: Skip if an earlier data PR is still open
         id: open
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          DRY: ${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}
         run: |
+          echo "dry=$DRY" >> "$GITHUB_OUTPUT"
+          if [ "$DRY" = "true" ]; then echo "open=0" >> "$GITHUB_OUTPUT"; echo "::notice::Test run: no data PR."; exit 0; fi
           n=$(gh pr list -R "$REPO" --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("data/"))] | length')
           echo "open=$n" >> "$GITHUB_OUTPUT"
           [ "$n" = "0" ] || echo "::notice::An agent data PR is still open; skipping this run."
@@ -109,6 +119,13 @@ jobs:
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
+      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      - name: Keep phase 1's transcript summary
+        if: ${{ !cancelled() && steps.phase1.outputs.execution_file != '' }}
+        env:
+          EXEC: ${{ steps.phase1.outputs.execution_file }}
+        run: cp "$EXEC" "$RUNNER_TEMP/phase1.json" || true
+
       - name: "Scout agent, phase 2 of 3: sources"
         id: phase2
         if: ${{ !cancelled() && steps.open.outputs.open == '0' }}
@@ -132,6 +149,13 @@ jobs:
             --max-turns 40
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
+
+      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      - name: Keep phase 2's transcript summary
+        if: ${{ !cancelled() && steps.phase2.outputs.execution_file != '' }}
+        env:
+          EXEC: ${{ steps.phase2.outputs.execution_file }}
+        run: cp "$EXEC" "$RUNNER_TEMP/phase2.json" || true
 
       - name: "Scout agent, phase 3 of 3: searches and Devpost"
         id: phase3
@@ -158,18 +182,22 @@ jobs:
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
+      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      - name: Keep phase 3's transcript summary
+        if: ${{ !cancelled() && steps.phase3.outputs.execution_file != '' }}
+        env:
+          EXEC: ${{ steps.phase3.outputs.execution_file }}
+        run: cp "$EXEC" "$RUNNER_TEMP/phase3.json" || true
+
       # Diagnostics: which tool calls were refused in each phase (tool name and the start of its input), so runs that
       # stop early can be understood without exposing the whole transcript in public logs.
       - name: Refused tool calls
         if: ${{ !cancelled() }}
-        env:
-          EXEC1: ${{ steps.phase1.outputs.execution_file }}
-          EXEC2: ${{ steps.phase2.outputs.execution_file }}
-          EXEC3: ${{ steps.phase3.outputs.execution_file }}
         run: |
-          for f in "$EXEC1" "$EXEC2" "$EXEC3"; do
-            [ -n "$f" ] && [ -f "$f" ] || continue
-            jq -r '.[] | select(.type == "result") | "\(.num_turns) turns; refused: \(.permission_denials_count // 0)", (.permission_denials[]? | "  \(.tool_name): \(.tool_input | tostring | .[0:240])")' "$f" || true
+          for n in 1 2 3; do
+            f="$RUNNER_TEMP/phase$n.json"
+            [ -f "$f" ] || { echo "Phase $n: no transcript"; continue; }
+            jq -r --arg n "$n" '.[] | select(.type == "result") | "Phase \($n): \(.num_turns) turns, \(.permission_denials | length) refused", (.permission_denials[]? | "  \(.tool_name): \(.tool_input | tostring | .[0:240])")' "$f" || true
           done
 
       - name: Only data/ changed, and the data is valid
@@ -189,8 +217,20 @@ jobs:
       # The Claude App token is revoked when the agent step ends, so the PR is opened with DATA_PR_TOKEN: a
       # fine-grained token limited to this repository (contents + pull requests). The agent never sees it, and PRs
       # opened with it trigger CI (GITHUB_TOKEN PRs would not). pr-policy still decides on auto-merge.
+      - name: "Test run: report and data diff"
+        if: ${{ !cancelled() && steps.open.outputs.dry == 'true' }}
+        run: |
+          git add -N data
+          {
+            [ -f .run/report.md ] && cat .run/report.md || echo "_The agent wrote no report._"
+            echo; echo "### Data changes"; echo '```'; git diff --stat -- data; echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "::group::Full data diff"
+          git diff -- data
+          echo "::endgroup::"
+
       - name: Open the data PR
-        if: steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
+        if: steps.open.outputs.dry != 'true' && steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.DATA_PR_TOKEN }}
           REPO: ${{ github.repository }}

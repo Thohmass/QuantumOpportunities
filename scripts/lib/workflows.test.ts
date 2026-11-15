@@ -123,3 +123,28 @@ describe('Scout workflow phases', () => {
     expect(guard).toBeGreaterThan(last);
   });
 });
+
+// Test runs (dry): never a data PR, and always dry off main, so nothing from a branch can reach main.
+describe('Scout workflow test runs', () => {
+  const wf = parse(readFileSync('.github/workflows/scout.yml', 'utf8'));
+  const open = steps.find((s) => s.name?.startsWith('Skip if an earlier data PR')) as Step & {
+    run: string;
+  };
+  const pr = steps.find((s) => s.name === 'Open the data PR') as Step & { if: string };
+
+  it('offers a dry_run input that defaults to off', () => {
+    expect(wf.on.workflow_dispatch.inputs.dry_run).toMatchObject({
+      type: 'boolean',
+      default: false,
+    });
+  });
+
+  it('is dry when asked and whenever the run is not on main', () => {
+    expect(open.env?.DRY).toBe("${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}");
+    expect(open.run).toContain('echo "dry=$DRY"');
+  });
+
+  it('never opens a data PR in a dry run', () => {
+    expect(pr.if).toContain("steps.open.outputs.dry != 'true'");
+  });
+});
