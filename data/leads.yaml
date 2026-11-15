@@ -40,35 +40,17 @@
   url: https://www.ntnu.edu/quspin/workshops
   tries: 2
   last_tried: 2026-11-11
-- title: Workshop on Phases of Open Quantum Systems – complexity, learnability and error correction, Les Diablerets, 13–18 Jun 2027
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 (SwissMAP Research Station)
-  url: https://swissmaprs.ch/events/phases-of-open-quantum-systems-complexity-learnability-and-error-correction/
 - title: APS DAMOP 2027 (Division of Atomic, Molecular and Optical Physics), Chicago, 31 May – 4 Jun 2027
   found: 2026-11-08
   hint: Listed on quantum.info/conf/2027
   url: https://www.aps.org/events/2027/damop-2027
-  tries: 1
-  last_tried: 2026-11-08
-- title: IHP workshop – Advances in Quantum Cryptography – Information-theoretic Foundations, Paris, 11–15 Oct 2027
-  found: 2026-11-08
-  hint: Part of the IHP quantum cryptography trimester; listed on quantum.info/conf/2027 (the introductory school is already in the database)
-  url: https://indico.math.cnrs.fr/event/16601/
-- title: IHP workshop – Advances in Quantum Cryptography – Complexity-theoretic Foundations, Paris, 15–19 Nov 2027
-  found: 2026-11-08
-  hint: Part of the IHP quantum cryptography trimester; listed on quantum.info/conf/2027
-  url: https://indico.math.cnrs.fr/event/16602/
-- title: IHP workshop – Advances in Quantum Cryptography – Computational and Interactive Primitives, Paris, 29 Nov – 3 Dec 2027
-  found: 2026-11-08
-  hint: Part of the IHP quantum cryptography trimester; listed on quantum.info/conf/2027
-  url: https://indico.math.cnrs.fr/event/16603/
+  tries: 2
+  last_tried: 2026-11-15
 - title: Single Photon Workshop (SPW 2027), Singapore, 15–19 Nov 2027
   found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027 without a link; search for the official page
-- title: Qiskit Global Summer School 2027 (IBM, online)
-  found: 2026-11-08
-  hint: Recurring every summer (usually July); check IBM Quantum events / Qiskit for the 2027 edition If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
-  url: https://www.ibm.com/quantum/events
+  hint: Listed on quantum.info/conf/2027 without a link; search for the official page. 2026-11-15 search found only SPW 2026 (Naples, 6–10 Jul 2026) and 2024 (Edinburgh); the series looks biennial, so 2027 is doubtful
+  tries: 1
+  last_tried: 2026-11-15
 - title: IBM Quantum Challenge 2027 (online)
   found: 2026-11-08
   hint: Recurring online challenge in some years; check IBM Quantum events If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
@@ -84,13 +66,13 @@
 - title: Quantum Korea 2027, Seoul
   found: 2026-11-08
   hint: Annual Korean quantum conference and expo (usually late June/July; 2026 was 2–4 Jul at DDP); no 2027 announcement found If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
-  tries: 1
-  last_tried: 2026-11-08
+  tries: 2
+  last_tried: 2026-11-15
 - title: Quantum World Congress 2027 (USA)
   found: 2026-11-08
   hint: Annual conference near Washington DC (usually September; 2026 was 23–25 Sep, College Park); no 2027 dates found If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
-  tries: 1
-  last_tried: 2026-11-08
+  tries: 2
+  last_tried: 2026-11-15
 - title: Q2B Tokyo 2027 and Q2B Paris 2027
   found: 2026-11-08
   hint: QC Ware's Q2B runs regional editions besides Silicon Valley/Chicago (Tokyo usually July, Paris usually September); series q2b already exists If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
@@ -103,6 +85,8 @@
   hint: Annual summit by the Government of Karnataka (usually July/August); search for the official site If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
 - title: QTML 2027 – Quantum Techniques in Machine Learning
   found: 2026-11-08
+  tries: 1
+  last_tried: 2026-11-15
   hint: Annual conference (usually November – December, location changes); search for the official site If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
 - title: Quantum hackathons and schools in Africa and Latin America (e.g. QWorld QSchool/QIntro events, Quantum Africa conference series)
   found: 2026-11-08

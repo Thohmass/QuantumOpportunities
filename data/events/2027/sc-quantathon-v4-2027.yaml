@@ -1,0 +1,28 @@
+id: sc-quantathon-v4-2027
+name: SC Quantathon v4
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2027-10-23
+  end: 2027-10-24
+location:
+  city: Clemson
+  country: US
+  venue: Watt Family Innovation Center
+organizers: [clemson-quantum]
+topics: [computing]
+audience: [anyone]
+prizes: "US$250 prize pool listed on Devpost"
+url: https://sc-quantathon-v4.devpost.com/
+description: Two-day in-person quantum hackathon hosted by Clemson Quantum at Clemson University, fourth edition. Challenge details have not yet been posted.
+sources:
+  - url: https://sc-quantathon-v4.devpost.com/
+    kind: organiser_social
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

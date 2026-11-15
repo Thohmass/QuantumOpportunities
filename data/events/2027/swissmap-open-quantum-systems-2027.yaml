@@ -1,0 +1,27 @@
+id: swissmap-open-quantum-systems-2027
+name: Phases of Open Quantum Systems – Complexity, Learnability and Error Correction (SwissMAP)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-13
+  end: 2027-06-18
+location:
+  city: Aigle
+  country: CH
+  venue: SwissMAP Research Station, Les Diablerets
+topics: [qit, qec]
+audience: [phd, postdoc, researcher]
+url: https://swissmaprs.ch/events/phases-of-open-quantum-systems-complexity-learnability-and-error-correction/
+description: Week-long research workshop at the SwissMAP Research Station on phases of open quantum systems and their links to computational complexity, learning and error correction. Organised by researchers from Princeton, Geneva and Harvard.
+sources:
+  - url: https://swissmaprs.ch/events/phases-of-open-quantum-systems-complexity-learnability-and-error-correction/
+    kind: official
+    accessed: 2026-11-15
+    note: No application deadline on the page; registration is on a linked indico page not read
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15
