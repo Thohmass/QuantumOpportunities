@@ -1,0 +1,31 @@
+id: nordic-quantum-career-fair-2027
+name: Nordic Quantum Career Fair 2027
+type: career_fair
+status: confirmed
+format: in_person
+dates:
+  start: "2027-02-01"
+  end: "2027-02-02"
+location:
+  city: Stockholm
+  country: SE
+  venue: AlbaNova
+organizers: [nordita]
+topics: [computing, sensing, communication]
+audience: [msc, phd, postdoc, industry]
+cost:
+  kind: free
+  note: Attendance is free, including the evening dinner
+url: https://nordita.org/nordic-quantum/career-fair-2027/
+description: Two-day career fair where Nordic quantum companies and institutes meet people looking for thesis projects, internships and jobs, with career panels and an evening mingle dinner.
+sources:
+  - url: https://nordita.org/nordic-quantum/career-fair-2027/
+    kind: official
+    accessed: 2026-11-15
+    note: Programme and booth map to follow; no registration link on the page
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

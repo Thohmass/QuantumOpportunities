@@ -9,8 +9,8 @@
   uses: 3
   yield: 0
 - q: quantum hackathon Nordic Denmark Sweden Finland Norway {year}
-  last_used: 2026-11-08
-  uses: 1
+  last_used: 2026-11-15
+  uses: 2
   yield: 0
 - q: quantum challenge competition prize {year}
   last_used: 2026-11-11
@@ -25,16 +25,16 @@
   uses: 1
   yield: 1
 - q: quantum computing summer school PhD master's {year}
-  last_used: 2026-11-08
-  uses: 1
-  yield: 0
+  last_used: 2026-11-15
+  uses: 2
+  yield: 1
 - q: quantum information conference {year}
-  last_used: 2026-11-08
-  uses: 1
+  last_used: 2026-11-15
+  uses: 2
   yield: 0
 - q: quantum error correction conference workshop {year}
-  last_used: 2026-11-08
-  uses: 1
+  last_used: 2026-11-15
+  uses: 2
   yield: 1
 - q: quantum sensing metrology conference {year}
   last_used: 2026-11-08
@@ -53,8 +53,8 @@
   uses: 1
   yield: 0
 - q: quantum industry conference {year}
-  last_used: 2026-11-08
-  uses: 1
+  last_used: 2026-11-15
+  uses: 2
   yield: 1
 - q: quantum computing conference Asia {year}
   last_used: 2026-11-11
@@ -65,9 +65,9 @@
   uses: 2
   yield: 0
 - q: quantum education outreach conference {year}
-  last_used: 2026-11-08
-  uses: 1
-  yield: 0
+  last_used: 2026-11-15
+  uses: 2
+  yield: 1
 - q: student quantum hackathon university {year}
   last_used: 2026-11-08
   uses: 1

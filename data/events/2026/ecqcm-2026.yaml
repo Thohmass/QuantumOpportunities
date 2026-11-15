@@ -1,0 +1,34 @@
+id: ecqcm-2026
+name: ECQCM 2026 – European Conference on Quantum and Complex Matter
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-30
+  end: 2026-12-04
+location:
+  city: Strasbourg
+  country: FR
+  venue: Institut de Science et d'Ingénierie Supramoléculaires (ISIS), University of Strasbourg
+topics: [qml, simulation, materials, computing]
+audience: [phd, postdoc, researcher]
+url: https://mlq.quantumexcellence.org/ecqcm26/
+description: Joint conference of the QLUSTER and MLQ doctoral networks on the overlap of quantum matter, soft matter and machine learning for quantum systems. Open to doctoral students, early-career scientists and researchers across Europe.
+deadlines:
+  - kind: registration
+    date: 2026-11-10
+    note: Regular registration; early bird closed 30 Sep
+sources:
+  - url: https://mlq.quantumexcellence.org/ecqcm26/
+    kind: official
+    accessed: 2026-11-15
+    note: Early-bird deadline 30 Sep, regular deadline 10 Nov 2026; fee amounts not published on the page
+  - url: https://www.qureca.com/calendar/european-conference-on-quantum-and-complex-matter/
+    kind: aggregator
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15
