@@ -208,3 +208,17 @@ describe('feed field in data/sources.yaml', () => {
     expect(validate(entry('    format: rss\n'))).not.toEqual([]);
   });
 });
+
+describe('social posts', () => {
+  it('uses the start of a post as its title when the feed has none (Bluesky, Mastodon)', () => {
+    const [post] = parseRss(fixture('bluesky.xml'));
+    expect(post!.title).toMatch(/^🚀 Registration is open for our quantum hackathon in Lisbon/);
+    expect(post!.title.length).toBeLessThanOrEqual(120);
+    expect(post!.title.endsWith('…')).toBe(true);
+    expect(post).toMatchObject({
+      url: 'https://bsky.app/profile/example.bsky.social/post/3abc',
+      start: '2026-11-12',
+    });
+    expect(post!.summary).toContain('travel grants for students');
+  });
+});

@@ -138,7 +138,10 @@ export function parseRss(xml: string): FeedItem[] {
   ];
   const items: FeedItem[] = [];
   for (const [, body = ''] of blocks) {
-    const title = textOf(body, 'title');
+    const text = textOf(body, 'description') ?? textOf(body, 'summary') ?? textOf(body, 'content');
+    // Bluesky and Mastodon posts have no title, only text: use the start of the text instead.
+    const title =
+      textOf(body, 'title') ?? (text && text.length > 120 ? `${text.slice(0, 119)}…` : text);
     if (!title) continue;
     const atomHref = /<link\b[^>]*\bhref=["']([^"']+)["']/i.exec(body)?.[1];
     const link = atomHref ? decodeEntities(atomHref) : textOf(body, 'link');
@@ -147,11 +150,7 @@ export function parseRss(xml: string): FeedItem[] {
       title,
       url: link ? unwrapLink(link) : undefined,
       start: dayOf(textOf(body, 'pubDate') ?? textOf(body, 'published') ?? textOf(body, 'updated')),
-      summary: (
-        textOf(body, 'description') ??
-        textOf(body, 'summary') ??
-        textOf(body, 'content')
-      )?.slice(0, 300),
+      summary: text?.slice(0, 300),
     });
   }
   return items;
