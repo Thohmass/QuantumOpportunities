@@ -195,3 +195,41 @@
     format: rss
     url: https://realmscape.substack.com/feed
   note: Weekly Substack roundup with a student-opportunities section. Items are hints, not sources.
+- id: nordic-qai-community-meetup
+  name: Nordic Quantum AI Community (Meetup)
+  url: https://www.meetup.com/quantum-ai/
+  kind: community
+  covers: [Nordic meetups, Copenhagen, Stockholm]
+  feed:
+    format: ical
+    url: https://www.meetup.com/quantum-ai/events/ical/
+    all_quantum: true
+  note: Meetup group iCal; no upcoming events when checked on 2026-11-15.
+- id: leap-quantum-hub-berlin-luma
+  name: Leap Quantum Technology Hub & Events (Luma, Berlin)
+  url: https://luma.com/calendar/cal-GgAvtCRuzwlQ5kE
+  kind: community
+  covers: [Berlin meetups]
+  feed:
+    format: ical
+    url: https://api.lu.ma/ics/get?entity=calendar&id=cal-GgAvtCRuzwlQ5kE
+  note: Luma calendar iCal (23 events when checked). Keyword filter on, so breakfasts and office days drop out.
+- id: unitary-foundation-bluesky
+  name: Unitary Foundation on Bluesky
+  url: https://bsky.app/profile/unitary.foundation
+  kind: organiser
+  covers: [unitaryHACK, grants, calls]
+  feed:
+    format: rss
+    url: https://bsky.app/profile/unitary.foundation/rss
+  note: Public profile RSS, no login. Posts are hints, not sources.
+- id: quantiki-bluesky
+  name: Quantiki on Bluesky
+  url: https://bsky.app/profile/quantiki.bsky.social
+  kind: community
+  covers: [workshops, conferences, calls for papers, schools]
+  feed:
+    format: rss
+    url: https://bsky.app/profile/quantiki.bsky.social/rss
+    all_quantum: true
+  note: Public profile RSS of the quantum information portal. Posts are hints, not sources.
