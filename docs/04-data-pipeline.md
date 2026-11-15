@@ -50,4 +50,4 @@ Reads the compact index (`npm run index`), confirms leads and `suggestion` issue
 
 ## 8. Output and caps
 
-One branch and one data-only PR per run (`data/refresh/<date>-<run>`, `data/scout/<date>-<run>`), authored by the Claude App, body = the agent's report. Caps: Refresher 25 events, ~80 fetches, 90 turns, 45 min; Scout 30 candidates, 20 new events, ~80 fetches, 110 turns, 50 min. Model: Sonnet 5.5.
+One branch and one data-only PR per run (`data/refresh/<date>-<run>`, `data/scout/<date>-<run>`), authored by the Claude App, body = the agent's report. Caps: Refresher 25 events, ~80 fetches, 90 turns, 45 min; Scout 30 candidates, 20 new events, ~80 fetches, 110 turns, 50 min. Model: Sonnet 5.5. The Scout also has a read-only headless browser (Playwright MCP, pinned version) for pages a plain fetch can't read; it may open, read, wait and close, nothing else (issue #41, `agents/scout.md`).
