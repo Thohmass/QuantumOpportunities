@@ -29,9 +29,9 @@
     format: ical
     url: https://www.qureca.com/events/list/?ical=1
     all_quantum: true
-  last_scanned: 2026-11-08
-  scans: 1
-  yield: 1
+  last_scanned: 2026-11-15
+  scans: 2
+  yield: 3
   zero_yield_streak: 0
 - id: qt-eu-events
   name: Quantum Flagship (qt.eu) events
