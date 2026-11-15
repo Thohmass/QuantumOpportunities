@@ -148,3 +148,17 @@ describe('Scout workflow test runs', () => {
     expect(pr.if).toContain("steps.open.outputs.dry != 'true'");
   });
 });
+
+// The agent gets only this run's read-only GitHub token: no Claude App token exchange, no write access.
+describe('Scout workflow GitHub access', () => {
+  const wf = parse(readFileSync('.github/workflows/scout.yml', 'utf8'));
+  it('gives every phase the read-only run token and asks for no id-token or write permission', () => {
+    const phases = steps.filter((s) => s.uses?.startsWith('anthropics/claude-code-action'));
+    for (const p of phases) expect(p.with?.github_token).toBe('${{ github.token }}');
+    expect(wf.jobs.scout.permissions).toEqual({
+      contents: 'read',
+      'pull-requests': 'read',
+      issues: 'read',
+    });
+  });
+});

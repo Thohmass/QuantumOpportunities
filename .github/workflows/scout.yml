@@ -32,7 +32,6 @@ jobs:
       contents: read
       pull-requests: read
       issues: read
-      id-token: write # exchanged for the Claude App token
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -105,6 +104,9 @@ jobs:
           DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The agent needs no GitHub access: give it this run's read-only token instead of exchanging one for
+          # the Claude App (that exchange refuses any workflow that differs from main, so test runs couldn't run).
+          github_token: ${{ github.token }}
           prompt: |
             You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
@@ -119,12 +121,10 @@ jobs:
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
-      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      # Each phase writes the same execution file: move it aside for the diagnostics below.
       - name: Keep phase 1's transcript summary
-        if: ${{ !cancelled() && steps.phase1.outputs.execution_file != '' }}
-        env:
-          EXEC: ${{ steps.phase1.outputs.execution_file }}
-        run: cp "$EXEC" "$RUNNER_TEMP/phase1.json" || true
+        if: ${{ !cancelled() }}
+        run: mv "$RUNNER_TEMP/claude-execution-output.json" "$RUNNER_TEMP/phase1.json" 2>/dev/null || true
 
       - name: "Scout agent, phase 2 of 3: sources"
         id: phase2
@@ -136,6 +136,9 @@ jobs:
           DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The agent needs no GitHub access: give it this run's read-only token instead of exchanging one for
+          # the Claude App (that exchange refuses any workflow that differs from main, so test runs couldn't run).
+          github_token: ${{ github.token }}
           prompt: |
             You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
@@ -150,12 +153,10 @@ jobs:
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
-      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      # Each phase writes the same execution file: move it aside for the diagnostics below.
       - name: Keep phase 2's transcript summary
-        if: ${{ !cancelled() && steps.phase2.outputs.execution_file != '' }}
-        env:
-          EXEC: ${{ steps.phase2.outputs.execution_file }}
-        run: cp "$EXEC" "$RUNNER_TEMP/phase2.json" || true
+        if: ${{ !cancelled() }}
+        run: mv "$RUNNER_TEMP/claude-execution-output.json" "$RUNNER_TEMP/phase2.json" 2>/dev/null || true
 
       - name: "Scout agent, phase 3 of 3: searches and Devpost"
         id: phase3
@@ -167,6 +168,9 @@ jobs:
           DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The agent needs no GitHub access: give it this run's read-only token instead of exchanging one for
+          # the Claude App (that exchange refuses any workflow that differs from main, so test runs couldn't run).
+          github_token: ${{ github.token }}
           prompt: |
             You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
@@ -182,12 +186,10 @@ jobs:
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
-      # Each phase overwrites the action's execution file, so keep a copy for the diagnostics below.
+      # Each phase writes the same execution file: move it aside for the diagnostics below.
       - name: Keep phase 3's transcript summary
-        if: ${{ !cancelled() && steps.phase3.outputs.execution_file != '' }}
-        env:
-          EXEC: ${{ steps.phase3.outputs.execution_file }}
-        run: cp "$EXEC" "$RUNNER_TEMP/phase3.json" || true
+        if: ${{ !cancelled() }}
+        run: mv "$RUNNER_TEMP/claude-execution-output.json" "$RUNNER_TEMP/phase3.json" 2>/dev/null || true
 
       # Diagnostics: which tool calls were refused in each phase (tool name and the start of its input), so runs that
       # stop early can be understood without exposing the whole transcript in public logs.
@@ -214,7 +216,7 @@ jobs:
           npm run data:check
           echo "changed=$(git status --porcelain --untracked-files=all -- data | wc -l)" >> "$GITHUB_OUTPUT"
 
-      # The Claude App token is revoked when the agent step ends, so the PR is opened with DATA_PR_TOKEN: a
+      # The agent only gets this run's read-only token, so the PR is opened with DATA_PR_TOKEN: a
       # fine-grained token limited to this repository (contents + pull requests). The agent never sees it, and PRs
       # opened with it trigger CI (GITHUB_TOKEN PRs would not). pr-policy still decides on auto-merge.
       - name: "Test run: report and data diff"
