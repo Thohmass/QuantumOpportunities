@@ -55,3 +55,37 @@ describe('Scout workflow browser', () => {
     expect(run.run).not.toContain('--allow-unrestricted-file-access');
   });
 });
+
+// Guards on Devpost's MCP (issue #46): the token only ever travels in env, and only filtered tools are allowed.
+describe('Scout workflow Devpost', () => {
+  const pre = steps.find((s) => s.name?.startsWith('Devpost for the agent')) as Step & {
+    run: string;
+    id: string;
+  };
+  const agent = steps.find((s) => s.uses?.startsWith('anthropics/claude-code-action'));
+
+  it('passes the token as an environment variable, never inside a command or a file', () => {
+    expect(pre.env?.DEVPOST_MCP_TOKEN).toBe('${{ secrets.DEVPOST_MCP_TOKEN }}');
+    expect(agent?.env?.DEVPOST_MCP_TOKEN).toBe('${{ secrets.DEVPOST_MCP_TOKEN }}');
+    expect(pre.run).not.toContain('secrets.');
+    expect(agent?.with?.claude_args).not.toContain('secrets.');
+  });
+
+  it('runs the filtering script and allows only what it outputs, plus the read-only browser', () => {
+    expect(pre.run).toContain('scripts/devpost-tools.ts');
+    const allowed = /--allowedTools "([^"]*)"/.exec(agent?.with?.claude_args ?? '')?.[1] ?? '';
+    expect(
+      allowed.startsWith(
+        `\${{ steps.${pre.id}.outputs.allowed }}mcp__playwright__browser_navigate,`,
+      ),
+    ).toBe(true);
+    expect(allowed).not.toMatch(/mcp__devpost__/);
+  });
+
+  it('runs before the agent, after the browser config it extends', () => {
+    const names = steps.map((s) => s.name ?? '');
+    const at = (prefix: string) => names.findIndex((n) => n.startsWith(prefix));
+    expect(at('Browser for the agent')).toBeLessThan(at('Devpost for the agent'));
+    expect(at('Devpost for the agent')).toBeLessThan(at('Scout agent'));
+  });
+});

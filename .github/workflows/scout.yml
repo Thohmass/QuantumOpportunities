@@ -76,10 +76,22 @@ jobs:
               "--image-responses", "omit", "--block-service-workers", "--output-dir", $out ] } } }' \
             > "$RUNNER_TEMP/mcp.json"
 
+      # Devpost's official MCP server (issue #46), with a read-only token from the project account. Only read
+      # tools are allowed (scripts/lib/devpost.ts); without the secret, or on any error, the Scout runs without it.
+      - name: Devpost for the agent (official MCP)
+        id: devpost
+        if: steps.open.outputs.open == '0'
+        env:
+          DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
+        run: npx tsx scripts/devpost-tools.ts "$RUNNER_TEMP/mcp.json"
+
       - name: Scout agent
         id: claude
         if: steps.open.outputs.open == '0'
         uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
+        env:
+          # Read by Claude Code to fill the devpost server's header; never written to a file.
+          DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
@@ -90,7 +102,7 @@ jobs:
             --model claude-sonnet-5-5
             --max-turns 110
             --mcp-config ${{ runner.temp }}/mcp.json
-            --allowedTools "mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
+            --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
       # Diagnostics: which tool calls were refused (tool name and the start of its input), so runs that stop early
       # can be understood without exposing the whole transcript in public logs.
