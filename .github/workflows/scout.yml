@@ -85,9 +85,10 @@ jobs:
           DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
         run: npx tsx scripts/devpost-tools.ts "$RUNNER_TEMP/mcp.json"
 
-      - name: Scout agent
-        id: claude
-        if: steps.open.outputs.open == '0'
+      - name: "Scout agent, phase 1 of 3: leads, suggestions and feeds"
+        id: phase1
+        if: ${{ !cancelled() && steps.open.outputs.open == '0' }}
+        continue-on-error: true
         uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
         env:
           # Read by Claude Code to fill the devpost server's header; never written to a file.
@@ -96,25 +97,83 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           prompt: |
             You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
-            Read CLAUDE.md, agents/common-rules.md and agents/scout.md, then follow the playbook using the files in .run/.
-            Write your report to .run/report.md and finish with `npm run data:check` passing.
+            Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
+            agents/scout.md); this is phase 1 of 3: steps 1 (leads and suggestions) and 3 (feeds). Do only these steps, and do them fully.
+            Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            Append your section "## Phase 1: leads, suggestions and feeds" to .run/report.md and your notes to the research log.
+            Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
+            Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
-            --max-turns 110
+            --max-turns 40
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
-      # Diagnostics: which tool calls were refused (tool name and the start of its input), so runs that stop early
-      # can be understood without exposing the whole transcript in public logs.
-      - name: Refused tool calls
-        if: always() && steps.claude.outputs.execution_file != ''
+      - name: "Scout agent, phase 2 of 3: sources"
+        id: phase2
+        if: ${{ !cancelled() && steps.open.outputs.open == '0' }}
+        continue-on-error: true
+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
         env:
-          EXEC: ${{ steps.claude.outputs.execution_file }}
+          # Read by Claude Code to fill the devpost server's header; never written to a file.
+          DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
+            Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
+            agents/scout.md); this is phase 2 of 3: step 2 (sources in .run/sources.txt). Do only these steps, and do them fully.
+            Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            Append your section "## Phase 2: sources" to .run/report.md and your notes to the research log.
+            Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
+            Finish with `npm run data:check` passing.
+          claude_args: >-
+            --model claude-sonnet-5-5
+            --max-turns 40
+            --mcp-config ${{ runner.temp }}/mcp.json
+            --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
+
+      - name: "Scout agent, phase 3 of 3: searches and Devpost"
+        id: phase3
+        if: ${{ !cancelled() && steps.open.outputs.open == '0' }}
+        continue-on-error: true
+        uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
+        env:
+          # Read by Claude Code to fill the devpost server's header; never written to a file.
+          DEVPOST_MCP_TOKEN: ${{ secrets.DEVPOST_MCP_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the Scout data agent of Quantum Opportunities. Today is the date of this run.
+            Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
+            agents/scout.md); this is phase 3 of 3: steps 4 (searches in .run/queries.txt) and 7 (Devpost). Do only these steps, and do them fully.
+            Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            Append your section "## Phase 3: searches and Devpost" to .run/report.md and your notes to the research log.
+            Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
+            As the last phase, also add the single data/runs.yaml line for the whole run.
+            Finish with `npm run data:check` passing.
+          claude_args: >-
+            --model claude-sonnet-5-5
+            --max-turns 40
+            --mcp-config ${{ runner.temp }}/mcp.json
+            --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
+
+      # Diagnostics: which tool calls were refused in each phase (tool name and the start of its input), so runs that
+      # stop early can be understood without exposing the whole transcript in public logs.
+      - name: Refused tool calls
+        if: ${{ !cancelled() }}
+        env:
+          EXEC1: ${{ steps.phase1.outputs.execution_file }}
+          EXEC2: ${{ steps.phase2.outputs.execution_file }}
+          EXEC3: ${{ steps.phase3.outputs.execution_file }}
         run: |
-          jq -r '.[] | select(.type == "result") | .permission_denials[]? | "\(.tool_name): \(.tool_input | tostring | .[0:240])"' "$EXEC" || true
+          for f in "$EXEC1" "$EXEC2" "$EXEC3"; do
+            [ -n "$f" ] && [ -f "$f" ] || continue
+            jq -r '.[] | select(.type == "result") | "\(.num_turns) turns; refused: \(.permission_denials_count // 0)", (.permission_denials[]? | "  \(.tool_name): \(.tool_input | tostring | .[0:240])")' "$f" || true
+          done
 
       - name: Only data/ changed, and the data is valid
-        if: steps.claude.outcome == 'success'
+        if: ${{ !cancelled() && steps.open.outputs.open == '0' }}
         id: guard
         run: |
           outside=$(git status --porcelain --untracked-files=all -- . ':!data' ':!.run' | wc -l)

@@ -21,11 +21,18 @@ wasting searches. Read `agents/common-rules.md` first; it applies throughout.
 
 ## Steps
 
-**Do every step, every run.** The caps below are the only reason to stop early. Plan your ~110 turns roughly as:
-leads ≤ 15, sources ≤ 25, feeds ≤ 20, searches ≤ 20, Devpost ≤ 10, wrap-up (`data:check`, report) ≤ 10. When a
-step's share is used up, move on to the next one. Anything under "Not done" in the report needs its reason (cap
-reached, turn budget, error). Look at files with `Read`, `Grep` and `Glob` and create them with `Write`/`Edit`:
-`Bash` only runs the npm scripts you are allowed.
+**Phases.** The workflow runs you three times per run, one phase each: (1) leads, suggestions and feeds, (2)
+sources, (3) searches and Devpost. Your prompt says which phase you are; do those steps fully and leave the others
+to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in every phase.
+- Read `.run/phases.md` first. It holds earlier phases' notes: what they did, the research log file they used, and
+  their counts. The caps below are for the whole run, so subtract what earlier phases used.
+- Use one research log for the whole run: phase 1 creates it, and later phases append to the file named in
+  `.run/phases.md`. Each phase appends its own `## Phase n` section to `.run/report.md`.
+- End each phase by appending to `.run/phases.md` (the log file, candidates processed, new events, fetches used,
+  anything left over) and running `npm run data:check`. Only phase 3 adds the `data/runs.yaml` line, for the whole
+  run.
+- Anything under "Not done" needs its reason (cap reached, turn limit, error). Look at files with `Read`, `Grep` and
+  `Glob` and create them with `Write`/`Edit`: `Bash` only runs the npm scripts you are allowed.
 
 1. **Leads and suggestions first.** Try to confirm each lead or suggestion on an official page.
    - Confirmed → create (or update) the event, remove the lead. For a suggestion issue, put `Closes #<number>` in
