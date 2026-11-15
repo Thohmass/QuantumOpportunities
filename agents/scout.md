@@ -31,7 +31,9 @@ to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in ever
 - End each phase by appending to `.run/phases.md` (the log file, candidates processed, new events, fetches used,
   anything left over) and running `npm run data:check`. Only phase 3 adds the `data/runs.yaml` line, for the whole
   run.
-- Anything under "Not done" needs its reason (cap reached, turn limit, error). Look at files with `Read`, `Grep` and
+- Each phase has up to 60 turns. Saving turns is not a reason to stop: finish every item of your phase unless a
+  cap is reached or you are past turn 50. Anything under "Not done" needs its reason (cap reached, past turn 50,
+  error). Look at files with `Read`, `Grep` and
   `Glob` and create them with `Write`/`Edit`: `Bash` only runs the npm scripts you are allowed.
 
 1. **Leads and suggestions first.** Try to confirm each lead or suggestion on an official page.

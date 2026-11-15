@@ -112,6 +112,8 @@ jobs:
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
             agents/scout.md); this is phase 1 of 3: steps 1 (leads and suggestions) and 3 (feeds). Do only these steps, and do them fully.
             Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            You have up to 60 turns for this phase, which is plenty: never stop early to save turns. Work through every
+            item of your steps; stop only when they are all done, a cap is reached, or you are past turn 50.
             Append your section "## Phase 1: leads, suggestions and feeds" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
             Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
@@ -121,7 +123,7 @@ jobs:
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
-            --max-turns 40
+            --max-turns 60
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
@@ -148,6 +150,8 @@ jobs:
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
             agents/scout.md); this is phase 2 of 3: step 2 (sources in .run/sources.txt). Do only these steps, and do them fully.
             Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            You have up to 60 turns for this phase, which is plenty: never stop early to save turns. Work through every
+            item of your steps; stop only when they are all done, a cap is reached, or you are past turn 50.
             Append your section "## Phase 2: sources" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
             Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
@@ -157,7 +161,7 @@ jobs:
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
-            --max-turns 40
+            --max-turns 60
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
@@ -184,6 +188,8 @@ jobs:
             Read CLAUDE.md, agents/common-rules.md and agents/scout.md. This run has three phases (see "Phases" in
             agents/scout.md); this is phase 3 of 3: steps 4 (searches in .run/queries.txt) and 7 (Devpost). Do only these steps, and do them fully.
             Read .run/phases.md first (notes from earlier phases, if any) and stay within the caps left.
+            You have up to 60 turns for this phase, which is plenty: never stop early to save turns. Work through every
+            item of your steps; stop only when they are all done, a cap is reached, or you are past turn 50.
             Append your section "## Phase 3: searches and Devpost" to .run/report.md and your notes to the research log.
             Before you finish, append to .run/phases.md: what you did, candidates processed, new events, fetches used.
             As the last phase, also add the single data/runs.yaml line for the whole run.
@@ -194,7 +200,7 @@ jobs:
             Finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
-            --max-turns 40
+            --max-turns 60
             --mcp-config ${{ runner.temp }}/mcp.json
             --allowedTools "${{ steps.devpost.outputs.allowed }}mcp__playwright__browser_navigate,mcp__playwright__browser_navigate_back,mcp__playwright__browser_snapshot,mcp__playwright__browser_wait_for,mcp__playwright__browser_close,Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 

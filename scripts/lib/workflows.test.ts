@@ -110,7 +110,7 @@ describe('Scout workflow phases', () => {
 
   it('keeps each phase short and lets the next phase run when one fails', () => {
     for (const p of phases) {
-      expect(p.with?.claude_args).toMatch(/--max-turns 40\b/);
+      expect(p.with?.claude_args).toMatch(/--max-turns 60\b/);
       expect(p['continue-on-error']).toBe(true);
     }
   });
