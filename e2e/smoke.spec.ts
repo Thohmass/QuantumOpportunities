@@ -512,7 +512,8 @@ test('timeline: the selected and the pointed-at event both open, with deadlines 
   await page.waitForTimeout(400);
   await expect(tl.locator('.name-line')).toHaveCount(2);
   // A deadline names itself and, clicked, lights up the deadlines in the event's card.
-  const diamond = tl.locator('button.diamond').first();
+  // iQuHACK's own deadline: which other event is pointed at depends on the data.
+  const diamond = tl.locator('button.diamond[aria-label*="MIT iQuHACK"]').first();
   await diamond.hover();
   await expect(diamond).toHaveAccessibleName(/Applications/);
   await diamond.click();
