@@ -1,0 +1,8 @@
+{
+  "name": "qo-scout-browser",
+  "private": true,
+  "description": "Read-only browser for the Scout agent (issue #41), installed with npm ci from the lockfile in .github/workflows/scout.yml.",
+  "dependencies": {
+    "@playwright/mcp": "0.0.85"
+  }
+}

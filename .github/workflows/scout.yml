@@ -60,19 +60,17 @@ jobs:
           gh issue list -R "$REPO" --label suggestion --state open --limit 20 --json number,title,body > .run/suggestions.json || echo '[]' > .run/suggestions.json
           wc -l .run/index.txt .run/sources.txt .run/queries.txt
 
-      # A real browser for pages a plain fetch can't read (blocked or JavaScript-only), issue #41. Pinned exact
-      # version, installed outside the repo, headless, in-memory profile. The agent may only open, read, wait and
+      # A real browser for pages a plain fetch can't read (blocked or JavaScript-only), issue #41. Exact version
+      # from tool/scout-browser's lockfile, headless, in-memory profile. The agent may only open, read, wait and
       # close (allowedTools below); clicking, typing, uploads and running code are refused.
       - name: Browser for the agent (Playwright MCP)
         if: steps.open.outputs.open == '0'
-        env:
-          PW_MCP: "@playwright/mcp@0.0.85"
         run: |
           # Ubuntu 24.04 blocks the unprivileged user namespaces Chrome's sandbox needs; allow them, keep the sandbox.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
-          npm install --prefix "$RUNNER_TEMP/pwmcp" --ignore-scripts --no-audit --no-fund "$PW_MCP"
+          npm ci --prefix tool/scout-browser --ignore-scripts --no-audit --no-fund
           mkdir -p .run/browser
-          jq -n --arg cli "$RUNNER_TEMP/pwmcp/node_modules/@playwright/mcp/cli.js" --arg out "$PWD/.run/browser" '{
+          jq -n --arg cli "$PWD/tool/scout-browser/node_modules/@playwright/mcp/cli.js" --arg out "$PWD/.run/browser" '{
             mcpServers: { playwright: { command: "node", args: [
               $cli, "--headless", "--isolated", "--browser", "chrome",
               "--image-responses", "omit", "--block-service-workers", "--output-dir", $out ] } } }' \

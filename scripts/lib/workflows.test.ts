@@ -20,9 +20,17 @@ type Step = {
 const steps: Step[] = parse(readFileSync('.github/workflows/scout.yml', 'utf8')).jobs.scout.steps;
 
 describe('Scout workflow browser', () => {
-  it('installs an exact Playwright MCP version, never a range or latest', () => {
-    const step = steps.find((s) => s.name?.startsWith('Browser for the agent'));
-    expect(step?.env?.PW_MCP).toMatch(/^@playwright\/mcp@\d+\.\d+\.\d+$/);
+  it('installs an exact Playwright MCP version from a lockfile', () => {
+    const step = steps.find((s) => s.name?.startsWith('Browser for the agent')) as Step & {
+      run: string;
+    };
+    expect(step.run).toContain('npm ci --prefix tool/scout-browser');
+    const pkg = JSON.parse(readFileSync('tool/scout-browser/package.json', 'utf8'));
+    expect(pkg.dependencies['@playwright/mcp']).toMatch(/^\d+\.\d+\.\d+$/);
+    const lock = JSON.parse(readFileSync('tool/scout-browser/package-lock.json', 'utf8'));
+    expect(lock.packages['node_modules/@playwright/mcp'].version).toBe(
+      pkg.dependencies['@playwright/mcp'],
+    );
   });
 
   it('allows only read-only browser tools', () => {
