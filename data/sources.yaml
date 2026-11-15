@@ -251,12 +251,3 @@
     format: rss
     url: https://www.google.com/alerts/feeds/06639093261592533807/379107984869301091
   note: Google's index of public LinkedIn pages; nothing reads linkedin.com itself. Items are hints, not sources.
-- id: devpost-on-dev-to
-  name: Devpost on DEV (monthly hackathon roundups)
-  url: https://dev.to/devpost
-  kind: aggregator
-  covers: [hackathons]
-  feed:
-    format: rss
-    url: https://dev.to/feed/devpost
-  note: Devpost's own posts on dev.to, read from dev.to's RSS. Only posts mentioning quantum pass the filter.
