@@ -89,3 +89,37 @@ describe('Scout workflow Devpost', () => {
     expect(at('Devpost for the agent')).toBeLessThan(at('Scout agent'));
   });
 });
+
+// Three phases per run (issue #52): same tools and guards in each, each one short, all before the data guard.
+describe('Scout workflow phases', () => {
+  const phases = steps.filter((s) =>
+    s.uses?.startsWith('anthropics/claude-code-action'),
+  ) as (Step & {
+    id: string;
+    'continue-on-error'?: boolean;
+  })[];
+  const allowed = (s: Step) => /--allowedTools "([^"]*)"/.exec(s.with?.claude_args ?? '')?.[1];
+
+  it('runs the agent three times, phase 1 to 3, with the same allowed tools', () => {
+    expect(phases.map((p) => p.id)).toEqual(['phase1', 'phase2', 'phase3']);
+    phases.forEach((p, i) => expect(p.with?.prompt).toContain(`phase ${i + 1} of 3`));
+    expect(new Set(phases.map(allowed)).size).toBe(1);
+    for (const p of phases)
+      expect(p.env?.DEVPOST_MCP_TOKEN).toBe('${{ secrets.DEVPOST_MCP_TOKEN }}');
+  });
+
+  it('keeps each phase short and lets the next phase run when one fails', () => {
+    for (const p of phases) {
+      expect(p.with?.claude_args).toMatch(/--max-turns 40\b/);
+      expect(p['continue-on-error']).toBe(true);
+    }
+  });
+
+  it('checks the data only after the last phase', () => {
+    const names = steps.map((s) => s.name ?? '');
+    const guard = names.findIndex((n) => n.startsWith('Only data/ changed'));
+    const last = names.findIndex((n) => n.includes('phase 3 of 3'));
+    expect(last).toBeGreaterThan(-1);
+    expect(guard).toBeGreaterThan(last);
+  });
+});
