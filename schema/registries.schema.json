@@ -41,6 +41,25 @@
               "type": "string"
             }
           },
+          "feed": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["format", "url"],
+            "description": "A machine-readable list of the source's events or posts, read by scout-prep before the Scout starts (issue #42).",
+            "properties": {
+              "format": {
+                "enum": ["ical", "rss"],
+                "description": "ical = iCalendar events; rss = RSS 2.0 or Atom posts (newsletters, Google Alerts, Bluesky and Mastodon profiles)."
+              },
+              "url": {
+                "$ref": "#/$defs/url"
+              },
+              "all_quantum": {
+                "type": "boolean",
+                "description": "Skip the quantum keyword filter: the feed is curated for quantum even when titles don't say so."
+              }
+            }
+          },
           "last_scanned": {
             "$ref": "#/$defs/fullDate"
           },
