@@ -25,6 +25,10 @@
   url: https://www.qureca.com/calendar/
   kind: aggregator
   covers: [conferences, industry events]
+  feed:
+    format: ical
+    url: https://www.qureca.com/events/list/?ical=1
+    all_quantum: true
   last_scanned: 2026-11-08
   scans: 1
   yield: 1
@@ -128,3 +132,66 @@
   scans: 1
   yield: 0
   zero_yield_streak: 1
+- id: google-alert-hackathon
+  name: "Google Alert: 'quantum hackathon'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-summer-school
+  name: "Google Alert: 'quantum' 'summer school' 2027"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/6994636051798689206
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/6994636051798689206
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-winter-school
+  name: "Google Alert: 'quantum' 'winter school'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/5185788421620374746
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/5185788421620374746
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-challenge
+  name: "Google Alert: 'quantum challenge' students"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/15137199719413512377
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/15137199719413512377
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-qiskit-fall-fest
+  name: "Google Alert: 'Qiskit Fall Fest'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/4869174282658340114
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/4869174282658340114
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-workshop-cfp
+  name: "Google Alert: quantum workshop 'call for participation' 2027"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/14842474362031340454
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/14842474362031340454
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: post-quantum-weekly-roundup
+  name: Post-Quantum Weekly Roundup (newsletter)
+  url: https://realmscape.substack.com/
+  kind: community
+  covers: [student opportunities, hackathons, schools]
+  feed:
+    format: rss
+    url: https://realmscape.substack.com/feed
+  note: Weekly Substack roundup with a student-opportunities section. Items are hints, not sources.
