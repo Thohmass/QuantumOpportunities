@@ -108,19 +108,9 @@
   yield: 0
   zero_yield_streak: 1
   note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-08.
-- id: devpost-quantum
-  name: Devpost – quantum hackathons
-  url: https://devpost.com/hackathons?search=quantum
-  kind: aggregator
-  covers: [hackathons, challenges]
-  last_scanned: 2026-11-15
-  scans: 2
-  yield: 0
-  zero_yield_streak: 2
-  note: Website not fetched (403 on 2026-11-08, site off limits); covered through the Devpost MCP in phase 3.
 - id: nbi-events
   name: Niels Bohr Institute events
-  url: https://nbi.ku.dk/english/news-events/
+  url: https://nbi.ku.dk/english/calendar/
   kind: university
   covers: [Copenhagen talks, workshops, schools]
   last_scanned: 2026-11-15

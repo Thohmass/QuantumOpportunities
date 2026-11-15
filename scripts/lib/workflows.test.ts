@@ -110,7 +110,7 @@ describe('Scout workflow phases', () => {
 
   it('keeps each phase short and lets the next phase run when one fails', () => {
     for (const p of phases) {
-      expect(p.with?.claude_args).toMatch(/--max-turns 40\b/);
+      expect(p.with?.claude_args).toMatch(/--max-turns 80\b/);
       expect(p['continue-on-error']).toBe(true);
     }
   });
@@ -121,5 +121,55 @@ describe('Scout workflow phases', () => {
     const last = names.findIndex((n) => n.includes('phase 3 of 3'));
     expect(last).toBeGreaterThan(-1);
     expect(guard).toBeGreaterThan(last);
+  });
+});
+
+// Test runs (dry): never a data PR, and always dry off main, so nothing from a branch can reach main.
+describe('Scout workflow test runs', () => {
+  const wf = parse(readFileSync('.github/workflows/scout.yml', 'utf8'));
+  const open = steps.find((s) => s.name?.startsWith('Skip if an earlier data PR')) as Step & {
+    run: string;
+  };
+  const pr = steps.find((s) => s.name === 'Open the data PR') as Step & { if: string };
+
+  it('offers a dry_run input that defaults to off', () => {
+    expect(wf.on.workflow_dispatch.inputs.dry_run).toMatchObject({
+      type: 'boolean',
+      default: false,
+    });
+  });
+
+  it('is dry when asked and whenever the run is not on main', () => {
+    expect(open.env?.DRY).toBe("${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}");
+    expect(open.run).toContain('echo "dry=$DRY"');
+  });
+
+  it('never opens a data PR in a dry run', () => {
+    expect(pr.if).toContain("steps.open.outputs.dry != 'true'");
+  });
+});
+
+// The agent gets only this run's read-only GitHub token: no Claude App token exchange, no write access.
+describe('Scout workflow GitHub access', () => {
+  const wf = parse(readFileSync('.github/workflows/scout.yml', 'utf8'));
+  it('gives every phase the read-only run token and asks for no id-token or write permission', () => {
+    const phases = steps.filter((s) => s.uses?.startsWith('anthropics/claude-code-action'));
+    for (const p of phases) expect(p.with?.github_token).toBe('${{ github.token }}');
+    expect(wf.jobs.scout.permissions).toEqual({
+      contents: 'read',
+      'pull-requests': 'read',
+      issues: 'read',
+    });
+  });
+});
+
+describe('Scout workflow data guard', () => {
+  const guard = steps.find((s) => s.name?.startsWith('Only data/ changed')) as Step & {
+    run: string;
+  };
+  it('removes only new files the agent emptied, before validating', () => {
+    expect(guard.run).toContain('git ls-files --others --exclude-standard -z -- data');
+    expect(guard.run.indexOf('rm -- "$f"')).toBeLessThan(guard.run.indexOf('npm run data:check'));
+    expect(guard.run).not.toMatch(/git rm|rm -r|rm -rf/);
   });
 });

@@ -31,7 +31,11 @@ to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in ever
 - End each phase by appending to `.run/phases.md` (the log file, candidates processed, new events, fetches used,
   anything left over) and running `npm run data:check`. Only phase 3 adds the `data/runs.yaml` line, for the whole
   run.
-- Anything under "Not done" needs its reason (cap reached, turn limit, error). Look at files with `Read`, `Grep` and
+- You can't delete files. To get rid of a file you created in this run by mistake (a wrong id, say), empty it
+  with `Write`: the workflow removes new files left empty. Never empty a file that existed before the run.
+- Each phase has about 60 turns. Saving turns is not a reason to stop: finish every item of your phase unless a
+  cap is reached or you are past turn 55. Anything under "Not done" needs its reason (cap reached, past turn 55,
+  error). Look at files with `Read`, `Grep` and
   `Glob` and create them with `Write`/`Edit`: `Bash` only runs the npm scripts you are allowed.
 
 1. **Leads and suggestions first.** Try to confirm each lead or suggestion on an official page.
@@ -61,7 +65,7 @@ to their phase. Steps 5, 6 and 8 (series, organisations, taxonomy) apply in ever
 
 ## Browser (only when fetching fails)
 
-Use `WebFetch` first. Only when it fails (HTTP 403, a timeout) or the page comes back without its content (an
+Use `WebFetch` first. Before you report a page or feed as unreachable or empty, you must have tried it in the browser (except on the sites below where the browser is never used); say so in the report. Only when it fails (HTTP 403, a timeout) or the page comes back without its content (an
 empty list that a browser would fill with JavaScript), open the page with the browser tools:
 `browser_navigate` → `browser_snapshot` (or `Read` the snapshot file it names) → `browser_close`. Use
 `browser_wait_for` (a few seconds) when the list loads late.
@@ -82,6 +86,8 @@ website itself stays off limits (see Browser).
 
 - Step 7: search for upcoming and open quantum hackathons: 2–4 searches (e.g. "quantum", "qiskit", "quantum
   computing"), at most 20 results looked at in all.
+- A hackathon page on Devpost written by its organiser counts as `organiser_social` (the organiser's own
+  announcement on a platform); a Devpost listing of many hackathons is `aggregator`.
 - Treat results like source candidates: `find-similar` first, then the organiser's own page as the official
   source. Use the Devpost page as the source only when the organiser has no page of their own; say so in `notes`.
 - Read only: never register, submit, join a team or message anyone, even if a tool seems to allow it.
@@ -95,4 +101,5 @@ product launches.
 
 ## Caps
 
-At most 30 candidates processed, 20 new events and about 80 web fetches per run.
+At most 45 candidates processed, 25 new events and about 120 web fetches per run, shared by the three phases
+(raised from 30/20/80 when the run was split into phases, so the last phase isn't starved).
