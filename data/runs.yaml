@@ -21,3 +21,4 @@
 - { date: 2026-11-11, job: scout, checked: 9, updated: 0, created: 2, note: "IPAM Quantum Winter School 2027 and unitaryHACK 2027 (expected) created from leads; 6 queries found only known events; sources not scanned" }
 - { date: 2026-11-12, job: refresher, checked: 13, updated: 1, created: 0, note: "EQTC start corrected to 30 Nov; no fees found on any official page; GQAI page 403" }
 - { date: 2026-11-15, job: scout, checked: 5, updated: 0, created: 2, note: "QURECA feed: NMR Summit 2026 and GITEX Quantum Expo 2026 (expected) created; IEEE QAI added as lead; web searches, Devpost and other sources not run" }
+- { date: 2026-11-15, job: scout, checked: 6, updated: 0, created: 2, note: "IEEE QAI 2026 (from lead) and Geneva Quantum Hackathon 2027 (CERN) created; ICQISET skipped (WASET); one search run; most sources, other queries and Devpost not run (turn budget)" }

@@ -1,0 +1,33 @@
+id: ieee-qai-2026
+name: 2026 IEEE 2nd International Conference on Quantum Artificial Intelligence (QAI)
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-12-13
+  end: 2026-12-16
+location:
+  city: Nottingham
+  country: GB
+  venue: Jubilee Conference Centre, University of Nottingham Jubilee Campus
+organizers: [ieee]
+topics: [qml]
+audience: [researcher, industry]
+url: https://attend.ieee.org/qai-2026
+description: Second edition of an IEEE conference on the intersection of quantum computing and artificial intelligence, with papers, special sessions and tutorials. Chaired from the University of Nottingham and Nottingham Trent University.
+sources:
+  - url: https://attend.ieee.org/qai-2026
+    kind: official
+    accessed: 2026-11-15
+  - url: https://easychair.org/cfp/QAI2026
+    kind: official
+    accessed: 2026-11-15
+  - url: https://www.qureca.com/calendar/2026-ieee-2nd-international-conference-on-quantum-artificial-intelligence-qai/
+    kind: aggregator
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15
