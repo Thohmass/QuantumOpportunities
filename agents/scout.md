@@ -101,4 +101,5 @@ product launches.
 
 ## Caps
 
-At most 30 candidates processed, 20 new events and about 80 web fetches per run.
+At most 45 candidates processed, 25 new events and about 120 web fetches per run, shared by the three phases
+(raised from 30/20/80 when the run was split into phases, so the last phase isn't starved).
