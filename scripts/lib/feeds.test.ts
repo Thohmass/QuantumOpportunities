@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { feedCandidates, PER_FEED } from './feed-candidates.ts';
+import { feedCandidates, isOwnFeed, PER_FEED } from './feed-candidates.ts';
 import { isQuantum, parseIcal, parseRss, relevant, robotsAllows, unwrapLink } from './feeds.ts';
 import { loadDataset, type SourceEntry } from './load.ts';
 import { validateDataset } from './validate.ts';
@@ -220,5 +220,34 @@ describe('social posts', () => {
       start: '2026-11-12',
     });
     expect(post!.summary).toContain('travel grants for students');
+  });
+});
+
+describe('own feeds', () => {
+  const googleRobots = 'User-agent: *\nDisallow: /alerts/\nAllow: /alerts/$\n';
+  const own = 'https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582';
+  const other = 'https://www.google.com/alerts/feeds/11111111111111111111/222';
+  const io = { get: async () => fixture('alerts.xml'), robots: async () => googleRobots };
+  const alert = (id: string, url: string): SourceEntry => ({
+    id,
+    name: id,
+    url,
+    kind: 'other',
+    feed: { format: 'rss', url },
+  });
+
+  it('reads the Google Alerts of our own account even though robots.txt disallows /alerts/', async () => {
+    expect(isOwnFeed(own)).toBe(true);
+    const lines = await feedCandidates([alert('own', own)], [], TODAY, io);
+    expect(lines.map((l) => l.text)).toEqual([
+      'own | Students invited to the Quantum Hackathon in Lisbon | posted 2026-11-13 |  | https://example.org/lisbon-qhack',
+    ]);
+  });
+
+  it("still honours robots.txt for anyone else's alerts and other google.com feeds", async () => {
+    expect(isOwnFeed(other)).toBe(false);
+    expect(isOwnFeed('https://www.google.com/alerts/feeds/06639093261592533807')).toBe(false);
+    const lines = await feedCandidates([alert('other', other)], [], TODAY, io);
+    expect(lines[0]!.text).toContain('SKIPPED: robots.txt');
   });
 });

@@ -45,7 +45,7 @@ Works through the queue: official page first, fills what sources support, promot
 Reads the compact index (`npm run index`), confirms leads and `suggestion` issues, scans the 8 sources scanned longest ago (`data/sources.yaml`) and runs the 6 queries used longest ago (`data/queries.yaml`), updating their scan/yield counters. Sources with no new events for 6 scans in a row are rested for 8 weeks. Creates events only with an official page, otherwise leads.
 
 **Feeds (issue #42).** A source can carry `feed: { format: ical | rss, url }`. `scout-prep` reads every feed
-before the agent starts (named user agent, `robots.txt` respected, 20 s timeout, at most 15 items per feed and 60 in
+before the agent starts (named user agent, `robots.txt` respected — except for the Google Alerts of our own project account, which Google offers as RSS for feed readers; owner's decision, 2026-11-15 — 20 s timeout, at most 15 items per feed and 60 in
 all), keeps quantum items that haven't ended (events) or were posted in the last 14 days (newsletters, Google
 Alerts, social posts), drops events `find-similar` already matches, and writes the rest to `.run/feeds.txt`. Feed
 sources leave the page-scanning rotation. The Scout adds a `feed` when a source page offers one.
