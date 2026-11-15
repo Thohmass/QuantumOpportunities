@@ -15,6 +15,8 @@ export interface SourceEntry {
   url: string;
   kind: string;
   covers?: string[];
+  /** Machine-readable feed read by scout-prep (issue #42). */
+  feed?: { format: 'ical' | 'rss'; url: string; all_quantum?: boolean };
   last_scanned?: string;
   scans?: number;
   yield?: number;

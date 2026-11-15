@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:idx="urn:atom-extension:indexing">
+  <id>tag:google.com,2005:reader/user/000/state/com.google/alerts/111</id>
+  <title>Google Alert - &quot;quantum hackathon&quot;</title>
+  <updated>2026-11-14T09:00:00Z</updated>
+  <entry>
+    <id>tag:google.com,2013:googlealerts/feed:1</id>
+    <title type="html">Students invited to the &lt;b&gt;Quantum Hackathon&lt;/b&gt; in Lisbon</title>
+    <link href="https://www.google.com/url?rct=j&amp;sa=t&amp;url=https://example.org/lisbon-qhack&amp;ct=ga&amp;cd=CAE" />
+    <published>2026-11-13T18:00:00Z</published>
+    <updated>2026-11-13T18:00:00Z</updated>
+    <content type="html">Registration is open for a 48-hour &lt;b&gt;quantum&lt;/b&gt; hackathon &amp;amp; summer camp.</content>
+  </entry>
+  <entry>
+    <id>tag:google.com,2013:googlealerts/feed:2</id>
+    <title type="html">An old &lt;b&gt;quantum&lt;/b&gt; story</title>
+    <link href="https://www.google.com/url?rct=j&amp;sa=t&amp;url=https://example.org/old&amp;ct=ga" />
+    <published>2026-09-01T10:00:00Z</published>
+  </entry>
+</feed>

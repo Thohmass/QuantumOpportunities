@@ -1,0 +1,31 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//Events//EN
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20270414
+DTEND;VALUE=DATE:20270417
+SUMMARY:Nordic Quantum Hackathon 2027
+URL:https://example.org/nqh-2027/
+LOCATION:DTU\, Kongens Lyngby\, Denmark
+DESCRIPTION:Three days of qubits and pizza. Teams of 3–5\, all levels welcome and a long line that is fo
+ lded onto the next one.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=UTC:20261201T080000
+DTEND;TZID=UTC:20261201T170000
+SUMMARY:Laser World of Photonics
+URL:https://example.org/laser/
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20260301
+DTEND;VALUE=DATE:20260302
+SUMMARY:Past Quantum Workshop 2026
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20271015
+DTEND;VALUE=DATE:20271023
+SUMMARY:QHack 2027
+URL:https://qhack.ai/
+DESCRIPTION:A quantum coding competition.
+END:VEVENT
+END:VCALENDAR
