@@ -11,6 +11,10 @@ on:
       limit:
         description: "Max events to check"
         default: "25"
+      dry_run:
+        description: "Test run: no data PR; the report and the data diff go to the log and the run summary"
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -31,7 +35,6 @@ jobs:
       contents: read
       pull-requests: read
       issues: read
-      id-token: write # exchanged for the Claude App token
     env:
       LIMIT: ${{ github.event.inputs.limit || '25' }}
     steps:
@@ -44,12 +47,17 @@ jobs:
           package-manager-cache: false
       - run: npm ci --ignore-scripts
 
+      # A run is a test run (dry) when asked for, and always when it isn't on main: it never opens a data PR, so
+      # nothing from a branch can reach main. A dry run also ignores open data PRs.
       - name: Skip if an earlier data PR is still open
         id: open
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          DRY: ${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}
         run: |
+          echo "dry=$DRY" >> "$GITHUB_OUTPUT"
+          if [ "$DRY" = "true" ]; then echo "open=0" >> "$GITHUB_OUTPUT"; echo "::notice::Test run: no data PR."; exit 0; fi
           n=$(gh pr list -R "$REPO" --state open --json headRefName --jq '[.[] | select(.headRefName | startswith("data/"))] | length')
           echo "open=$n" >> "$GITHUB_OUTPUT"
           [ "$n" = "0" ] || echo "::notice::An agent data PR is still open; skipping this run."
@@ -65,32 +73,43 @@ jobs:
           due=$(grep -cv '^#' .run/queue.txt || true)
           echo "due=$due" >> "$GITHUB_OUTPUT"
 
+      # The action fails the step when the agent's own turn count passes --max-turns, even after a finished run
+      # (2026-11-16: 107 turns against 90 threw away 8 updates), so the cap sits well above the ~90-turn target and
+      # the data guard below runs whatever the step's outcome.
       - name: Refresher agent
         id: claude
         if: steps.open.outputs.open == '0' && steps.prep.outputs.due != '0'
+        continue-on-error: true
         uses: anthropics/claude-code-action@61a9c274fa7110a66dfafc1bbbced03833eb25fe # v1.0.269
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # The agent needs no GitHub access: give it this run's read-only token instead of exchanging one for
+          # the Claude App (that exchange refuses any workflow that differs from main, so test runs couldn't run).
+          github_token: ${{ github.token }}
           prompt: |
             You are the Refresher data agent of Quantum Opportunities. Today is the date of this run.
             Read CLAUDE.md, agents/common-rules.md and agents/refresher.md, then work through .run/queue.txt.
+            You have about 90 turns, which is plenty: work through every event in the queue; stop early only when
+            you are past turn 85.
+            Tools: create and change files only with Write and Edit, and read them with Read, Grep and Glob. Bash runs
+            only the npm scripts listed in the playbook; every other Bash command is refused and wastes a turn.
             Write your report to .run/report.md and finish with `npm run data:check` passing.
           claude_args: >-
             --model claude-sonnet-5-5
-            --max-turns 90
+            --max-turns 130
             --allowedTools "Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Bash(npm run data:check),Bash(npm run --silent data:check),Bash(npm run -s data:check),Bash(npm run find-similar:*),Bash(npm run --silent find-similar:*),Bash(npm run -s find-similar:*),Bash(npm run index),Bash(npm run --silent index),Bash(npm run -s index),Bash(npm run queue:*),Bash(npm run -s queue:*)"
 
       # Diagnostics: which tool calls were refused (tool name and the start of its input), so runs that stop early
       # can be understood without exposing the whole transcript in public logs.
       - name: Refused tool calls
-        if: always() && steps.claude.outputs.execution_file != ''
-        env:
-          EXEC: ${{ steps.claude.outputs.execution_file }}
+        if: ${{ !cancelled() }}
         run: |
-          jq -r '.[] | select(.type == "result") | .permission_denials[]? | "\(.tool_name): \(.tool_input | tostring | .[0:240])"' "$EXEC" || true
+          f="$RUNNER_TEMP/claude-execution-output.json"
+          [ -f "$f" ] || { echo "No transcript"; exit 0; }
+          jq -r '.[] | select(.type == "result") | "\(.num_turns) turns, \(.permission_denials | length) refused", (.permission_denials[]? | "  \(.tool_name): \(.tool_input | tostring | .[0:240])")' "$f" || true
 
       - name: Only data/ changed, and the data is valid
-        if: steps.claude.outcome == 'success'
+        if: ${{ !cancelled() && steps.open.outputs.open == '0' && steps.prep.outputs.due != '0' }}
         id: guard
         run: |
           outside=$(git status --porcelain --untracked-files=all -- . ':!data' ':!.run' | wc -l)
@@ -100,14 +119,31 @@ jobs:
             echo "::error::The agent changed files outside data/ (or protected data files). Nothing is committed."
             exit 1
           fi
+          # The agent can't delete files: a file it created this run and then emptied means "delete it". Only new
+          # (untracked) files are removed this way; an emptied existing file still fails the check below.
+          git ls-files --others --exclude-standard -z -- data | while IFS= read -r -d '' f; do
+            if ! grep -q '[^[:space:]]' "$f"; then echo "Removing emptied new file: $f"; rm -- "$f"; fi
+          done
           npm run data:check
           echo "changed=$(git status --porcelain --untracked-files=all -- data | wc -l)" >> "$GITHUB_OUTPUT"
 
-      # The Claude App token is revoked when the agent step ends, so the PR is opened with DATA_PR_TOKEN: a
+      # The agent only gets this run's read-only token, so the PR is opened with DATA_PR_TOKEN: a
       # fine-grained token limited to this repository (contents + pull requests). The agent never sees it, and PRs
       # opened with it trigger CI (GITHUB_TOKEN PRs would not). pr-policy still decides on auto-merge.
+      - name: "Test run: report and data diff"
+        if: ${{ !cancelled() && steps.open.outputs.dry == 'true' }}
+        run: |
+          git add -N data
+          {
+            [ -f .run/report.md ] && cat .run/report.md || echo "_The agent wrote no report._"
+            echo; echo "### Data changes"; echo '```'; git diff --stat -- data; echo '```'
+          } | tee -a "$GITHUB_STEP_SUMMARY"
+          echo "::group::Full data diff"
+          git diff -- data
+          echo "::endgroup::"
+
       - name: Open the data PR
-        if: steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
+        if: steps.open.outputs.dry != 'true' && steps.guard.outputs.changed != '0' && steps.guard.outcome == 'success'
         env:
           GH_TOKEN: ${{ secrets.DATA_PR_TOKEN }}
           REPO: ${{ github.repository }}
