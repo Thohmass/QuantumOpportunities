@@ -173,3 +173,38 @@ describe('Scout workflow data guard', () => {
     expect(guard.run).not.toMatch(/git rm|rm -r|rm -rf/);
   });
 });
+
+// The Refresher gets the Scout's fixes (2026-11-16): a finished run is never thrown away, test runs, read-only token.
+describe('Refresher workflow', () => {
+  const wf = parse(readFileSync('.github/workflows/refresher.yml', 'utf8'));
+  const rsteps: (Step & { run?: string; if?: string; 'continue-on-error'?: boolean })[] =
+    wf.jobs.refresh.steps;
+  const agent = rsteps.find((s) => s.uses?.startsWith('anthropics/claude-code-action'))!;
+  const guard = rsteps.find((s) => s.name?.startsWith('Only data/ changed'))!;
+  const pr = rsteps.find((s) => s.name === 'Open the data PR')!;
+
+  it('validates the data even when the action marks the agent step failed', () => {
+    expect(agent['continue-on-error']).toBe(true);
+    expect(guard.if).not.toContain('steps.claude.outcome');
+    expect(agent.with?.claude_args).toMatch(/--max-turns 130\b/);
+  });
+
+  it('gives the agent only the read-only run token', () => {
+    expect(agent.with?.github_token).toBe('${{ github.token }}');
+    expect(wf.jobs.refresh.permissions).toEqual({
+      contents: 'read',
+      'pull-requests': 'read',
+      issues: 'read',
+    });
+  });
+
+  it('never opens a data PR in a test run, and is always a test run off main', () => {
+    expect(wf.on.workflow_dispatch.inputs.dry_run).toMatchObject({
+      type: 'boolean',
+      default: false,
+    });
+    const open = rsteps.find((s) => s.name?.startsWith('Skip if an earlier data PR'))!;
+    expect(open.env?.DRY).toBe("${{ inputs.dry_run == true || github.ref != 'refs/heads/main' }}");
+    expect(pr.if).toContain("steps.open.outputs.dry != 'true'");
+  });
+});
