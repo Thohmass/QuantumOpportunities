@@ -208,3 +208,16 @@ describe('Refresher workflow', () => {
     expect(pr.if).toContain("steps.open.outputs.dry != 'true'");
   });
 });
+
+// Schedules (2026-11-17): Scout three times a week, Refresher weekly, Deploy only when main changes.
+describe('Schedules', () => {
+  const on = (f: string) => parse(readFileSync(`.github/workflows/${f}.yml`, 'utf8')).on;
+  it('runs the Scout on Monday, Wednesday and Friday and the Refresher on Saturday', () => {
+    expect(on('scout').schedule).toEqual([{ cron: '41 4 * * 1,3,5' }]);
+    expect(on('refresher').schedule).toEqual([{ cron: '23 4 * * 6' }]);
+  });
+  it('deploys on every push to main (data PRs included), never on a timer', () => {
+    expect(on('deploy').schedule).toBeUndefined();
+    expect(on('deploy').push).toEqual({ branches: ['main'] });
+  });
+});
