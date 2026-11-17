@@ -5,7 +5,7 @@ labels: [suggestion]
 body:
   - type: markdown
     attributes:
-      value: Thanks! The weekly Scout agent checks suggestions against the official page and adds them.
+      value: Thanks! The Scout agent (Monday, Wednesday and Friday) checks suggestions against the official page and adds them.
   - type: input
     id: name
     attributes:

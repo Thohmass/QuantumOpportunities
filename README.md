@@ -21,8 +21,8 @@ marked that way.
 - Every event links to the sources that support it, with the date they were checked.
 
 Data agents run on a schedule (see [`docs/04-data-pipeline.md`](docs/04-data-pipeline.md)): a
-**Scout** looks for new events every Wednesday and a **Refresher** re-checks events with missing or
-stale data every Monday and Thursday. They can only change files in `data/`, and their pull requests
+**Scout** looks for new events every Monday, Wednesday and Friday and a **Refresher** re-checks events with missing or
+stale data every Saturday. They can only change files in `data/`, and their pull requests
 go through the same automatic checks as everything else before merging.
 
 ## Contributing

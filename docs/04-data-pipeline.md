@@ -15,9 +15,9 @@ Everything a script can decide is decided by a script (what to check and in what
 
 | Workflow | When | Steps |
 |---|---|---|
-| **Refresher** | Mon + Thu 04:23 UTC, or by hand | expected-edition stubs → link check → queue → agent (≤ 25 events) → guard → PR |
-| **Scout** | Wed 04:41 UTC, or by hand | index, sources, queries, suggestion issues → agent → guard → PR |
-| **Deploy** | every merge to `main` + daily 05:17 UTC | build and publish (keeps data health current) |
+| **Refresher** | Sat 04:23 UTC, or by hand | expected-edition stubs → link check → queue → agent (≤ 25 events) → guard → PR |
+| **Scout** | Mon + Wed + Fri 04:41 UTC, or by hand | index, sources, queries, suggestion issues → agent → guard → PR |
+| **Deploy** | every merge to `main` (data PRs included), or by hand | build and publish; the About page's data health is refreshed with each merge |
 
 Both agent runs share a concurrency group and **skip while an earlier `data/…` PR is still open**, so runs never pile up or conflict. The Refresher skips the agent entirely when nothing is due (costs nothing).
 
