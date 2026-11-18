@@ -1,0 +1,36 @@
+id: quantum-frontiers-in-nmr-summit-2026
+name: Quantum Frontiers in NMR Summit 2026
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-17
+  end: 2026-11-19
+location:
+  city: Karlsruhe
+  country: DE
+  venue: Cyberforum, iwerkx Smart Production Park, Rintheimer Str. 23
+organizers: [hqs-quantum-simulations]
+topics: [computing, simulation, sensing]
+audience: [researcher, industry]
+cost:
+  kind: paid
+  min: 150
+  max: 150
+  currency: EUR
+  note: Regular ticket, net of VAT; payment link sent after registration
+url: https://quantumsimulations.de/summit-26
+description: Three-day summit where quantum computing meets nuclear magnetic resonance, with keynotes, discussions, a poster session with dinner and networking. Seats are limited and allocated by fit and order of registration.
+sources:
+  - url: https://quantumsimulations.de/summit-26
+    kind: official
+    accessed: 2026-11-15
+  - url: https://www.qureca.com/calendar/quantum-frontiers-in-nmr-summit-2026/
+    kind: aggregator
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

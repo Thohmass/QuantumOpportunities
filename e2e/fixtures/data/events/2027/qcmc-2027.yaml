@@ -1,0 +1,28 @@
+id: qcmc-2027
+name: QCMC 2027 – International Conference on Quantum Communication, Measurement and Computing
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-09
+  end: 2027-08-13
+location:
+  city: Ottawa
+  country: CA
+topics: [communication, computing]
+audience: [phd, postdoc, researcher]
+url: https://www.qcmc-conference.org
+description: Research conference on quantum communication, measurement and computing, announced for Ottawa in August 2027. Deadlines were not visible on the page that was read; a calls section exists.
+sources:
+  - url: https://www.qcmc-conference.org
+    kind: official
+    accessed: 2026-11-08
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

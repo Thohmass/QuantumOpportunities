@@ -1,0 +1,10 @@
+# Who an event is for. Restrictions beyond these go in an event's `eligibility` text.
+# Editable only by humans (protected path).
+- { id: highschool, name: High school }
+- { id: bsc, name: Bachelor's students }
+- { id: msc, name: Master's students }
+- { id: phd, name: PhD students }
+- { id: postdoc, name: Postdocs }
+- { id: researcher, name: Researchers }
+- { id: industry, name: Industry professionals }
+- { id: anyone, name: Open to all }

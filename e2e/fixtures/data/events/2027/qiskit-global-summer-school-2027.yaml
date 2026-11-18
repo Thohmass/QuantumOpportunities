@@ -1,0 +1,27 @@
+id: qiskit-global-summer-school-2027
+series: qiskit-global-summer-school
+name: Qiskit Global Summer School 2027
+type: summer_school
+status: expected
+format: online
+dates:
+  start: 2027-07
+organizers: [ibm-quantum]
+topics: [computing, qc-software]
+audience: [bsc, msc, phd, industry]
+url: https://www.ibm.com/quantum/blog/qiskit-summer-school-2026
+description: IBM's free two-week virtual summer school with lectures and labs in Qiskit, open to students, educators, developers and professionals; the 2026 edition was the seventh. No 2027 announcement yet.
+expected:
+  basis: Runs every July; the 2026 edition (13–24 Jul, seventh year) and 2025 (7–22 Jul) per IBM Quantum pages and search results
+  confidence: medium
+sources:
+  - url: https://www.ibm.com/quantum/blog/qiskit-summer-school-2026
+    kind: official
+    accessed: 2026-11-15
+    note: 2026 edition, 13–24 Jul, virtual, seventh year; registration closed; spots fill within about a week
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

@@ -1,0 +1,28 @@
+id: cleo-europe-eqec-2027
+series: cleo-europe-eqec
+name: CLEO/Europe-EQEC 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-21
+  end: 2027-06-25
+location:
+  city: Munich
+  country: DE
+  venue: ICM – International Congress Center Messe München
+organizers: [european-physical-society, optica, ieee]
+topics: [optics, hw-photonics]
+audience: [phd, postdoc, researcher, industry]
+url: https://www.cleoeurope.org/
+description: Joint European conference on lasers, electro-optics and quantum electronics, held in Munich within the World of Photonics Congress. Deadlines and registration details are linked from the official site but were not read yet.
+sources:
+  - url: https://www.cleoeurope.org
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

@@ -1,0 +1,30 @@
+id: grc-quantum-control-light-matter-2027
+name: Quantum Control of Light and Matter Gordon Research Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-01
+  end: 2027-08-06
+location:
+  city: Newport
+  country: US
+  venue: Salve Regina University
+organizers: [gordon-research-conferences]
+topics: [optics, qit]
+audience: [researcher, phd, postdoc]
+deadlines:
+  - kind: application
+    date: 2027-07-04
+url: https://www.grc.org/quantum-control-of-light-and-matter-conference/2027/
+description: Gordon Research Conference on controlling quantum systems of light and matter, held at Salve Regina University in Newport, Rhode Island. Applications may close early if the meeting fills.
+sources:
+  - url: https://www.grc.org/quantum-control-of-light-and-matter-conference/2027/
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

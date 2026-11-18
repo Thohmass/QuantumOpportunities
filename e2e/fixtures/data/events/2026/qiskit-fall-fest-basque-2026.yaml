@@ -1,0 +1,39 @@
+id: qiskit-fall-fest-basque-2026
+series: qiskit-fall-fest-basque
+name: Qiskit Fall Fest 2026 – Basque Country
+type: hackathon
+status: confirmed
+format: hybrid
+dates:
+  start: 2026-11-04
+  end: 2026-11-06
+deadlines:
+  - kind: registration
+    date: 2026-10-26
+    note: 17:00 CET
+location:
+  city: San Sebastián
+  country: ES
+  note: Day 1 in Donostia or online; build day in Bilbao, Donostia or Vitoria-Gasteiz
+organizers: [basq, ibm-quantum]
+topics: [computing, qc-algorithms, qc-software]
+audience: [anyone]
+eligibility: "Anyone curious: students, researchers, engineers"
+team:
+  note: Teams formed online on day 1; size not stated
+hardware:
+  real_qpu: true
+  note: IBM Quantum, including ibm_basquecountry
+prizes: One winner per challenge per city; prize content not stated
+url: https://www.basquequantum.eus/en/events/qiskit-fall-fest-2026
+description: "Three-day Qiskit Fall Fest across the Basque Country: an opening day in Donostia or online, then a build day in one of three cities with challenges on IBM quantum hardware."
+sources:
+  - url: https://www.basquequantum.eus/en/events/qiskit-fall-fest-2026
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-10-28
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

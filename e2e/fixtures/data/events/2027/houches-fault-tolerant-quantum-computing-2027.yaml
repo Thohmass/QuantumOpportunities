@@ -1,0 +1,30 @@
+id: houches-fault-tolerant-quantum-computing-2027
+name: "Les Houches: Fault-Tolerant Quantum Computing 2027"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-04-25"
+  end: "2027-04-30"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [qec, computing]
+audience: [researcher, phd, industry]
+url: https://www.houches-school-physics.com/program/program-2027/fault-tolerant-quantum-computing-1735191.kjsp
+description: Week-long workshop on the theory of fault-tolerant quantum computing, mixing academic and industry experimentalists, theorists and engineers; organised by N. Sangouard and J. Guillaud.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-07
+  - url: https://www.houches-school-physics.com/program/program-2027/fault-tolerant-quantum-computing-1735191.kjsp
+    kind: official
+    accessed: 2026-11-07
+checks:
+  last_checked: 2026-11-07
+  unchanged_streak: 0
+added:
+  date: 2026-11-07
+  by: scout-2026-11-07

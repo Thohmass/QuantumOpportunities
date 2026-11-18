@@ -1,0 +1,36 @@
+id: quantum-renaissance-2027
+name: Quantum Renaissance 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-04-01
+  end: 2027-04-02
+location:
+  city: Florence
+  country: IT
+  venue: Palazzo Vecchio
+organizers: [the-quantum-insider, ionq]
+topics: [business, computing]
+audience: [industry, researcher]
+cost:
+  kind: mixed
+  min: 300
+  max: 500
+  currency: EUR
+  note: "Invitation only; after confirmation Academic 300, Corporate 500, Policymaker 500; public exhibition free"
+url: https://thequantumrenaissance.com/
+description: Two-day quantum technology gathering in Florence with a gala dinner, a conference day on policy, funding, industry use cases and workforce, and a free public exhibition.
+sources:
+  - url: https://thequantumrenaissance.com/
+    kind: official
+    accessed: 2026-11-08
+  - url: https://thequantuminsider.com/2026/10/05/quantum-renaissance-to-convene-global-quantum-leaders-in-florence-in-april-2027/
+    kind: news
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

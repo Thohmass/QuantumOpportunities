@@ -1,0 +1,31 @@
+id: commercialising-quantum-global-2027
+series: commercialising-quantum-global
+name: Commercialising Quantum Global 2027
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-06
+location:
+  city: London
+  country: GB
+topics: [business]
+audience: [industry, researcher]
+url: https://events.economist.com/commercialising-quantum/
+expected:
+  basis: Annual Economist Impact conference in London (13-14 May 2025; 16-17 Jun 2026 at Business Design Centre); a third-party listing shows 2027 with dates TBD
+  confidence: medium
+description: Annual business-focused conference in London on bringing quantum technology to market, run by Economist Impact. The 2027 dates are not yet announced.
+sources:
+  - url: https://www.techuk.org/what-we-deliver/events/economist-impact-s-commercialising-quantum-global.html
+    kind: other
+    accessed: 2026-11-18
+  - url: https://www.showsbee.com/fairs/103340-Commercialising-Quantum-2027.html
+    kind: aggregator
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

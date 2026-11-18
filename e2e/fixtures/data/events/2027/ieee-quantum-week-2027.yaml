@@ -1,0 +1,30 @@
+id: ieee-quantum-week-2027
+series: ieee-quantum-week
+name: IEEE Quantum Week 2027 (QCE27)
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-09
+organizers: [ieee]
+topics: [computing, qc-software, qc-hardware, qc-benchmarking]
+audience: [phd, postdoc, researcher, industry, msc]
+url: https://qce.quantum.ieee.org/
+description: IEEE’s flagship quantum computing and engineering conference, with research tracks, tutorials, workshops, an exhibition and a career fair.
+expected:
+  basis: Annual; QCE25 31 Aug – 5 Sep 2025 (Albuquerque), QCE26 13–18 Sep 2026 (Toronto)
+  confidence: high
+sources:
+  - url: https://qce.quantum.ieee.org/2026/qce/
+    kind: official
+    accessed: 2026-11-06
+  - url: https://www.gophotonics.com/events/details/1131-ieee-quantum-week-2026
+    kind: aggregator
+    accessed: 2026-11-06
+    note: QCE26 dates
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

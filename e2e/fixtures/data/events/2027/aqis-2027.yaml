@@ -1,0 +1,31 @@
+id: aqis-2027
+series: aqis
+name: AQIS 2027 – Asian Quantum Information Science Conference
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-08
+location:
+  city: Tsukuba
+  country: JP
+topics: [qit, computing]
+audience: [phd, postdoc, researcher]
+url: https://aqis-conf.org/2027
+expected:
+  basis: The AQIS 2026 page (KAIST, 24-28 Aug 2026) ends with "See you at AQIS 2027"; quantum.info lists 2027 in Tsukuba in late August (aggregator only)
+  confidence: medium
+description: Annual Asian conference on quantum information science covering theory and experiment of quantum computing, communication and foundations. The 2027 edition has no official page with dates yet.
+sources:
+  - url: https://aqis-conf.org/2027
+    kind: official
+    accessed: 2026-11-18
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

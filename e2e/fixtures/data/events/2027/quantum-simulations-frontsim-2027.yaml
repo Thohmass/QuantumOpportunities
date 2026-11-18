@@ -1,0 +1,30 @@
+id: quantum-simulations-frontsim-2027
+name: "Quantum Simulations 2027 (FrontSim): Emerging Frontiers and Practical Challenges"
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-14
+  end: 2027-02-18
+location:
+  city: Jerusalem
+  country: IL
+  venue: Yearim Hotel, Ma'ale HaHamisha
+topics: [simulation, qc-algorithms, qec]
+audience: [phd, postdoc, researcher]
+url: https://qernel.org/quantumsimulations2027/
+deadlines:
+  - kind: registration
+    date: 2026-10-31
+    note: Deadline stated on the page; already passed on the date it was read
+description: International meeting on digital quantum simulation, covering experimental progress, correlated errors, leakage and noise, and where quantum advantage may realistically appear. Follows editions in 2020 and 2022.
+sources:
+  - url: https://qernel.org/quantumsimulations2027/
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

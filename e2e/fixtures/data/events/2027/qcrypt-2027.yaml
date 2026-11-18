@@ -1,0 +1,27 @@
+id: qcrypt-2027
+series: qcrypt
+name: QCrypt 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-23
+  end: 2027-08-27
+location:
+  city: Vienna
+  country: AT
+organizers: [qcrypt-steering-committee]
+topics: [qkd, communication, qit]
+audience: [phd, postdoc, researcher, industry]
+url: https://qcrypt.net/2026/2027/
+description: The main annual conference on quantum cryptography, from QKD to device-independent protocols and security proofs. Registration and venue details were still to come.
+sources:
+  - url: https://qcrypt.net/2026/2027/
+    kind: official
+    accessed: 2026-11-06
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

@@ -1,0 +1,33 @@
+id: damop-2027
+series: damop
+name: APS DAMOP 2027 – Division of Atomic, Molecular and Optical Physics Meeting
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-05-31
+  end: 2027-06-04
+location:
+  city: Chicago
+  country: US
+organizers: [aps]
+topics: [optics, hw-neutral-atoms, hw-trapped-ions, sensing]
+audience: [phd, postdoc, researcher]
+url: https://www.aps.org/events/2027/damop-2027
+expected:
+  basis: A university listing and an APS partner page (seen in search results) give 31 May – 4 June 2027 in Chicago; the APS event page itself was blocked (HTTP 403, browser check) and could not be read
+  confidence: high
+description: Annual meeting of the APS atomic, molecular and optical physics division, with many sessions on cold atoms, trapped ions, quantum sensing and quantum information. The 58th edition is planned for Chicago.
+sources:
+  - url: https://ucan.physics.utoronto.ca/conferences/damop2027/
+    kind: other
+    accessed: 2026-11-18
+  - url: https://www.aps.org/events/2027/damop-2027
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

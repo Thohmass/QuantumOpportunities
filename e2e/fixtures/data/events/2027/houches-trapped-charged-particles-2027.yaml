@@ -1,0 +1,30 @@
+id: houches-trapped-charged-particles-2027
+name: "Les Houches: Physics with Trapped Charged Particles 2027"
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-01-11"
+  end: "2027-01-22"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [hw-trapped-ions, optics]
+audience: [phd]
+url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-physics-with-trapped-charged-particles-1735413.kjsp
+description: Doctoral training on Penning and Paul traps, non-neutral plasmas and applications such as precision spectroscopy and quantum information; includes posters and a CERN visit.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-07
+  - url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-physics-with-trapped-charged-particles-1735413.kjsp
+    kind: official
+    accessed: 2026-11-07
+checks:
+  last_checked: 2026-11-07
+  unchanged_streak: 0
+added:
+  date: 2026-11-07
+  by: scout-2026-11-07

@@ -1,0 +1,26 @@
+id: quantum-india-bengaluru-summit-2027
+name: Quantum India Bengaluru Summit 2027
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027
+location:
+  city: Bengaluru
+  country: IN
+topics: [computing, business]
+audience: [researcher, industry]
+expected:
+  basis: News reports say Karnataka will host the summit again in 2027 (first edition 31 Jul - 1 Aug 2025); no month or official page found
+  confidence: low
+description: Summit on quantum technologies hosted by the Government of Karnataka in Bengaluru. A second edition is reported for 2027; dates are not announced.
+sources:
+  - url: https://www.newsbytesapp.com/news/science/karnataka-aims-20b-quantum-economy-will-host-summit-2027/tldr
+    kind: news
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

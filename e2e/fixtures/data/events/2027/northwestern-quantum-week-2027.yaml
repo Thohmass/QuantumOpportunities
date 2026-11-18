@@ -1,0 +1,30 @@
+id: northwestern-quantum-week-2027
+name: Northwestern Quantum Week 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-15
+  end: 2027-03-19
+location:
+  city: Evanston
+  country: US
+  venue: Scott Hall
+organizers: [northwestern-inquire]
+topics: [computing, business]
+audience: [researcher, industry]
+url: https://quantum.northwestern.edu/events/northwestern-quantum-week/
+description: Second annual week of quantum events at Northwestern, with a Quantum Innovation Symposium linking researchers, engineers, industry, alumni and investors. Programme and registration are not yet published.
+sources:
+  - url: https://quantum.northwestern.edu/events/northwestern-quantum-week/
+    kind: official
+    accessed: 2026-11-15
+  - url: https://planitpurple.northwestern.edu/event/642587
+    kind: official
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

@@ -1,0 +1,261 @@
+# Discovery source registry (docs/04-data-pipeline.md §6). The Scout scans the K sources with the
+# oldest last_scanned each run and updates last_scanned, scans, yield and zero_yield_streak.
+- id: quantum-info-conf
+  name: quantum.info conference list
+  url: https://quantum.info/conf/2027.html
+  kind: aggregator
+  covers: [conferences, workshops, schools]
+  note: One page per year (/conf/<year>.html). Dates there are hints; confirm on official pages.
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 13
+  zero_yield_streak: 0
+- id: nordita-nordic-quantum-events
+  name: Nordita – Nordic quantum events
+  url: https://nordita.org/nordic-quantum/nordic-quantum-events
+  kind: aggregator
+  covers: [Nordic conferences, workshops, schools]
+  last_scanned: 2026-11-15
+  scans: 2
+  yield: 1
+  zero_yield_streak: 0
+  note: Listings failed to load on 2026-11-08 and 2026-11-15; the page links the Nordic Quantum Career Fair 2027 (created from its own page).
+- id: qureca-calendar
+  name: QURECA quantum events calendar
+  url: https://www.qureca.com/calendar/
+  kind: aggregator
+  covers: [conferences, industry events]
+  feed:
+    format: ical
+    url: https://www.qureca.com/events/list/?ical=1
+    all_quantum: true
+  last_scanned: 2026-11-18
+  scans: 5
+  yield: 5
+  zero_yield_streak: 1
+- id: qt-eu-events
+  name: Quantum Flagship (qt.eu) events
+  url: https://qt.eu/events
+  kind: aggregator
+  covers: [European conferences, schools]
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 3
+  zero_yield_streak: 0
+- id: nanowerk-quantum-events
+  name: Nanowerk event calendar (quantum)
+  url: https://www.nanowerk.com/events.php
+  kind: aggregator
+  covers: [conferences]
+  last_scanned: 2026-11-15
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Fetch returned HTTP 403 on 2026-11-08 and 2026-11-15.
+- id: benasque-center
+  name: Centro de Ciencias de Benasque – programme
+  url: https://www.benasque.org/
+  kind: organiser
+  covers: [workshops, schools]
+  last_scanned: 2026-11-18
+  scans: 3
+  yield: 6
+  zero_yield_streak: 1
+- id: les-houches-school
+  name: École de Physique des Houches – schools
+  url: https://www.houches-school-physics.com/
+  kind: organiser
+  covers: [schools]
+  last_scanned: 2026-11-15
+  scans: 2
+  yield: 5
+  zero_yield_streak: 1
+- id: ihp-paris
+  name: Institut Henri Poincaré – programmes
+  url: https://www.ihp.fr/en
+  kind: organiser
+  covers: [trimesters, schools, workshops]
+  last_scanned: 2026-11-18
+  scans: 3
+  yield: 0
+  zero_yield_streak: 3
+- id: qiskit-events
+  name: Qiskit events
+  url: https://www.ibm.com/quantum/events
+  kind: company
+  covers: [hackathons, fall fests, summer schools]
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: WebFetch shows only filters, no event list; the browser shows four events (Qiskit Fall Fest umbrella, SC26, MRS Fall, Q2B Chicago) as of 2026-11-18, none new.
+- id: unitary-foundation-events
+  name: Unitary Foundation – community events
+  url: https://unitary.foundation/
+  kind: community
+  covers: [hackathons, challenges]
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Calendar at /community/events is a Google Calendar iframe with only weekly calls and office hours (read in the browser 2026-11-18); no fixed-date events.
+- id: qworld-events
+  name: QWorld events
+  url: https://qworld.net/
+  kind: community
+  covers: [workshops, schools, hackathons]
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-08.
+- id: nbi-events
+  name: Niels Bohr Institute events
+  url: https://nbi.ku.dk/english/calendar/
+  kind: university
+  covers: [Copenhagen talks, workshops, schools]
+  last_scanned: 2026-11-15
+  scans: 1
+  yield: 0
+  zero_yield_streak: 1
+  note: /english/news-events/ returned 404; the calendar at /english/calendar/ works (only talks and an info session there).
+- id: dtu-physics-events
+  name: DTU Physics events
+  url: https://physics.dtu.dk/
+  kind: university
+  covers: [Copenhagen-area events, hackathons]
+  last_scanned: 2026-11-18
+  scans: 3
+  yield: 0
+  zero_yield_streak: 3
+- id: google-alert-hackathon
+  name: "Google Alert: 'quantum hackathon'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-summer-school
+  name: "Google Alert: 'quantum' 'summer school' 2027"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/6994636051798689206
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/6994636051798689206
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-winter-school
+  name: "Google Alert: 'quantum' 'winter school'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/5185788421620374746
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/5185788421620374746
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-challenge
+  name: "Google Alert: 'quantum challenge' students"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/15137199719413512377
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/15137199719413512377
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-qiskit-fall-fest
+  name: "Google Alert: 'Qiskit Fall Fest'"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/4869174282658340114
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/4869174282658340114
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: google-alert-workshop-cfp
+  name: "Google Alert: quantum workshop 'call for participation' 2027"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/14842474362031340454
+  kind: other
+  covers: [news hints]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/14842474362031340454
+  note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
+- id: post-quantum-weekly-roundup
+  name: Post-Quantum Weekly Roundup (newsletter)
+  url: https://realmscape.substack.com/
+  kind: community
+  covers: [student opportunities, hackathons, schools]
+  feed:
+    format: rss
+    url: https://realmscape.substack.com/feed
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Weekly Substack roundup with a student-opportunities section. Items are hints, not sources. Feed returned HTTP 403 to the prep step and WebFetch on 2026-11-15 and 2026-11-18; the browser got a Cloudflare check on 2026-11-18 (not bypassed).
+- id: nordic-qai-community-meetup
+  name: Nordic Quantum AI Community (Meetup)
+  url: https://www.meetup.com/quantum-ai/
+  kind: community
+  covers: [Nordic meetups, Copenhagen, Stockholm]
+  feed:
+    format: ical
+    url: https://www.meetup.com/quantum-ai/events/ical/
+    all_quantum: true
+  note: Meetup group iCal; no upcoming events when checked on 2026-11-15.
+- id: leap-quantum-hub-berlin-luma
+  name: Leap Quantum Technology Hub & Events (Luma, Berlin)
+  url: https://luma.com/calendar/cal-GgAvtCRuzwlQ5kE
+  kind: community
+  covers: [Berlin meetups]
+  feed:
+    format: ical
+    url: https://api.lu.ma/ics/get?entity=calendar&id=cal-GgAvtCRuzwlQ5kE
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Luma calendar iCal (23 events when checked). Keyword filter on, so breakfasts and office days drop out.
+- id: unitary-foundation-bluesky
+  name: Unitary Foundation on Bluesky
+  url: https://bsky.app/profile/unitary.foundation
+  kind: organiser
+  covers: [unitaryHACK, grants, calls]
+  feed:
+    format: rss
+    url: https://bsky.app/profile/unitary.foundation/rss
+  last_scanned: 2026-11-18
+  scans: 2
+  yield: 0
+  zero_yield_streak: 2
+  note: Public profile RSS, no login. Posts are hints, not sources.
+- id: quantiki-bluesky
+  name: Quantiki on Bluesky
+  url: https://bsky.app/profile/quantiki.bsky.social
+  kind: community
+  covers: [workshops, conferences, calls for papers, schools]
+  feed:
+    format: rss
+    url: https://bsky.app/profile/quantiki.bsky.social/rss
+    all_quantum: true
+  note: Public profile RSS of the quantum information portal. Posts are hints, not sources.
+- id: google-alert-devpost
+  name: "Google Alert: quantum site:devpost.com"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/1892997390614593091
+  kind: other
+  covers: [Devpost hackathons]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/1892997390614593091
+  note: Google's index of Devpost pages, so nothing reads devpost.com itself. Items are hints, not sources; Devpost-only events become leads.
+- id: google-alert-linkedin
+  name: "Google Alert: quantum hackathon site:linkedin.com"
+  url: https://www.google.com/alerts/feeds/06639093261592533807/379107984869301091
+  kind: other
+  covers: [LinkedIn posts and events]
+  feed:
+    format: rss
+    url: https://www.google.com/alerts/feeds/06639093261592533807/379107984869301091
+  note: Google's index of public LinkedIn pages; nothing reads linkedin.com itself. Items are hints, not sources.
