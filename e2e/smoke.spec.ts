@@ -8,9 +8,13 @@ test('home page loads with events', async ({ page }) => {
 
 test('search filters the list and is kept in the URL', async ({ page }) => {
   await page.goto('/#/list');
+  const cards = page.locator('article.card');
+  await expect(cards.first()).toBeVisible();
+  const all = await cards.count();
   await page.getByPlaceholder(/Search events/).fill('singapore');
-  await expect(page.locator('article.card')).toHaveCount(1);
-  await expect(page.locator('article.card')).toContainText('QIP 2027');
+  // How many events are in Singapore depends on the data: check that the list narrows and still has QIP 2027.
+  await expect(cards.filter({ hasText: 'QIP 2027' })).toHaveCount(1);
+  await expect.poll(() => cards.count()).toBeLessThan(all);
   await expect(page).toHaveURL(/q=singapore/);
 });
 
