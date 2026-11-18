@@ -1,0 +1,31 @@
+id: aidaq-2027
+name: AIDAQ27 – AI, Data and Quantum Summit
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-09-21
+  end: 2027-09-22
+location:
+  city: Berlin
+  country: DE
+  venue: bcc Berlin Congress Center
+topics: [business, computing]
+audience: [researcher, industry]
+url: https://aidaq.berlin/
+description: Two-day European summit on AI, data and quantum computing for industry, policy and academia, covering strategy, governance and industrial applications. Organised by Bitkom.
+sources:
+  - url: https://aidaq.berlin/
+    kind: official
+    accessed: 2026-11-18
+    note: Dates and venue; ticket prices not on the page read
+  - url: https://qt.eu/events/aidaq-ai-data-and-quantum-summit
+    kind: aggregator
+    accessed: 2026-11-18
+    note: Organiser named as Bitkom
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

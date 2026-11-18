@@ -1,0 +1,27 @@
+id: ipam-qmc-sign-problem-2027
+name: "IPAM Workshop: The Quantum Monte Carlo Sign Problem – Structure, Complexity, and New Directions"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-25
+  end: 2027-01-29
+location:
+  city: Los Angeles
+  country: US
+organizers: [ipam]
+topics: [simulation, qc-algorithms, qit]
+audience: [phd, postdoc, researcher]
+url: https://www.ipam.ucla.edu/programs/workshops/the-quantum-monte-carlo-sign-problem-structure-complexity-and-new-directions/
+description: Week-long IPAM workshop bringing physicists, mathematicians and computer scientists together on the sign problem in quantum Monte Carlo, with lectures, tutorials, discussions and a poster session aimed at early-career researchers.
+sources:
+  - url: https://www.ipam.ucla.edu/programs/workshops/the-quantum-monte-carlo-sign-problem-structure-complexity-and-new-directions/
+    kind: official
+    accessed: 2026-11-18
+    note: Dates and content; venue, fee and deadline not on the page text read. City is that of IPAM (UCLA)
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18
