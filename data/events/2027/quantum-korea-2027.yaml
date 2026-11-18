@@ -1,0 +1,31 @@
+id: quantum-korea-2027
+series: quantum-korea
+name: Quantum Korea 2027
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-06
+location:
+  city: Seoul
+  country: KR
+topics: [computing, business]
+audience: [researcher, industry]
+url: https://quantum-korea.kr/
+expected:
+  basis: Held annually in Seoul since 2023 (24-26 Jun 2025 at aT Center; 2-4 Jul 2026 at DDP); no 2027 dates announced
+  confidence: medium
+description: Annual Korean quantum conference and expo with industry, government and research delegations. Dates for 2027 are not yet announced.
+sources:
+  - url: https://quantum-korea.kr/en/schedule
+    kind: official
+    accessed: 2026-11-18
+  - url: https://thequantuminsider.com/2026/07/03/south-korea-expands-quantum-cooperation-with-canada-u-k-and-eu-at-quantum-korea-2026/
+    kind: news
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

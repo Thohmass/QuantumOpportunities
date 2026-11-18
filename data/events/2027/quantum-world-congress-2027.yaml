@@ -1,0 +1,31 @@
+id: quantum-world-congress-2027
+series: quantum-world-congress
+name: Quantum World Congress 2027
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-09
+location:
+  city: Washington
+  country: US
+topics: [computing, business]
+audience: [researcher, industry]
+url: https://quantumworldcongress.com/
+expected:
+  basis: Held in the Washington DC area in September 2025 (16-18 Sep) and 2026 (23-25 Sep, College Park); no 2027 announcement found
+  confidence: medium
+description: Annual congress near Washington DC bringing together quantum industry, government and research. Dates and venue for 2027 are not yet announced.
+sources:
+  - url: https://quantumworldcongress.com/
+    kind: official
+    accessed: 2026-11-18
+  - url: https://today.umd.edu/briefs/2026-quantum-world-congress-to-be-held-in-college-park.md
+    kind: other
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

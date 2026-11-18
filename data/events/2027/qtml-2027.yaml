@@ -1,0 +1,25 @@
+id: qtml-2027
+series: qtml
+name: QTML 2027 – Quantum Techniques in Machine Learning
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2027-11
+topics: [qml]
+audience: [phd, postdoc, researcher]
+url: https://qtml2026.nithecs.ac.za/about
+expected:
+  basis: Annual conference since 2017, held in November or December (2025 Singapore, 16-21 Nov; 2026 Stellenbosch, 6-11 Dec); no 2027 host announced
+  confidence: low
+description: Annual conference on quantum machine learning and related techniques. Host and dates for 2027 are not yet announced.
+sources:
+  - url: https://qtml2026.nithecs.ac.za/about
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18
