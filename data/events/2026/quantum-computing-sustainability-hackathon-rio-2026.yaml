@@ -1,0 +1,29 @@
+id: quantum-computing-sustainability-hackathon-rio-2026
+name: Quantum Computing and Sustainability – Hackathon and Workshop (Rio de Janeiro) 2026
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2026-11-30
+  end: 2026-12-02
+location:
+  city: Rio de Janeiro
+  country: BR
+  venue: CBPF
+organizers: [ictp-saifr]
+topics: [computing, business]
+audience: [msc, phd]
+url: https://indico.cern.ch/event/1716817/overview
+description: Three-day hackathon and workshop at CBPF in Rio de Janeiro, following the ICTP-SAIFR Quantum Computing School in São Paulo. Priority goes to students who attended the school; accepted participants get travel from São Paulo and housing covered. Application window has closed.
+eligibility: Priority to students who attend the São Paulo school.
+sources:
+  - url: https://www.ictp-saifr.org/?p=39402
+    kind: official
+    accessed: 2026-11-20
+    note: School page that announces the follow-on hackathon and links the Indico page
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

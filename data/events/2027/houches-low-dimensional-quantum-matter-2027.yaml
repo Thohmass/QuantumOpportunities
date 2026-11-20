@@ -1,0 +1,29 @@
+id: houches-low-dimensional-quantum-matter-2027
+name: "Les Houches: Doctoral Training – School on Low-Dimensional Quantum Matter 2027"
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-10-04"
+  end: "2027-10-15"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [materials]
+url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-school-on-low-dimensional-quantum-matter-1843186.kjsp
+description: Two-week doctoral training school on low-dimensional quantum matter, organised by Roderich Moessner and Nicolas Regnault.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-20
+  - url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-school-on-low-dimensional-quantum-matter-1843186.kjsp
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

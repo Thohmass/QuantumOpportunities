@@ -1,0 +1,27 @@
+id: quantum-spintronics-2027
+name: Quantum Spintronics 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-08
+  end: 2027-06-10
+location:
+  city: Trondheim
+  country: NO
+organizers: [quspin-ntnu]
+topics: [materials, hw-spins]
+audience: [researcher, phd, postdoc]
+url: https://www.ntnu.edu/quspin/workshops
+description: Three-day international conference of the Center for Quantum Spintronics at NTNU, part of its annual conference series in Trondheim. The official workshops page lists the 2027 dates; venue, programme and registration are not yet published.
+sources:
+  - url: https://www.ntnu.edu/quspin/workshops
+    kind: official
+    accessed: 2026-11-20
+    note: The 2027 entry lists no venue; Trondheim comes from the page's description of the annual series
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

@@ -1,0 +1,29 @@
+id: houches-quantum-optics-2027
+name: "Les Houches: Non-linear, Imaging and Quantum Optics 2027"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-04-18"
+  end: "2027-04-23"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [optics, sensing]
+url: https://www.houches-school-physics.com/program/program-2027/non-linear-imaging-and-quantum-optics-from-fundamentals-to-applications-1758642.kjsp
+description: Lecture-based meeting linking nonlinear, quantum and imaging optics, from light-matter interaction and complex media to quantum state engineering for imaging and sensing.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-20
+  - url: https://www.houches-school-physics.com/program/program-2027/non-linear-imaging-and-quantum-optics-from-fundamentals-to-applications-1758642.kjsp
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

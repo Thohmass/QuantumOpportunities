@@ -1,0 +1,28 @@
+id: ictp-saifr-quantum-computing-school-2026
+name: 3rd Quantum Computing School (ICTP-SAIFR) 2026
+type: summer_school
+status: confirmed
+format: hybrid
+dates:
+  start: 2026-11-16
+  end: 2026-11-27
+location:
+  city: São Paulo
+  country: BR
+  venue: IFT-UNESP Auditorium, ICTP-SAIFR
+organizers: [ictp-saifr]
+topics: [computing, hw-trapped-ions, hw-photonics, hw-neutral-atoms, qec]
+audience: [msc, phd, postdoc]
+url: https://www.ictp-saifr.org/?p=39402
+description: Two-week school of short courses and lectures on quantum technologies with an emphasis on quantum computing, covering platforms such as trapped ions, photonics and Rydberg atoms plus error correction and algorithms. Aimed at master's and PhD students and early-career researchers; online access via Zoom. Applications are closed.
+eligibility: Primarily master's and PhD students, plus early-career researchers holding a doctorate.
+sources:
+  - url: https://www.ictp-saifr.org/?p=39402
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

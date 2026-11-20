@@ -1,0 +1,29 @@
+id: qworld-qsilver41-2026
+name: QSilver41 – Global Quantum Computing and Programming Workshop (QWorld)
+type: workshop
+status: confirmed
+format: online
+dates:
+  start: 2026-11-28
+  end: 2026-11-29
+deadlines:
+  - kind: application
+    date: 2026-11-21
+organizers: [qworld]
+topics: [computing, qc-software, education]
+audience: [anyone]
+cost:
+  kind: free
+url: https://qworld.net/qsilver41/
+description: Free two-day online programming workshop by QWorld with live Zoom sessions and mentor support on Discord, using Qiskit and Cirq notebooks. Expect two to three hours of study per day.
+eligibility: Applicants need a technical background, English proficiency and a completed QBronze workshop or equivalent course.
+sources:
+  - url: https://qworld.net/qsilver41/
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

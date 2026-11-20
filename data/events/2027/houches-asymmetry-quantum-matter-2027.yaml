@@ -1,0 +1,30 @@
+id: houches-asymmetry-quantum-matter-2027
+name: "Les Houches: Asymmetry School on Quantum Matter 2027"
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-09-26"
+  end: "2027-10-01"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [materials]
+audience: [phd, postdoc]
+url: https://www.houches-school-physics.com/program/program-2027/asymmetry-school-on-quantum-matter-from-strong-correlations-to-cross-correlations-1734210.kjsp
+description: School on correlated quantum matter with introductory lectures on materials, experiments and theory, including multipoles, topological magnetism and unconventional superconductivity.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-20
+  - url: https://www.houches-school-physics.com/program/program-2027/asymmetry-school-on-quantum-matter-from-strong-correlations-to-cross-correlations-1734210.kjsp
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

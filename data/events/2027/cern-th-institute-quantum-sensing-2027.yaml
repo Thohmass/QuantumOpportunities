@@ -1,0 +1,28 @@
+id: cern-th-institute-quantum-sensing-2027
+name: CERN TH Institute on Quantum Sensing, Simulation and Computation 2027
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-15
+  end: 2027-02-26
+location:
+  city: Genève
+  country: CH
+  venue: CERN, TH Conference Room
+organizers: [cern]
+topics: [sensing, simulation, computing]
+audience: [researcher, postdoc, phd]
+url: https://indico.cern.ch/event/1739438/
+description: Two-week theory institute at CERN bringing together particle theorists, quantum information scientists, experimentalists and computer scientists. One week covers quantum-enhanced measurement, the other computational approaches such as tensor networks and quantum algorithms. Applications are open; the programme is informal and low-density.
+sources:
+  - url: https://indico.cern.ch/event/1739438/
+    kind: official
+    accessed: 2026-11-20
+    note: Page behind a bot check; content read through search result summary
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20
