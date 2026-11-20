@@ -1,0 +1,28 @@
+id: ihp-quantum-cryptography-workshop-3-2027
+name: Advances in Quantum Cryptography – Computational and Interactive Primitives (IHP Paris)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-11-29
+  end: 2027-12-03
+location:
+  city: Paris
+  country: FR
+  venue: Institut Henri Poincaré, Amphithéâtre Hermite
+organizers: [institut-henri-poincare]
+topics: [qkd, qit]
+audience: [phd, postdoc, researcher]
+url: https://indico.math.cnrs.fr/event/16603/
+description: Third workshop of the IHP thematic trimester on quantum cryptography, on computational and interactive primitives.
+sources:
+  - url: https://indico.math.cnrs.fr/event/16603/
+    kind: official
+    accessed: 2026-11-15
+    note: Registration link present; no deadline or fee stated
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

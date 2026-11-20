@@ -1,0 +1,27 @@
+id: qiskit-fall-fest-stuttgart-2027
+series: qiskit-fall-fest-stuttgart
+name: Qiskit Fall Fest 2027 – University of Stuttgart
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-11
+location:
+  city: Stuttgart
+  country: DE
+organizers: [university-of-stuttgart, ibm-quantum]
+topics: [computing, simulation, qc-algorithms]
+url: https://qiskit-fall-fest-bw.com/
+expected:
+  basis: Annual series; previous edition November 2026
+  confidence: medium
+sources:
+  - url: https://qiskit-fall-fest-bw.com/
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-11-09
+  unchanged_streak: 0
+added:
+  date: 2026-11-09
+  by: expected-stub

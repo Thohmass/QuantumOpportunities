@@ -1,0 +1,33 @@
+id: bristol-quantum-in-the-summer-2027
+name: Quantum in the Summer 2027 (Bristol)
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-08-02
+  end: 2027-08-06
+location:
+  city: Bristol
+  country: GB
+  venue: University of Bristol
+organizers: [university-of-bristol]
+topics: [education, computing]
+audience: [highschool]
+eligibility: Aged 16–18 at the start, studying maths and physics (first year of A-level or equivalent completed); UK students, international students need to fund their own UK visa.
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: Applications open March 2027, closing date not yet stated. Lunches provided; limited bursaries cover accommodation, travel and food.
+url: https://www.bristol.ac.uk/qet-labs/outreach/quantum-summer/
+description: Week-long summer school for school students with taught sessions and practical work on quantum technologies at the University of Bristol.
+sources:
+  - url: https://www.bristol.ac.uk/qet-labs/outreach/quantum-summer/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

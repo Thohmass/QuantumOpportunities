@@ -1,0 +1,29 @@
+id: hanken-quantum-ai-hackathon-2027
+series: hanken-quantum-ai-hackathon
+name: Hanken Quantum × AI Hackathon 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-10
+location:
+  city: Helsinki
+  country: FI
+organizers: [hanken]
+topics: [qml, business, qc-algorithms]
+url: https://www.hanken.fi/en/calendar/quantum-x-ai-hackathon-shape-future-finance-0
+description: Quantum and AI hackathon at the Hanken School of Economics with a finance and ESG focus; 2027 would be its eighth edition.
+expected:
+  basis: Annual; last edition 8–10 Oct 2026
+  confidence: medium
+sources:
+  - url: https://www.hanken.fi/en/calendar/quantum-x-ai-hackathon-shape-future-finance-0
+    kind: official
+    accessed: 2026-10-23
+    note: 2026 edition page
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

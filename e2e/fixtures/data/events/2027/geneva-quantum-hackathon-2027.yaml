@@ -1,0 +1,27 @@
+id: geneva-quantum-hackathon-2027
+name: Geneva Quantum Hackathon 2027
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-25
+  end: 2027-06-27
+location:
+  city: Genève
+  country: CH
+  venue: CERN IdeaSquare
+organizers: [cern]
+topics: [computing, sensing]
+audience: [bsc, msc, phd]
+url: https://indico.cern.ch/event/1749971/
+description: Weekend hackathon at CERN where students work in multidisciplinary teams on partner challenges linked to the UN Sustainable Development Goals. The 2027 edition, run with UNOSAT, focuses on quantum technologies for space and Earth observation. No prior quantum experience needed; application details are still to be published.
+sources:
+  - url: https://indico.cern.ch/event/1749971/
+    kind: official
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

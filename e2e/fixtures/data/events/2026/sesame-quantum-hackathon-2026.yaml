@@ -1,0 +1,27 @@
+id: sesame-quantum-hackathon-2026
+series: sesame-quantum-hackathon
+name: SESAME Quantum Computing Hackathon 2026
+type: hackathon
+status: postponed
+format: in_person
+dates:
+  start: 2026-11-05
+  end: 2026-11-07
+  note: Original dates; postponed until further notice after a cybersecurity incident
+organizers: [sesame]
+partners: [cern]
+topics: [computing, qc-algorithms]
+audience: [bsc, msc, phd, researcher]
+eligibility: Master’s and PhD students, final-year bachelor students and young researchers, selected on qualifications
+url: https://indico.sesame.org.jo/event/53/overview
+description: Quantum computing hackathon in Jordan focused on water and energy problems, organised by SESAME with CERN, the EU Delegation to Jordan, OQI and ASREN.
+sources:
+  - url: https://indico.sesame.org.jo/event/53/overview
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-10-28
+  unchanged_streak: 0
+added:
+  date: 2026-10-28
+  by: radar-import

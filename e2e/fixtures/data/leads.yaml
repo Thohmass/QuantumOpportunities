@@ -1,0 +1,69 @@
+# Unverified hints (no official page confirmed yet). Not shown on the site.
+# The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
+- title: Quantum.Tech World 2027, Boston (25–26 May 2027)
+  found: 2026-11-06
+  hint: Listed on quantum.info/conf/2027 and showsbee (organiser Alpha Events, Encore Boston Harbor; 2026 edition was 25–26 Jun); one showsbee page lists USA 2027 as TBD, so dates are unconfirmed; no official 2027 page read (alphaevents.com fetch refused). Co-located with Compute.Tech 2027 per a listing.
+  url: https://quantum.info/conf/2027.html
+  tries: 2
+  last_tried: 2026-11-18
+- title: Further Les Houches 2027 schools with quantum content (Non-linear, Imaging and Quantum Optics 18–23 Apr; Out of Equilibrium Physics in Low Dimensional Quantum Fluids 14–19 Mar; School on Low-Dimensional Quantum Matter 4–15 Oct)
+  found: 2026-11-07
+  hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
+  url: https://www.houches-school-physics.com/program/program-2027/
+- title: More 2027 events on quantum.info – QSDC27 (10–11 May, San Diego); IQT PQC (25–26 Oct, New York)
+  found: 2026-11-08
+  hint: Listed with links on quantum.info/conf/2027 (quantumsandiego.org returned 403; iqtevent.com has no 2027 PQC page, only PQC+IQT 25–26 Oct 2026 and Q+AI Munich 26–28 Apr 2027 with site forthcoming)
+  url: https://quantum.info/conf/2027.html
+  tries: 3
+  last_tried: 2026-11-08
+- title: Fundamentals and Applications of Superconducting Nanowire Single Photon Detectors (WE-Heraeus), Bad Honnef, 19–24 Sep 2027
+  found: 2026-11-08
+  hint: Listed on quantum.info/conf/2027; the link there is a generic WE-Heraeus page; 2026-11-18 search found no 2027 announcement (only a 2018 seminar on the topic)
+  url: https://www.we-heraeus-stiftung.de/
+  tries: 1
+  last_tried: 2026-11-18
+- title: Quantum Spintronics 2027, Trondheim, 8–10 Jun 2027
+  found: 2026-11-08
+  hint: Official QuSpin page confirms 8–10 Jun 2027 and calls the series an annual conference in Trondheim, but names no 2027 venue and has no 2027 page link; create once the venue or page is stated
+  url: https://www.ntnu.edu/quspin/workshops
+  tries: 3
+  last_tried: 2026-11-18
+- title: Single Photon Workshop (SPW 2027), Singapore, 15–19 Nov 2027
+  found: 2026-11-08
+  hint: Listed on quantum.info/conf/2027 without a link; search for the official page. 2026-11-15 search found only SPW 2026 (Naples, 6–10 Jul 2026) and 2024 (Edinburgh); the series looks biennial, so 2027 is doubtful
+  tries: 1
+  last_tried: 2026-11-15
+- title: IBM Quantum Challenge 2027 (online)
+  found: 2026-11-08
+  hint: Recurring online challenge in some years; check IBM Quantum events If the 2027 edition has no page yet but an official page of the 2026 (or 2025) edition shows it recurs, create the 2027 edition as status expected (common-rules rule 4; basis = past editions and their months, confidence by regularity), with the series file, instead of keeping this lead.
+  url: https://www.ibm.com/quantum/events
+- title: QOSF Quantum Computing Mentorship Programme (next cohort)
+  found: 2026-11-08
+  hint: Recurring cohort-based programme of the Quantum Open Source Foundation with application windows
+  url: https://qosf.org/
+- title: Q2B Tokyo 2027 and Q2B Paris 2027
+  found: 2026-11-08
+  hint: q2b.qcware.com (2026-11-18) lists only 2026 events (Tokyo 4–5 Jun, Copenhagen 9–10 Sep, Chicago 8–10 Dec); no Paris and no 2027 dates yet; series q2b already exists
+  url: https://q2b.qcware.com/
+  tries: 1
+  last_tried: 2026-11-18
+- title: Quantum hackathons and schools in Africa and Latin America (e.g. QWorld QSchool/QIntro events, Quantum Africa conference series)
+  found: 2026-11-08
+  hint: Regions with no events in the database yet; QWorld and community sites list workshops in many countries
+  url: https://qworld.net/
+- title: QED-C Quantum Summit, Washington DC, mid-April 2027
+  found: 2026-11-08
+  hint: Official page shows only the 2026 edition (14–15 Apr 2026, Convene Hamilton Square, Washington DC); no 2027 announcement as of 2026-11-18
+  url: https://quantumconsortium.org/current-plenary
+  tries: 1
+  last_tried: 2026-11-18
+- title: CERN TH-Institute on Quantum Sensing, Simulation, and Computation, CERN, 15–26 Feb 2027
+  found: 2026-11-18
+  hint: Search result points to the official CERN Indico page (indico.cern.ch/event/1739438) with applications open; not opened because the candidate cap was reached
+  url: https://indico.cern.ch/event/1739438/
+- title: Quantum-2027 (PAGES Conferences), Berlin, 24–25 May 2027
+  found: 2026-11-18
+  hint: Only seen in a search summary of a listing site; commercial-style organiser, so check reputation and find the official page before creating
+- title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
+  found: 2026-11-08
+  hint: Probably 2027; no dates or place announced as of 2026-11-08

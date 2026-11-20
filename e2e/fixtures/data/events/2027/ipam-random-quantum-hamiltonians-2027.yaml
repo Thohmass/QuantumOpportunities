@@ -1,0 +1,27 @@
+id: ipam-random-quantum-hamiltonians-2027
+name: "IPAM Workshop: Random Quantum Hamiltonians – Physics, Computation, and Complexity"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-08
+  end: 2027-02-12
+location:
+  city: Los Angeles
+  country: US
+organizers: [ipam]
+topics: [qit, qc-algorithms, materials]
+audience: [phd, postdoc, researcher]
+url: https://www.ipam.ucla.edu/programs/workshops/random-quantum-hamiltonians-physics-computation-and-complexity
+description: IPAM workshop on random quantum Hamiltonians, covering spectral properties, thermalization, links to holography and the average-case hardness of simulating such systems classically and on quantum computers. Includes a poster session.
+sources:
+  - url: https://www.ipam.ucla.edu/programs/workshops/random-quantum-hamiltonians-physics-computation-and-complexity
+    kind: official
+    accessed: 2026-11-18
+    note: Dates and content; venue, fee and deadline not on the page text read. City is that of IPAM (UCLA)
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

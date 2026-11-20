@@ -1,0 +1,11 @@
+# Event types. Editable only by humans (protected path).
+- { id: conference, name: Conference }
+- { id: workshop, name: Workshop }
+- { id: hackathon, name: Hackathon }
+- { id: summer_school, name: Summer school }
+- { id: winter_school, name: Winter school }
+- { id: challenge, name: Challenge / competition }
+- { id: programme, name: Programme / course }
+- { id: meetup, name: Meetup }
+- { id: career_fair, name: Career fair }
+- { id: other, name: Other }

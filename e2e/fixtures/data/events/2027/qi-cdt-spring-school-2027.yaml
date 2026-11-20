@@ -1,0 +1,28 @@
+id: qi-cdt-spring-school-2027
+name: QI CDT Spring School 2027
+type: programme
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-24
+  end: 2027-05-28
+location:
+  city: Edinburgh
+  country: GB
+  venue: Newbattle Abbey College
+organizers: [quantum-informatics-cdt]
+topics: [computing, qc-hardware, qc-software]
+audience: [msc, phd, researcher]
+eligibility: Postgraduate students (master's and PhD) and early-career researchers in quantum informatics and related fields
+url: https://www.quantuminformatics-cdt.ac.uk/spring-school-2027/
+description: Week-long advanced training in quantum informatics with lectures, hands-on tutorials and interactive sessions led by academics. Programme, application and fee details are still to be published.
+sources:
+  - url: https://www.quantuminformatics-cdt.ac.uk/spring-school-2027/
+    kind: official
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

@@ -1,0 +1,31 @@
+id: houches-cold-atoms-school-2027
+name: "Les Houches: Cold-Atoms School – Quantum Simulation with Ultracold Atoms 2027"
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-10-18"
+  end: "2027-10-29"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [simulation, hw-neutral-atoms]
+audience: [phd]
+eligibility: Early graduate students
+url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-cold-atoms-school-quantum-simulation-with-ultracold-atoms-1745489.kjsp
+description: Doctoral training on ultracold atomic and molecular gases, from laser cooling to simulating many-body problems relevant to condensed matter, high-energy physics and quantum information.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-07
+  - url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-cold-atoms-school-quantum-simulation-with-ultracold-atoms-1745489.kjsp
+    kind: official
+    accessed: 2026-11-07
+checks:
+  last_checked: 2026-11-07
+  unchanged_streak: 0
+added:
+  date: 2026-11-07
+  by: scout-2026-11-07

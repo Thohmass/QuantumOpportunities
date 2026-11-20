@@ -1,0 +1,32 @@
+id: qtml-2026
+name: QTML 2026 – Quantum Techniques in Machine Learning
+type: conference
+status: confirmed
+format: in_person
+series: qtml
+dates:
+  start: 2026-12-06
+  end: 2026-12-11
+deadlines:
+  - kind: registration
+    date: 2026-11-15
+    note: General registration closes 23:59 SAST
+location:
+  city: Stellenbosch
+  country: ZA
+  venue: Stellenbosch University
+topics: [qml, computing]
+audience: [researcher, phd, industry]
+url: https://qtml2026.nithecs.ac.za/
+description: Tenth edition of the annual conference on quantum techniques in machine learning, hosted in South Africa. Open to researchers, students and industry professionals.
+sources:
+  - url: https://qtml2026.nithecs.ac.za/about
+    kind: official
+    accessed: 2026-11-15
+    note: Fees and abstract deadline not on this page
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

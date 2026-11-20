@@ -1,0 +1,32 @@
+id: womanium-quantum-2027
+series: womanium-quantum
+name: Womanium Quantum programme 2027
+type: programme
+status: expected
+format: online
+dates:
+  start: 2027-06
+  end: 2027-08
+organizers: [womanium, qworld]
+topics: [computing, education, qc-algorithms]
+audience: [anyone]
+eligibility: Open; scholarships mainly for young women aged 15–25
+prizes: "Past: $15,000+"
+cost:
+  kind: mixed
+  note: Professionals pay ($900 in one past year); scholarships available
+url: https://www.womanium.org/Quantum/Hackathon
+description: Training-heavy online quantum programme with a hackathon among its parts; past challenges came from IBM, Deloitte, Quantinuum and IQM.
+expected:
+  basis: Typically runs June – August
+  confidence: medium
+sources:
+  - url: https://www.womanium.org/Quantum/Hackathon
+    kind: official
+    accessed: 2026-10-23
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

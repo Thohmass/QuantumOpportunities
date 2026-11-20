@@ -1,0 +1,33 @@
+id: saarland-qit-summer-school-2027
+name: Summer School on Quantum Information Theory (Saarland 2027)
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-08
+  end: 2027-03-12
+location:
+  city: Saarbrücken
+  country: DE
+  venue: Saarland University
+organizers: [saarland-university]
+topics: [qit]
+audience: [bsc]
+eligibility: Advanced bachelor's students in mathematics, computer science or physics; no prior physics needed. Up to 15 of 50 places reserved for T4EU alliance universities.
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: Free accommodation for students of other universities (up to 50 beds), meals included; limited travel support. Applications for support have closed; self-funded registration may still be possible.
+url: https://www.uni-saarland.de/fr/summer-school-qit.html
+description: One-week introduction to quantum information theory for advanced bachelor's students with a mathematical background. Self-funded participation is still possible after the support applications closed.
+sources:
+  - url: https://www.uni-saarland.de/fr/summer-school-qit.html
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

@@ -1,0 +1,32 @@
+id: iqt-nordics-2027
+series: iqt-nordics
+name: IQT Nordics 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06
+  note: June dates to be announced; quantum.info lists 7–9 June
+location:
+  city: Copenhagen
+  country: DK
+organizers: [inside-quantum-technology]
+topics: [computing, business]
+audience: [industry, researcher]
+url: https://www.iqtevent.com/
+description: Annual Nordic quantum technology business and networking conference, rotating between Denmark, Finland, Sweden and Norway; returns to Copenhagen in June 2027.
+sources:
+  - url: https://www.insidequantumtechnology.com/news-archive/announcing-the-return-of-iqt-nordics-in-copenhagen-2027/
+    kind: official
+    accessed: 2026-11-06
+    note: announcement, 23 Apr 2026
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-06
+    note: lists 7–9 June
+checks:
+  last_checked: 2026-11-06
+  unchanged_streak: 0
+added:
+  date: 2026-11-06
+  by: seed-research

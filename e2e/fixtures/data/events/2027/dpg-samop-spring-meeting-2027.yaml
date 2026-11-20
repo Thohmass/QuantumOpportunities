@@ -1,0 +1,43 @@
+id: dpg-samop-spring-meeting-2027
+series: dpg-samop-spring-meeting
+name: DPG Spring Meeting of the AMOP Section (SAMOP) 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-28
+  end: 2027-03-05
+deadlines:
+  - kind: abstract
+    date: 2026-12-01
+    note: Contributed talks and posters, 23:59 CET
+  - kind: registration
+    date: 2027-01-27
+    note: Early bird closes; regular registration closes 2027-02-24
+location:
+  city: Hannover
+  country: DE
+cost:
+  kind: paid
+  min: 100
+  max: 350
+  currency: EUR
+  note: Early bird to 2027-01-27, regular after; student member 100/130, member 240/270, non-member 320/350; day tickets and free categories exist; net prices exempt from VAT
+organizers: [dpg]
+topics: [optics, qit]
+audience: [phd, postdoc, researcher]
+url: https://hannover27.dpg-tagungen.de/
+description: Annual German meeting of the atomic, molecular, quantum optics and photonics section, with talks, posters and symposia, held in Hannover. A welcome evening opens it on 28 February, the scientific programme runs 1 to 5 March.
+sources:
+  - url: https://hannover27.dpg-tagungen.de/deadlines
+    kind: official
+    accessed: 2026-11-08
+  - url: https://hannover27.dpg-tagungen.de/attend/registration
+    kind: official
+    accessed: 2026-11-09
+checks:
+  last_checked: 2026-11-12
+  unchanged_streak: 1
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

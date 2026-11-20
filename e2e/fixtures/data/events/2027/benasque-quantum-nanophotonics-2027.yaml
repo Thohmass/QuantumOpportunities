@@ -1,0 +1,30 @@
+id: benasque-quantum-nanophotonics-2027
+name: Quantum Nanophotonics 2027 (Benasque)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-03-28"
+  end: "2027-04-02"
+deadlines:
+  - { kind: abstract, date: "2027-01-08" }
+  - { kind: registration, date: "2027-02-28", note: registration and accommodation form }
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [optics]
+audience: [researcher, phd, postdoc]
+url: https://benasque.org/2027quantumnanophotonics/
+description: Week-long meeting at the interface of quantum optics and subwavelength optics, covering strong coupling, lasing, waveguide QED, quantum effects in nanogaps and quantum metamaterials.
+sources:
+  - url: https://benasque.org/2027quantumnanophotonics/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

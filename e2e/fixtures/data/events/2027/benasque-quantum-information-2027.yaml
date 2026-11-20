@@ -1,0 +1,27 @@
+id: benasque-quantum-information-2027
+name: Quantum Information 2027 (Benasque)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-06-20"
+  end: "2027-07-09"
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [qit]
+audience: [researcher, phd, postdoc]
+url: https://www.benasque.org/
+description: Three-week research meeting on quantum information organised by Ignacio Cirac and Artur Ekert at the Benasque science centre. No dedicated event page was linked yet; the programme listing gives the dates.
+sources:
+  - url: https://benasque.org/new_general/cgi-bin/years.pl?ano=2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

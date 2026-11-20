@@ -1,0 +1,29 @@
+id: lanl-quantum-computing-summer-school-2027
+series: lanl-quantum-computing-summer-school
+name: Los Alamos Quantum Computing Summer School 2027
+type: summer_school
+status: expected
+format: in_person
+dates:
+  start: 2027-06
+  end: 2027-08
+location:
+  city: Los Alamos
+  country: US
+topics: [computing, education]
+audience: [bsc, msc, phd]
+url: https://www.lanl.gov/engage/collaboration/internships/summer-schools/quantumschool/
+expected:
+  basis: Annual 10-week fellowship at Los Alamos (2026 edition 8 Jun - 14 Aug, recruitment opened Dec 2025); no 2027 page seen yet
+  confidence: medium
+description: Ten-week summer school fellowship for students on quantum computing theory and programming of real quantum computers, with project work. The 2027 call is expected around the end of 2026.
+sources:
+  - url: https://www.lanl.gov/engage/collaboration/internships/summer-schools/quantumschool/
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

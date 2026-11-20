@@ -1,0 +1,27 @@
+id: qia-quantum-internet-hackathon-2025
+series: qia-quantum-internet-hackathon
+name: QIA Pan-European Quantum Internet Hackathon 2025
+type: hackathon
+status: confirmed
+format: in_person
+dates:
+  start: 2025-11-28
+location:
+  city: Amsterdam
+  country: NL
+  note: "Multi-node: Amsterdam, Dresden, Paris, Poznań"
+organizers: [quantum-internet-alliance]
+topics: [communication, networks]
+audience: [anyone]
+url: https://quantuminternetalliance.org/qia-initiatives/
+description: Pan-European quantum internet hackathon run in parallel at several nodes. QIA calls it annual; past editions in 2019, 2022, 2024 and 2025.
+sources:
+  - url: https://quantuminternetalliance.org/qia-initiatives/
+    kind: official
+    accessed: 2026-10-28
+checks:
+  last_checked: 2026-10-28
+  unchanged_streak: 0
+added:
+  date: 2026-10-28
+  by: radar-import

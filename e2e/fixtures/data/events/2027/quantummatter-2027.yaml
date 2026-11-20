@@ -1,0 +1,30 @@
+id: quantummatter-2027
+name: QUANTUMatter2027 (part of QuAI2027)
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-10-19
+  end: 2027-10-22
+location:
+  city: San Sebastián
+  country: ES
+topics: [materials, computing]
+audience: [phd, postdoc, researcher, industry]
+url: https://www.quantumconf.eu/2027/
+description: Quantum-materials and technology conference with its own scientific programme, held together with AI4AM2027 in the joint QuAI2027 summit and expo, with a shared exhibition and industrial forum.
+sources:
+  - url: https://www.quantumconf.eu/2027/
+    kind: official
+    accessed: 2026-11-18
+    note: Confirms San Sebastián and the joint summit; the exact dates are not on the page and come from the aggregator
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-18
+    note: Dates 19-22 Oct
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18
