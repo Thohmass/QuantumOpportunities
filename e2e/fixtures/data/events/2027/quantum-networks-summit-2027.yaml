@@ -1,0 +1,27 @@
+id: quantum-networks-summit-2027
+name: Quantum Networks Summit 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-04-07
+  end: 2027-04-08
+location:
+  city: Paris
+  country: FR
+  venue: Palais des Congrès de Paris
+organizers: [upperside-conferences]
+topics: [networks, communication]
+audience: [researcher, industry]
+url: https://www.uppersideconferences.com/quantum-networks/2027/index.html
+description: Fourth edition of a two-day conference in Paris, co-located with the Upperside World Congress, on quantum networking and quantum-safe infrastructure, including memories, repeaters, transducers and entanglement distribution.
+sources:
+  - url: https://www.uppersideconferences.com/quantum-networks/2027/index.html
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

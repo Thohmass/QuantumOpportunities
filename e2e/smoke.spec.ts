@@ -1,4 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { FIXTURE_DAY } from './fixture-day.ts';
+
+// These tests run on frozen sample data (e2e/fixtures/data) with the clock fixed to the day it was copied, so new
+// events and passing time can't change what they see. Today's data is checked separately in live.spec.ts.
+test.beforeEach(async ({ page }) => {
+  await page.clock.setFixedTime(new Date(FIXTURE_DAY));
+});
 
 test('home page loads with events', async ({ page }) => {
   await page.goto('/#/list');

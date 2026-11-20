@@ -1,0 +1,34 @@
+id: gitex-quantum-expo-2026
+name: GITEX Quantum Expo 2026
+type: conference
+status: expected
+format: in_person
+dates:
+  start: 2026-12-08
+  end: 2026-12-10
+location:
+  city: Dubai
+  country: AE
+  venue: Expo City Dubai
+topics: [computing, business]
+audience: [industry, researcher]
+url: https://www.gitex.com/gitex-quantum-expo
+description: Expo and conference on the quantum ecosystem for governments, investors, research labs and enterprises, with an exhibition, a quantum conference, workshops, demos and roundtables.
+expected:
+  basis: "Dates and venue from the QURECA calendar listing; the official GITEX page presents the event but states no dates"
+  confidence: medium
+sources:
+  - url: https://www.gitex.com/gitex-quantum-expo
+    kind: official
+    accessed: 2026-11-15
+    note: Describes the event; no dates given
+  - url: https://www.qureca.com/calendar/gitex-quantum-expo/
+    kind: aggregator
+    accessed: 2026-11-15
+    note: Source of dates and venue
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

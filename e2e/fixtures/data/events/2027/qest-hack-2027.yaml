@@ -1,0 +1,27 @@
+id: qest-hack-2027
+series: qest-hack
+name: QEst Hack 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-11
+location:
+  city: Tallinn
+  country: EE
+organizers: [metrosert, institut-quantique]
+topics: [computing, qc-algorithms, qc-software]
+url: https://kvant.ee/en/qest-hack-2026/
+expected:
+  basis: Annual series; previous edition November 2026
+  confidence: medium
+sources:
+  - url: https://kvant.ee/en/qest-hack-2026/
+    kind: official
+    accessed: 2026-11-09
+checks:
+  last_checked: 2026-11-12
+  unchanged_streak: 0
+added:
+  date: 2026-11-12
+  by: expected-stub

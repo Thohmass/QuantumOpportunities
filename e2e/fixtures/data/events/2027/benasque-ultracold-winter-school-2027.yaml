@@ -1,0 +1,27 @@
+id: benasque-ultracold-winter-school-2027
+name: Winter School on Ultracold Quantum Many-Body Systems 2027 (Benasque)
+type: winter_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-01-24"
+  end: "2027-01-30"
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [simulation, hw-neutral-atoms]
+audience: [msc, phd]
+url: https://www.benasque.org/
+description: Winter school on ultracold quantum many-body systems organised by researchers from UAB, UPC and ICFO. No dedicated event page was linked yet; the programme listing gives the dates and organisers.
+sources:
+  - url: https://benasque.org/new_general/cgi-bin/years.pl?ano=2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

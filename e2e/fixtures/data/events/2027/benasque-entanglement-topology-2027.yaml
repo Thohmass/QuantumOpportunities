@@ -1,0 +1,39 @@
+id: benasque-entanglement-topology-2027
+name: Entanglement and Topology in Interacting Quantum Matter (Benasque 2027)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-08-15"
+  end: "2027-08-28"
+deadlines:
+  - kind: abstract
+    date: "2027-07-24"
+    note: Decisions by 30 July
+  - kind: registration
+    date: "2027-07-30"
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [materials, qit]
+audience: [researcher, phd, postdoc]
+cost:
+  kind: paid
+  min: 350
+  max: 450
+  currency: EUR
+  note: One week 350 EUR, two weeks 450 EUR; includes bus transport, reception and coffee breaks
+url: https://benasque.org/2027etqm/
+description: Two-week meeting on strongly correlated quantum matter seen through its entanglement structure, with tensor networks, topological phases, localisation, integrability and Monte Carlo. Aimed at specialists and newcomers.
+sources:
+  - url: https://benasque.org/2027etqm/
+    kind: official
+    accessed: 2026-11-15
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

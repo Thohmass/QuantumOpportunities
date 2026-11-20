@@ -1,0 +1,30 @@
+id: qp-2027
+name: QP 2027 – International Workshop on the Art, Science, and Engineering of Quantum Programming
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-15
+  end: 2027-03-16
+deadlines:
+  - kind: abstract
+    date: 2026-12-14
+    note: paper submission deadline (AoE)
+location:
+  city: Kyoto
+  country: JP
+  venue: Research Building No. 8, Yoshida Campus, Kyoto University
+topics: [qc-software, computing]
+audience: [researcher, phd, industry]
+url: https://2027.programmingconference.org/home/qp-2027
+description: Fourth workshop on how to program quantum computers, how this relates to classical programming and which research directions should guide the field. Held within the Programming 2027 conference; the workshop dates are marked tentative.
+sources:
+  - url: https://2027.programmingconference.org/home/qp-2027
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

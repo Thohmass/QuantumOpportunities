@@ -1,0 +1,26 @@
+# One line per pipeline run, newest last. Agents append their run here (shown on the About page).
+- { date: 2026-11-06, job: import, created: 27, note: Quantum Hackathon Radar import (checked 23 Oct – 4 Nov 2026) }
+- { date: 2026-11-06, job: manual, created: 11, note: Seed research of conferences and schools }
+- { date: 2026-11-07, job: scout, checked: 9, updated: 0, created: 0, note: find-similar needed approval and was refused; leads updated only }
+- { date: 2026-11-07, job: scout, checked: 6, updated: 0, created: 5, note: Les Houches 2027 quantum schools created; other sources and queries not reached }
+- { date: 2026-11-08, job: scout, checked: 9, updated: 0, created: 6, note: "BQIT, Quantum Days and four Benasque events created; other sources and queries not reached" }
+- { date: 2026-11-08, job: scout, checked: 7, updated: 0, created: 3, note: "DPG SAMOP, CLEO/Europe-EQEC and APS QIS 2027 created; other sources and queries not reached" }
+- { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 3, note: "PQCrypto 2027, EQTC 2026 and World Quantum Cannes Festival created; Devpost 403; other sources and queries not reached" }
+- { date: 2026-11-08, job: scout, checked: 12, updated: 0, created: 6, note: "SEEQA, IHP crypto school, QCNC, QuNeW, NQCC Scalability and Quantum Australia created; AQIS still unconfirmed; quantum.info and Nordita scanned, 3 queries run" }
+- { date: 2026-11-08, job: scout, checked: 6, updated: 0, created: 4, note: "AQSN conference, QP 2027, Quantum Networks Summit and QEI 2027 created; QSDC27 403; sources and queries not reached" }
+- { date: 2026-11-08, job: scout, checked: 4, updated: 0, created: 1, note: "IQT Korea 2026 created; QURECA scanned, one query run; IQT PQC 2027 still unconfirmed" }
+- { date: 2026-11-08, job: scout, checked: 14, updated: 0, created: 6, note: "GRC Quantum Sensing, two WE-Heraeus seminars, SPIE Quantum West, LIFT 2027 and Quantum Renaissance created; GRC Quantum Biology 404, GRC Quantum Control fetch error, DAMOP 403, Spintronics venue unstated; 2 queries run; sources not reached" }
+- { date: 2026-11-08, job: scout, checked: 3, updated: 0, created: 0, note: "Unitary Foundation scanned (no 2027 dates), 2 queries run; nothing new" }
+- { date: 2026-11-08, job: scout, checked: 8, updated: 0, created: 4, note: "JILA quantum sensors workshop, AQTI 2027, Sheffield winter school and ICFO-Wits school created; QWorld and Qiskit sources scanned, nothing new; 3 queries run" }
+- { date: 2026-11-08, job: scout, checked: 6, updated: 0, created: 2, note: "Saarland QIT school and Bristol Quantum in the Summer created; unitaryHACK still no 2027 page; 1 query run; sources not reached" }
+- { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 1, note: "QVLS Winter School 2027 created; IPAM winter school added as lead; DTU scanned, NBI unreachable; 2 queries run" }
+- { date: 2026-11-08, job: scout, checked: 6, updated: 0, created: 1, note: "QCMC 2027 (Ottawa) created from official page; unitaryHACK, Quantum Korea, Quantum World Congress 2027 still unannounced; Nanowerk 403; 2 searches" }
+- { date: 2026-11-08, job: scout, checked: 2, updated: 0, created: 0, note: "2 searches (Asia conferences, Europe hackathons) found nothing new; Les Houches fetch timed out" }
+- { date: 2026-11-08, job: scout, checked: 5, updated: 0, created: 1, note: "GRC Quantum Biology 2027 created from official page; GRC Quantum Control 404; 6 queries run; PQCrypto, Quantum Education Summit, QuNeW already known; sources not reached" }
+- { date: 2026-11-09, job: refresher, checked: 25, updated: 5, created: 0, note: "SAMOP fees, IHP free, LIFT and PQCrypto deadlines, Tennessee venue; most 2027 hackathons still unannounced; APS, GRC, GQAI pages 403 or empty" }
+- { date: 2026-11-11, job: scout, checked: 9, updated: 0, created: 2, note: "IPAM Quantum Winter School 2027 and unitaryHACK 2027 (expected) created from leads; 6 queries found only known events; sources not scanned" }
+- { date: 2026-11-12, job: refresher, checked: 13, updated: 1, created: 0, note: "EQTC start corrected to 30 Nov; no fees found on any official page; GQAI page 403" }
+- { date: 2026-11-15, job: scout, checked: 5, updated: 0, created: 2, note: "QURECA feed: NMR Summit 2026 and GITEX Quantum Expo 2026 (expected) created; IEEE QAI added as lead; web searches, Devpost and other sources not run" }
+- { date: 2026-11-15, job: scout, checked: 6, updated: 0, created: 2, note: "IEEE QAI 2026 (from lead) and Geneva Quantum Hackathon 2027 (CERN) created; ICQISET skipped (WASET); one search run; most sources, other queries and Devpost not run (turn budget)" }
+- { date: 2026-11-15, job: scout, checked: 32, updated: 0, created: 13, note: "three-phase run: leads, feeds, sources, 6 searches and Devpost MCP; new: ECQCM, QTML, IHP workshops, SwissMAP, Qiskit summer school, Benasque x2, Nordic career fair, QI CDT spring school, Northwestern Quantum Week, SC Quantathon v4; QED-C, Quantum.Tech and other leads not tried" }
+- { date: 2026-11-18, job: scout, checked: 47, updated: 0, created: 20, note: "three-phase run: 9 from leads (DAMOP, AQIS, Quantum Korea, QWC and others), 11 from sources (IPAM x2, STQI, BAQ, SPW and others); 6 searches and 2 Devpost searches found nothing new beyond 2 leads (CERN TH-Institute, Quantum-2027 Berlin); candidate cap reached" }

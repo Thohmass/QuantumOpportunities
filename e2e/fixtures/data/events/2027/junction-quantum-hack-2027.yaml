@@ -1,0 +1,42 @@
+id: junction-quantum-hack-2027
+series: junction-quantum-hack
+name: Junction Quantum Hack 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-06
+location:
+  city: Espoo
+  country: FI
+organizers: [junction]
+partners: [iqm, ibm-quantum]
+topics: [computing, qc-algorithms, qc-software]
+audience: [anyone]
+eligibility: Open application; 2026 drew 150 participants from 30+ countries
+team:
+  max: 4
+hardware:
+  real_qpu: true
+  note: IQM and IBM quantum computers plus CSC HPC (2026)
+cost:
+  kind: free
+support:
+  travel_grants: true
+  note: €300 travel grant for participants from outside Finland (2026)
+url: https://hackjunction.app/hackathons/quantum-hack-2026
+description: Weekend quantum hackathon by Junction in Espoo with real IQM and IBM hardware, free participation and travel grants for international participants.
+expected:
+  basis: Annual; last edition 5–7 Jun 2026 (application deadline 24 May 2026)
+  confidence: medium
+sources:
+  - url: https://hackjunction.app/hackathons/quantum-hack-2026
+    kind: official
+    accessed: 2026-10-23
+    note: 2026 edition page
+checks:
+  last_checked: 2026-10-23
+  unchanged_streak: 0
+added:
+  date: 2026-10-23
+  by: radar-import

@@ -1,0 +1,28 @@
+id: ihp-quantum-cryptography-workshop-2-2027
+name: Advances in Quantum Cryptography – Complexity-theoretic Foundations (IHP Paris)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-11-15
+  end: 2027-11-19
+location:
+  city: Paris
+  country: FR
+  venue: Institut Henri Poincaré, Amphithéâtre Hermite
+organizers: [institut-henri-poincare]
+topics: [qkd, qit]
+audience: [phd, postdoc, researcher]
+url: https://indico.math.cnrs.fr/event/16602/
+description: Second workshop of the IHP thematic trimester on quantum cryptography, on complexity-theoretic foundations.
+sources:
+  - url: https://indico.math.cnrs.fr/event/16602/
+    kind: official
+    accessed: 2026-11-15
+    note: Registration link present; no deadline or fee stated
+checks:
+  last_checked: 2026-11-15
+  unchanged_streak: 0
+added:
+  date: 2026-11-15
+  by: scout-2026-11-15

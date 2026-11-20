@@ -1,0 +1,28 @@
+id: q-stav-2027
+name: Q-STAV 2027 – Quantum Software-Engineering Tools, Algorithms & Verification
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-22
+location:
+  city: Dortmund
+  country: DE
+topics: [qc-software, computing]
+audience: [phd, postdoc, researcher]
+url: https://www.spp2514.kit.edu/Q-STAV_2027.php
+deadlines:
+  - kind: abstract
+    date: 2026-12-01
+    note: Paper submission deadline (AoE)
+description: Fourth workshop on tools, languages, compilation, testing and verification for quantum software, co-located with SE 2027, bringing together software-engineering and quantum computing researchers. Keynote by Jens Palsberg.
+sources:
+  - url: https://www.spp2514.kit.edu/Q-STAV_2027.php
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

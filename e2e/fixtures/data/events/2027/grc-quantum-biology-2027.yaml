@@ -1,0 +1,30 @@
+id: grc-quantum-biology-2027
+name: Quantum Biology Gordon Research Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-07
+  end: 2027-03-12
+location:
+  city: Oxnard
+  country: US
+  venue: Holiday Inn Oxnard - Ventura
+organizers: [gordon-research-conferences]
+topics: [sensing]
+audience: [researcher, phd, postdoc]
+deadlines:
+  - kind: application
+    date: 2027-02-07
+url: https://www.grc.org/quantum-biology-conference/2027/
+description: Third edition of a conference on quantum effects in living systems and on quantum technologies used to measure biological processes, including for diagnosis. A linked Gordon Research Seminar for early-career researchers precedes it.
+sources:
+  - url: https://www.grc.org/quantum-biology-conference/2027/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

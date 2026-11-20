@@ -23,7 +23,7 @@ Status: v0.1 · 6 Nov 2026 · builds on the *Lynote Agentic Dev Pipeline — Des
 
 ## 2. Stack
 
-Svelte 5, Vite 8, TypeScript (strict); own SVG map with d3-geo, d3-zoom and topojson-client over world-atlas (Natural Earth 1:110m) in a lazy chunk; MiniSearch. Data scripts in TypeScript (`tsx`), `ajv` (JSON Schema 2020-12), `yaml`, `all-the-cities` for geocoding. Vitest unit tests; Playwright smoke tests on desktop and mobile viewports. Prettier + `svelte-check` (no ESLint in v0.1).
+Svelte 5, Vite 8, TypeScript (strict); own SVG map with d3-geo, d3-zoom and topojson-client over world-atlas (Natural Earth 1:110m) in a lazy chunk; MiniSearch. Data scripts in TypeScript (`tsx`), `ajv` (JSON Schema 2020-12), `yaml`, `all-the-cities` for geocoding. Vitest unit tests; Playwright tests on desktop and mobile viewports, on frozen data, plus a live-data check. Prettier + `svelte-check` (no ESLint in v0.1).
 
 ## 3. Repo layout
 
@@ -35,7 +35,7 @@ scripts/              validate, build-data, index, find-similar, queue, stubs, l
 scripts/lib/          shared logic with unit tests
 agents/               common-rules.md, scout.md, refresher.md
 tool/ci/              policy.json, qo_ci.py and its tests, dependency allowlist
-e2e/                  Playwright smoke tests
+e2e/                  Playwright tests; e2e/fixtures/data = frozen copy of data/ they run on
 .github/workflows/    ci, pr-policy, deploy, scout, refresher
 .github/ISSUE_TEMPLATE/  suggest-event, correction, bug
 docs/                 these docs
@@ -57,6 +57,20 @@ docs/                 these docs
 
 **Protected paths:** `.github/`, `.claude/`, `CLAUDE.md`, licences, `package*.json`, configs, `osv-scanner.toml`, `tool/ci/`, `schema/`, `data/taxonomy/`, `agents/`, `scripts/size-budget.ts`.
 **Auto-merge (agent PRs):** `data/events|series|orgs/`, `data/leads|sources|queries|runs|not-duplicates|redirects.yaml`, `docs/` (not `docs/decisions/`), new test files.
+
+### Browser tests: frozen data and live data
+
+`npm run test:e2e` builds the site once (`npm run e2e:build`) and serves two copies:
+
+- **Behaviour tests** (`e2e/smoke.spec.ts`, desktop and mobile) run on `e2e/fixtures/data`, a frozen copy of
+  `data/`, with the browser clock fixed to the day it was copied (`e2e/fixture-day.ts`). New events and passing time
+  can't break them.
+- **Live check** (`e2e/live.spec.ts`) runs on today's `data/`: every view loads, every event opens, and nothing
+  throws an error. It asserts no counts or names.
+
+Whether events are real is not a browser-test question: agents need an official source for every value,
+`data:check` validates every PR, and the Refresher re-checks links weekly. To refresh the frozen data (only when a
+test needs a newer kind of event), run `npm run e2e:fixture`, set `FIXTURE_DAY` to today and run the tests.
 
 ## 5. Merge policy
 

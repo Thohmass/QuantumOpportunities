@@ -1,0 +1,27 @@
+id: quantum-san-diego-convening-2027
+name: Quantum San Diego Convening 2027 (QSDC27)
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-10
+  end: 2027-05-11
+location:
+  city: San Diego
+  country: US
+  venue: UC San Diego
+topics: [business, computing]
+audience: [researcher, industry]
+url: https://quantumsandiego.org
+description: Two-day gathering of industry, academia, government and national labs to strengthen California's quantum ecosystem and move quantum technology from research to deployment. Organised by the Qualcomm Institute, HPE Quantum and Quantum Machines.
+sources:
+  - url: https://quantumsandiego.org
+    kind: official
+    accessed: 2026-11-18
+    note: Dates and organisers; further details to be announced
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

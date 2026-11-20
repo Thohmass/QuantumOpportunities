@@ -1,0 +1,26 @@
+id: acm-qcs-2027
+name: QCS 2027 – ACM SIGARCH International Conference on Quantum Computing and Systems
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-06-10
+  end: 2027-06-11
+location:
+  city: Atlanta
+  country: US
+topics: [computing, qc-software]
+audience: [phd, postdoc, researcher]
+url: https://sites.google.com/view/qcs2027/
+description: Conference on quantum computing systems — architecture, compilation, runtime, programming languages and HPC integration — co-located with ACM FCRC 2027 in Atlanta.
+sources:
+  - url: https://sites.google.com/view/qcs2027/
+    kind: official
+    accessed: 2026-11-18
+    note: Deadlines not on the page read
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

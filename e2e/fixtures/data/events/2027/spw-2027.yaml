@@ -1,0 +1,31 @@
+id: spw-2027
+name: Single Photon Workshop 2027 (SPW 2027)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-11-15
+  end: 2027-11-19
+location:
+  city: Singapore
+  country: SG
+topics: [optics, hw-photonics, sensing]
+audience: [phd, postdoc, researcher, industry]
+url: https://spw2027.org
+deadlines:
+  - kind: abstract
+    date: 2027-07-01
+  - kind: early_bird
+    date: 2027-09-15
+    note: Early registration deadline; registration opening date not yet announced
+description: Five-day workshop on single-photon sources, detection and applications in communication, computing, sensing and imaging, hosted in Singapore.
+sources:
+  - url: https://spw2027.org
+    kind: official
+    accessed: 2026-11-18
+checks:
+  last_checked: 2026-11-18
+  unchanged_streak: 0
+added:
+  date: 2026-11-18
+  by: scout-2026-11-18

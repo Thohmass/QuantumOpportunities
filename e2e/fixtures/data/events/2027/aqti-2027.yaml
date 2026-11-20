@@ -1,0 +1,34 @@
+id: aqti-2027
+name: AQTI 2027 – International Conference on Advances in Quantum Technologies and Information
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-05-03
+  end: 2027-05-05
+deadlines:
+  - kind: abstract
+    date: 2027-02-15
+    note: extended abstract submission
+location:
+  city: Genève
+  country: CH
+  venue: Crowne Plaza
+organizers: [ifsa]
+topics: [qit, optics]
+audience: [researcher, phd, industry]
+url: https://aqti-conference.com/
+description: First edition of a general conference on quantum technologies and quantum information, held alongside the OPAL 2027 optics and photonics conference. Run by the IFSA association.
+sources:
+  - url: https://aqti-conference.com/
+    kind: official
+    accessed: 2026-11-08
+  - url: https://easychair.org/cfp/AQTI_2027
+    kind: other
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

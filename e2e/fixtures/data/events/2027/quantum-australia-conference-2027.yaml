@@ -1,0 +1,25 @@
+id: quantum-australia-conference-2027
+name: Quantum Australia Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-17
+  end: 2027-02-19
+location:
+  city: Sydney
+  country: AU
+topics: [business, computing]
+audience: [industry, researcher, anyone]
+url: https://www.quantum-australia-conference.com/
+description: Industry-focused national conference on the quantum economy. Main conference in Sydney on 17–18 Feb, a government day in Canberra on 19 Feb, and a series of city events from 11 to 24 Feb. Early-bird tickets are on sale.
+sources:
+  - url: https://www.quantum-australia-conference.com/
+    kind: official
+    accessed: 2026-11-08
+checks:
+  last_checked: 2026-11-08
+  unchanged_streak: 0
+added:
+  date: 2026-11-08
+  by: scout-2026-11-08

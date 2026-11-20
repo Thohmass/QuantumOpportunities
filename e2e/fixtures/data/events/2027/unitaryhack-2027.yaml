@@ -1,0 +1,27 @@
+id: unitaryhack-2027
+series: unitaryhack
+name: unitaryHACK 2027
+type: hackathon
+status: expected
+format: online
+dates:
+  start: 2027-06
+organizers: [unitary-foundation]
+topics: [computing, qc-software]
+audience: [anyone]
+url: https://unitaryhack.dev
+description: Annual virtual open-source hackathon in which participants contribute to quantum software projects; the 2026 edition also had in-person local hack days at several universities. No 2027 dates announced yet.
+expected:
+  basis: Described by the organiser as an annual virtual hackathon; the 2026 edition ran 3–17 June
+  confidence: medium
+sources:
+  - url: https://unitaryhack.dev
+    kind: official
+    accessed: 2026-11-11
+    note: 2026 edition dates and annual format; no 2027 dates listed
+checks:
+  last_checked: 2026-11-11
+  unchanged_streak: 0
+added:
+  date: 2026-11-11
+  by: scout-2026-11-11
