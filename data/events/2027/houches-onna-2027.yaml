@@ -1,0 +1,29 @@
+id: houches-onna-2027
+name: "Optical Nanofiber Applications 2027 (ONNA 27) – Les Houches WE-Heraeus Workshop"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-09-19"
+  end: "2027-09-24"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches, we-heraeus-foundation]
+topics: [optics, sensing]
+url: https://www.houches-school-physics.com/program/program-2027/optical-nanofiber-applications-2027-onna-27-les-houches-we-heraeus-workshop-1781919.kjsp
+description: Workshop on optical nanofibres and whispering-gallery resonators, covering quantum optics, waveguide and cavity QED, sensing, optomechanics and quantum technologies.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-20
+  - url: https://www.houches-school-physics.com/program/program-2027/optical-nanofiber-applications-2027-onna-27-les-houches-we-heraeus-workshop-1781919.kjsp
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20

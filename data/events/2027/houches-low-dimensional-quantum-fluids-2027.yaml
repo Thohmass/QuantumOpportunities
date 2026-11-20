@@ -1,0 +1,29 @@
+id: houches-low-dimensional-quantum-fluids-2027
+name: "Les Houches: Out of Equilibrium Physics in Low Dimensional Quantum Fluids 2027"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-03-14"
+  end: "2027-03-19"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [simulation, optics]
+url: https://www.houches-school-physics.com/program/program-2027/out-of-equilibrium-physics-in-low-dimensional-quantum-fluids-1733582.kjsp
+description: Workshop on non-equilibrium dynamics of one- and two-dimensional quantum fluids in atomic and photonic platforms, with tutorials and seminars on thermalisation and driven dynamics.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-20
+  - url: https://www.houches-school-physics.com/program/program-2027/out-of-equilibrium-physics-in-low-dimensional-quantum-fluids-1733582.kjsp
+    kind: official
+    accessed: 2026-11-20
+checks:
+  last_checked: 2026-11-20
+  unchanged_streak: 0
+added:
+  date: 2026-11-20
+  by: scout-2026-11-20
