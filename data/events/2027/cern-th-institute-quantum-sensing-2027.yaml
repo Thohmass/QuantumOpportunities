@@ -18,11 +18,11 @@ description: Two-week theory institute at CERN bringing together particle theori
 sources:
   - url: https://indico.cern.ch/event/1739438/
     kind: official
-    accessed: 2026-11-20
-    note: Page behind a bot check; content read through search result summary
+    accessed: 2026-11-21
+    note: Page read directly on 2026-11-21 (earlier via search summary); no deadline or fee stated
 checks:
-  last_checked: 2026-11-20
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-20
   by: scout-2026-11-20

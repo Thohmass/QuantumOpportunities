@@ -17,6 +17,7 @@ deadlines:
 location:
   city: Hannover
   country: DE
+  venue: Leibniz University Hannover
 cost:
   kind: paid
   min: 100
@@ -35,9 +36,13 @@ sources:
   - url: https://hannover27.dpg-tagungen.de/attend/registration
     kind: official
     accessed: 2026-11-09
+  - url: https://hannover27.dpg-tagungen.de/
+    kind: official
+    accessed: 2026-11-21
+    note: Venue (Leibniz University Hannover)
 checks:
-  last_checked: 2026-11-12
-  unchanged_streak: 1
+  last_checked: 2026-11-21
+  unchanged_streak: 0
 added:
   date: 2026-11-08
   by: scout-2026-11-08

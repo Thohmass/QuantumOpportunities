@@ -19,10 +19,10 @@ description: Fourth workshop on tools, languages, compilation, testing and verif
 sources:
   - url: https://www.spp2514.kit.edu/Q-STAV_2027.php
     kind: official
-    accessed: 2026-11-18
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-18
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-18
   by: scout-2026-11-18

@@ -12,6 +12,9 @@ location:
   venue: CBPF
 organizers: [ictp-saifr]
 topics: [computing, business]
+deadlines:
+  - kind: application
+    date: 2026-11-21
 audience: [msc, phd]
 url: https://indico.cern.ch/event/1716817/overview
 description: Three-day hackathon and workshop at CBPF in Rio de Janeiro, following the ICTP-SAIFR Quantum Computing School in São Paulo. Priority goes to students who attended the school; accepted participants get travel from São Paulo and housing covered. Application window has closed.
@@ -21,8 +24,12 @@ sources:
     kind: official
     accessed: 2026-11-20
     note: School page that announces the follow-on hackathon and links the Indico page
+  - url: https://rioquantumhack.com.br/en/
+    kind: official
+    accessed: 2026-11-21
+    note: Event site; pre-registration open until 2026-11-21
 checks:
-  last_checked: 2026-11-20
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-20

@@ -20,11 +20,11 @@ sources:
     accessed: 2026-11-08
   - url: https://www.eqtc2026.eu/
     kind: official
-    accessed: 2026-11-12
+    accessed: 2026-11-21
     note: Organiser site gives 30 Nov – 3 Dec; the Quantum Flagship listing was read earlier with 29 Nov start
 checks:
-  last_checked: 2026-11-12
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-08
   by: scout-2026-11-08

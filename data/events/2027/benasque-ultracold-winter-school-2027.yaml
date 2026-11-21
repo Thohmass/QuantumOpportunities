@@ -13,14 +13,24 @@ location:
 organizers: [benasque-center]
 topics: [simulation, hw-neutral-atoms]
 audience: [msc, phd]
-url: https://www.benasque.org/
-description: Winter school on ultracold quantum many-body systems organised by researchers from UAB, UPC and ICFO. No dedicated event page was linked yet; the programme listing gives the dates and organisers.
+url: https://benasque.org/2027uqms/
+cost:
+  kind: paid
+  min: 350
+  max: 350
+  currency: EUR
+  note: Covers bus transport, welcome dinner, coffee breaks and centre facilities
+description: One-week winter school (third edition) on ultracold quantum many-body systems organised by researchers from UAB, UPC and ICFO, with lectures on quantum simulation, Rydberg atoms, optical lattices, ultracold molecules and tensor networks. The application form is closed.
 sources:
   - url: https://benasque.org/new_general/cgi-bin/years.pl?ano=2027
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
+  - url: https://benasque.org/2027uqms/
+    kind: official
+    accessed: 2026-11-21
+    note: Fee and description; the page names 11 December as application deadline without a year while saying the form is closed, so no deadline recorded
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-08

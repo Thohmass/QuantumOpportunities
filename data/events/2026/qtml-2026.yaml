@@ -14,7 +14,7 @@ deadlines:
 location:
   city: Stellenbosch
   country: ZA
-  venue: Stellenbosch University
+  venue: Jan Mouton Learning Centre, Stellenbosch University
 topics: [qml, computing]
 audience: [researcher, phd, industry]
 url: https://qtml2026.nithecs.ac.za/
@@ -24,8 +24,12 @@ sources:
     kind: official
     accessed: 2026-11-15
     note: Fees and abstract deadline not on this page
+  - url: https://qtml2026.nithecs.ac.za/
+    kind: official
+    accessed: 2026-11-21
+    note: Venue (Jan Mouton Learning Centre); fee amounts not on the page
 checks:
-  last_checked: 2026-11-15
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-15

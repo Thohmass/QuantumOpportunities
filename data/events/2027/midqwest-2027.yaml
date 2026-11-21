@@ -1,0 +1,27 @@
+id: midqwest-2027
+series: midqwest
+name: MidQWest 2027
+type: hackathon
+status: expected
+format: in_person
+dates:
+  start: 2027-11
+location:
+  city: Chicago
+  country: US
+organizers: [midqwest]
+topics: [computing, qc-algorithms, qc-software]
+url: https://www.midqwest.dev/
+expected:
+  basis: Annual series; previous edition November 2026
+  confidence: medium
+sources:
+  - url: https://www.midqwest.dev/
+    kind: official
+    accessed: 2026-11-09
+checks:
+  last_checked: 2026-11-21
+  unchanged_streak: 0
+added:
+  date: 2026-11-21
+  by: expected-stub
