@@ -18,10 +18,10 @@ description: Five-day intensive school on photonics and quantum technologies, fr
 sources:
   - url: https://www.icfo.eu/event/4329/icfo-wits-frontiers-research-school-photonics-and-quantum-technologies-from-fundamentals-to-applications/
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-08
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-08
   by: scout-2026-11-08

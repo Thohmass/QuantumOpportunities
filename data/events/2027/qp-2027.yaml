@@ -21,10 +21,10 @@ description: Fourth workshop on how to program quantum computers, how this relat
 sources:
   - url: https://2027.programmingconference.org/home/qp-2027
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-08
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-08
   by: scout-2026-11-08

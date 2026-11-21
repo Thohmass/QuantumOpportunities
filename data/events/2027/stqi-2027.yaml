@@ -13,6 +13,8 @@ location:
 topics: [qit]
 audience: [phd, postdoc, researcher]
 url: https://indico.yukawa.kyoto-u.ac.jp/event/91/
+cost:
+  kind: free
 deadlines:
   - kind: application
     date: 2026-11-26
@@ -24,10 +26,10 @@ description: Week-long workshop at YITP Kyoto on stochastic thermodynamics and q
 sources:
   - url: https://indico.yukawa.kyoto-u.ac.jp/event/91/
     kind: official
-    accessed: 2026-11-18
+    accessed: 2026-11-21
     note: Participant information page; scientific scope inferred from the workshop title
 checks:
-  last_checked: 2026-11-18
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-18

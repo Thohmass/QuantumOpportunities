@@ -24,10 +24,10 @@ description: The 18th International Conference on Post-Quantum Cryptography, wit
 sources:
   - url: https://easychair.org/cfp/pqcrypto2027
     kind: official
-    accessed: 2026-11-12
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-12
-  unchanged_streak: 1
+  last_checked: 2026-11-21
+  unchanged_streak: 2
 added:
   date: 2026-11-08
   by: scout-2026-11-08

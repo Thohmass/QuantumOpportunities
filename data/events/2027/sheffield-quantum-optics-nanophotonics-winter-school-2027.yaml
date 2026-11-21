@@ -7,6 +7,8 @@ dates:
   start: 2027-01-20
   end: 2027-01-22
 deadlines:
+  - kind: early_bird
+    date: 2026-12-14
   - kind: abstract
     date: 2026-12-15
     note: poster abstract
@@ -24,9 +26,9 @@ description: Three-day school on quantum light and nanophotonics, covering gener
 sources:
   - url: https://quantumschool.sheffield.ac.uk/
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-08
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-08

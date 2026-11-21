@@ -18,6 +18,11 @@ location:
   country: JP
   venue: OIST Main Campus, Onna Village, Okinawa
 organizers: [oist]
+cost:
+  kind: paid
+  min: 75000
+  max: 75000
+  currency: JPY
 topics: [networks, communication]
 audience: [phd, postdoc, researcher, industry]
 url: https://www.oist.jp/conference/qunew-2027
@@ -25,10 +30,10 @@ description: Third edition of the biennial three-day workshop on quantum network
 sources:
   - url: https://www.oist.jp/conference/qunew-2027
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
 checks:
-  last_checked: 2026-11-08
-  unchanged_streak: 1
+  last_checked: 2026-11-21
+  unchanged_streak: 0
 added:
   date: 2026-11-08
   by: scout-2026-11-08

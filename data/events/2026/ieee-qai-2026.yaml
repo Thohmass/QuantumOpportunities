@@ -26,8 +26,8 @@ sources:
     kind: aggregator
     accessed: 2026-11-15
 checks:
-  last_checked: 2026-11-15
-  unchanged_streak: 0
+  last_checked: 2026-11-21
+  unchanged_streak: 1
 added:
   date: 2026-11-15
   by: scout-2026-11-15

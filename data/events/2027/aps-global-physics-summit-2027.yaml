@@ -11,6 +11,10 @@ location:
   city: Atlanta
   country: US
   venue: Georgia World Congress Center
+deadlines:
+  - kind: early_bird
+    date: 2027-02-25
+    note: Early-bird registration cutoff, 23:59, as given on the APS summit page (read via search result)
 organizers: [aps]
 topics: [computing, qit, materials, optics]
 audience: [bsc, msc, phd, postdoc, researcher, industry]
@@ -24,8 +28,8 @@ sources:
     kind: official
     accessed: 2026-11-06
 checks:
-  last_checked: 2026-11-09
-  unchanged_streak: 1
+  last_checked: 2026-11-21
+  unchanged_streak: 0
 added:
   date: 2026-11-06
   by: seed-research

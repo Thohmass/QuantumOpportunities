@@ -14,7 +14,7 @@ organizers: [ecole-de-physique-des-houches]
 topics: [hw-trapped-ions, optics]
 audience: [phd]
 url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-physics-with-trapped-charged-particles-1735413.kjsp
-description: Doctoral training on Penning and Paul traps, non-neutral plasmas and applications such as precision spectroscopy and quantum information; includes posters and a CERN visit.
+description: Doctoral training on Penning and Paul traps, non-neutral plasmas and applications such as precision spectroscopy and quantum information; includes posters and a CERN visit. Applications are closed (about 55 places); the call for abstracts is still open.
 sources:
   - url: https://www.houches-school-physics.com/program/program-2027/
     kind: official
@@ -22,8 +22,12 @@ sources:
   - url: https://www.houches-school-physics.com/program/program-2027/doctoral-training-physics-with-trapped-charged-particles-1735413.kjsp
     kind: official
     accessed: 2026-11-07
+  - url: https://indico.cern.ch/e/pwtcp2027
+    kind: official
+    accessed: 2026-11-21
+    note: Applications closed, about 55 places, abstracts open; no fee stated
 checks:
-  last_checked: 2026-11-07
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-07

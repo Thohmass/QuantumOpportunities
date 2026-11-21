@@ -10,6 +10,12 @@ location:
   city: Incheon
   country: KR
   venue: Songdo ConvensiA
+cost:
+  kind: paid
+  min: 800000
+  max: 1200000
+  currency: KRW
+  note: Early registration 800,000 (closed 2026-10-31); late and on-site 1,200,000
 topics: [business]
 audience: [researcher, industry]
 url: https://iqtkorea.com
@@ -17,13 +23,17 @@ description: First Asian edition of the IQT industry event, with exhibition, tal
 sources:
   - url: https://iqtkorea.com
     kind: official
-    accessed: 2026-11-08
+    accessed: 2026-11-21
+  - url: https://iqtkorea.com/register/
+    kind: official
+    accessed: 2026-11-21
+    note: Ticket prices
   - url: https://www.qureca.com/calendar/
     kind: aggregator
     accessed: 2026-11-08
 checks:
-  last_checked: 2026-11-12
-  unchanged_streak: 1
+  last_checked: 2026-11-21
+  unchanged_streak: 0
 added:
   date: 2026-11-08
   by: scout-2026-11-08

@@ -6,6 +6,16 @@ format: in_person
 dates:
   start: 2027-01-20
   end: 2027-01-22
+deadlines:
+  - kind: application
+    date: 2026-12-01
+    note: Full consideration for applications received by this date
+cost:
+  kind: paid
+  min: 25
+  max: 50
+  currency: USD
+  note: USD 25 for graduate students and postdocs, USD 50 for faculty, government and industry; includes materials, double-occupancy lodging and breakfast
 organizers: [ipam]
 topics: [computing, qc-algorithms, qc-software]
 audience: [msc, phd, postdoc]
@@ -14,10 +24,10 @@ description: Three-day school run by IPAM with CIQC and QCSA on LLM-based agenti
 sources:
   - url: https://www.ipam.ucla.edu/programs/workshops/quantum-winter-school-2027/
     kind: official
-    accessed: 2026-11-11
-    note: Dates, organisers, topics and audience; venue, fee and deadline not on the page text read
+    accessed: 2026-11-21
+    note: Dates, organisers, topics, audience, fee and deadline (Application tab); venue and city not stated on the page
 checks:
-  last_checked: 2026-11-11
+  last_checked: 2026-11-21
   unchanged_streak: 0
 added:
   date: 2026-11-11
