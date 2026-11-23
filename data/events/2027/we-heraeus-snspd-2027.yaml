@@ -1,0 +1,28 @@
+id: we-heraeus-snspd-2027
+name: Fundamentals and Applications of Superconducting Nanowire Single Photon Detectors (WE-Heraeus-Seminar)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-09-19
+  end: 2027-09-24
+location:
+  city: Bad Honnef
+  country: DE
+  venue: Physikzentrum Bad Honnef
+organizers: [we-heraeus-foundation]
+topics: [hw-photonics, sensing]
+audience: [researcher, phd]
+url: https://www.we-heraeus-stiftung.de/veranstaltungen/musterseiten/titel/main-2/
+description: Seminar on superconducting nanowire single-photon detectors, from theory, materials and fabrication to applications, aiming at a roadmap linking models and experiments. English language; the foundation covers full board.
+sources:
+  - url: https://www.we-heraeus-stiftung.de/veranstaltungen/musterseiten/titel/main-2/
+    kind: official
+    accessed: 2026-11-23
+    note: Page sits under a template-like path ("musterseiten") and gives no seminar number or deadline
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23

@@ -1,27 +1,11 @@
 # Unverified hints (no official page confirmed yet). Not shown on the site.
 # The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
-- title: Quantum.Tech World 2027, Boston (25–26 May 2027)
-  found: 2026-11-06
-  hint: Listed on quantum.info/conf/2027 and showsbee (organiser Alpha Events, Encore Boston Harbor; 2026 edition was 25–26 Jun); one showsbee page lists USA 2027 as TBD, so dates are unconfirmed; no official 2027 page read (alphaevents.com fetch refused). Co-located with Compute.Tech 2027 per a listing.
-  url: https://quantum.info/conf/2027.html
-  tries: 3
-  last_tried: 2026-11-20
-- title: Further Les Houches 2027 schools with quantum content (Non-linear, Imaging and Quantum Optics 18–23 Apr; Out of Equilibrium Physics in Low Dimensional Quantum Fluids 14–19 Mar; School on Low-Dimensional Quantum Matter 4–15 Oct)
-  found: 2026-11-07
-  hint: On the official Les Houches 2027 programme; borderline scope (quantum optics/matter), not created
-  url: https://www.houches-school-physics.com/program/program-2027/
 - title: More 2027 events on quantum.info – IQT PQC (25–26 Oct, New York); QSDC27 is already an event
   found: 2026-11-08
   hint: iqtevent.com has no 2027 PQC page, only PQC+IQT 25–26 Oct 2026 and Q+AI Munich 26–28 Apr 2027 with site forthcoming
   url: https://quantum.info/conf/2027.html
   tries: 3
   last_tried: 2026-11-08
-- title: Fundamentals and Applications of Superconducting Nanowire Single Photon Detectors (WE-Heraeus), Bad Honnef, 19–24 Sep 2027
-  found: 2026-11-08
-  hint: Listed on quantum.info/conf/2027; the link there is a generic WE-Heraeus page; 2026-11-18 search found no 2027 announcement (only a 2018 seminar on the topic)
-  url: https://www.we-heraeus-stiftung.de/
-  tries: 2
-  last_tried: 2026-11-20
 - title: IBM Quantum Challenge 2027 (online)
   found: 2026-11-08
   hint: 2026-11-20 search found the challenge only for 2024 (5–14 Jun 2024); no 2025 or 2026 edition seen, so recurrence is not shown. Check IBM Quantum events if it returns.
@@ -32,8 +16,8 @@
   found: 2026-11-08
   hint: q2b.qcware.com (2026-11-20) still lists only 2026 events (Tokyo 4–5 Jun, Copenhagen 9–10 Sep, Chicago 8–10 Dec); no Paris and no 2027 dates yet; series q2b already exists
   url: https://q2b.qcware.com/
-  tries: 2
-  last_tried: 2026-11-20
+  tries: 3
+  last_tried: 2026-11-23
 - title: Quantum hackathons and schools in Africa and Latin America (QWorld, Quantum Africa, Africa Quantum Institute, Quantum Hackathon LATAM)
   found: 2026-11-08
   hint: 2026-11-20 - Africa Quantum Institute says more events on the African continent follow in 2027 (no dates); Quantum Hackathon LATAM ran 1–3 Oct 2025, no 2027 edition seen; QWorld event list at qworld.net has QBronze/QSilver workshops by country (QNigeria, QMexico etc., 2026)
@@ -42,11 +26,13 @@
   found: 2026-11-08
   hint: Official page shows only the 2026 edition (14–15 Apr 2026, Convene Hamilton Square, Washington DC); no 2027 announcement as of 2026-11-18
   url: https://quantumconsortium.org/current-plenary
-  tries: 1
-  last_tried: 2026-11-18
+  tries: 2
+  last_tried: 2026-11-23
 - title: Quantum-2027 (PAGES Conferences), Berlin, 24–25 May 2027
   found: 2026-11-18
   hint: Only seen in a search summary of a listing site; commercial-style organiser, so check reputation and find the official page before creating
+  tries: 1
+  last_tried: 2026-11-23
 - title: Black Hat Asia 2027 Quantum Security Summit, Singapore (2 Mar 2027, Marina Bay Sands)
   found: 2026-11-20
   hint: Seen only in a search summary of blackhat.com/asia/quantum-security-summit.html; WebFetch 403 and browser Cloudflare block; one-day summit track of a commercial security conference
@@ -55,6 +41,12 @@
   last_tried: 2026-11-20
 - title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
   found: 2026-11-08
-  hint: Probably 2027; no dates or place announced as of 2026-11-20 (search found only QEC25, 11–15 Aug 2025)
+  hint: Probably 2027; no dates or place announced as of 2026-11-23 (search found only QEC25, 11–15 Aug 2025)
+  tries: 2
+  last_tried: 2026-11-23
+- title: Utah Quantum Summit (first edition, December 2026)
+  found: 2026-11-23
+  hint: Mentioned only in a Deseret News opinion piece (22 Nov 2026) as "in December"; search found no event page (related - Utah Quantum Initiative, Nucleus Institute)
+  url: https://www.deseret.com/opinion/2026/11/22/quantum-tech-is-utahs-generational-opportunity/
   tries: 1
-  last_tried: 2026-11-20
+  last_tried: 2026-11-23

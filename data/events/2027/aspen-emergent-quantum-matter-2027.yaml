@@ -1,0 +1,28 @@
+id: aspen-emergent-quantum-matter-2027
+name: Emergent Quantum Matter Across Scales (Aspen Winter Conference 2027)
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-07
+  end: 2027-02-12
+location:
+  city: Aspen
+  country: US
+  venue: Aspen Center for Physics
+organizers: [aspen-center-for-physics]
+topics: [materials, simulation]
+audience: [researcher, phd]
+url: https://quantum-matter-aspen-winter-2027.netlify.app
+description: Winter conference joining solid-state, cold-atom and computational communities to look for shared principles in moiré materials, quantum simulators, strongly correlated materials, tensor networks and neural-network quantum states. Attendance by application.
+sources:
+  - url: https://quantum-matter-aspen-winter-2027.netlify.app
+    kind: organiser_social
+    accessed: 2026-11-23
+    note: Organisers' own conference site (netlify); no page found on the centre's domain
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23

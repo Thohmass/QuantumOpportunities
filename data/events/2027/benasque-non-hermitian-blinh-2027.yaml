@@ -1,0 +1,33 @@
+id: benasque-non-hermitian-blinh-2027
+name: "Beyond Linearity: Frontiers in Non-Hermitian Many-Body Physics (BLINH 2027, Benasque)"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-09-12
+  end: 2027-09-18
+location:
+  city: Benasque
+  country: ES
+  venue: Centro de Ciencias de Benasque Pedro Pascual
+organizers: [benasque-center]
+topics: [materials, qit]
+audience: [researcher, phd]
+url: https://benasque.org/2027blinch/
+cost:
+  kind: paid
+  min: 350
+  max: 350
+  currency: EUR
+  note: Covers bus transport, welcome dinner, coffee breaks and centre facilities
+description: Workshop bridging the non-Hermitian and quantum many-body communities, on skin effects, nonlinear exceptional points, non-Hermitian topology, measurement-induced transitions and open or monitored systems. Second edition after Erice 2025. The application form is closed.
+sources:
+  - url: https://benasque.org/2027blinch/
+    kind: official
+    accessed: 2026-11-23
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23
