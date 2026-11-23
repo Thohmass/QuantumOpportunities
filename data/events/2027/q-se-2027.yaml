@@ -1,0 +1,29 @@
+id: q-se-2027
+name: Q-SE 2027 – International Workshop on Quantum Software Engineering (at ICSE 2027)
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-04-25
+location:
+  city: Dublin
+  country: IE
+  venue: Convention Centre Dublin
+url: https://conf.researchr.org/home/icse-2027/q-se-2027
+topics: [qc-software]
+audience: [researcher, industry]
+deadlines:
+  - kind: abstract
+    date: 2026-11-13
+    note: Paper submission (AoE); notification 2026-12-11, camera-ready 2027-01-29
+description: One-day workshop at ICSE 2027 on developing, testing, verifying and deploying quantum software, including quantum DevOps, education needs and the link to AI.
+sources:
+  - url: https://conf.researchr.org/home/icse-2027/q-se-2027
+    kind: official
+    accessed: 2026-11-23
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23

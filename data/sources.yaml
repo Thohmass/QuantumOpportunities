@@ -6,9 +6,9 @@
   kind: aggregator
   covers: [conferences, workshops, schools]
   note: One page per year (/conf/<year>.html). Dates there are hints; confirm on official pages.
-  last_scanned: 2026-11-18
-  scans: 2
-  yield: 13
+  last_scanned: 2026-11-23
+  scans: 3
+  yield: 18
   zero_yield_streak: 0
 - id: nordita-nordic-quantum-events
   name: Nordita – Nordic quantum events
@@ -29,19 +29,19 @@
     format: ical
     url: https://www.qureca.com/events/list/?ical=1
     all_quantum: true
-  last_scanned: 2026-11-20
-  scans: 6
+  last_scanned: 2026-11-23
+  scans: 7
   yield: 5
-  zero_yield_streak: 2
+  zero_yield_streak: 3
 - id: qt-eu-events
   name: Quantum Flagship (qt.eu) events
   url: https://qt.eu/events
   kind: aggregator
   covers: [European conferences, schools]
-  last_scanned: 2026-11-18
-  scans: 2
+  last_scanned: 2026-11-23
+  scans: 3
   yield: 3
-  zero_yield_streak: 0
+  zero_yield_streak: 1
 - id: nanowerk-quantum-events
   name: Nanowerk event calendar (quantum)
   url: https://www.nanowerk.com/events.php
@@ -57,30 +57,30 @@
   url: https://www.benasque.org/
   kind: organiser
   covers: [workshops, schools]
-  last_scanned: 2026-11-20
-  scans: 4
-  yield: 6
-  zero_yield_streak: 2
+  last_scanned: 2026-11-23
+  scans: 5
+  yield: 7
+  zero_yield_streak: 0
 - id: les-houches-school
   name: École de Physique des Houches – schools
   url: https://www.houches-school-physics.com/
   kind: organiser
   covers: [schools]
-  last_scanned: 2026-11-20
-  scans: 3
+  last_scanned: 2026-11-23
+  scans: 4
   yield: 10
-  zero_yield_streak: 0
+  zero_yield_streak: 1
   note: The programme page works at /program/program-2027/ (with trailing slash; without it 404).
 - id: ihp-paris
   name: Institut Henri Poincaré – programmes
   url: https://www.ihp.fr/en
   kind: organiser
   covers: [trimesters, schools, workshops]
-  last_scanned: 2026-11-20
-  scans: 4
+  last_scanned: 2026-11-23
+  scans: 5
   yield: 0
-  zero_yield_streak: 4
-  note: Unreachable on 2026-11-20 (WebFetch connection refused, browser timeout).
+  zero_yield_streak: 5
+  note: Unreachable on 2026-11-20 and 2026-11-23 (WebFetch connection refused, browser timeout).
 - id: qiskit-events
   name: Qiskit events
   url: https://www.ibm.com/quantum/events
@@ -96,21 +96,21 @@
   url: https://unitary.foundation/
   kind: community
   covers: [hackathons, challenges]
-  last_scanned: 2026-11-18
-  scans: 2
+  last_scanned: 2026-11-23
+  scans: 3
   yield: 0
-  zero_yield_streak: 2
+  zero_yield_streak: 3
   note: Calendar at /community/events is a Google Calendar iframe with only weekly calls and office hours (read in the browser 2026-11-18); no fixed-date events.
 - id: qworld-events
   name: QWorld events
   url: https://qworld.net/
   kind: community
   covers: [workshops, schools, hackathons]
-  last_scanned: 2026-11-18
-  scans: 2
+  last_scanned: 2026-11-23
+  scans: 3
   yield: 0
-  zero_yield_streak: 2
-  note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-08.
+  zero_yield_streak: 3
+  note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-23; /calendar/ not opened.
 - id: nbi-events
   name: Niels Bohr Institute events
   url: https://nbi.ku.dk/english/calendar/
@@ -126,10 +126,10 @@
   url: https://physics.dtu.dk/
   kind: university
   covers: [Copenhagen-area events, hackathons]
-  last_scanned: 2026-11-20
-  scans: 4
+  last_scanned: 2026-11-23
+  scans: 5
   yield: 0
-  zero_yield_streak: 4
+  zero_yield_streak: 5
 - id: google-alert-hackathon
   name: "Google Alert: 'quantum hackathon'"
   url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
@@ -138,10 +138,10 @@
   feed:
     format: rss
     url: https://www.google.com/alerts/feeds/06639093261592533807/15848687924026020582
-  last_scanned: 2026-11-20
-  scans: 1
+  last_scanned: 2026-11-23
+  scans: 2
   yield: 0
-  zero_yield_streak: 1
+  zero_yield_streak: 2
   note: Google Alert of the project account (agentomass), delivered as RSS. Items are hints, not sources.
 - id: google-alert-summer-school
   name: "Google Alert: 'quantum' 'summer school' 2027"
@@ -223,10 +223,10 @@
   feed:
     format: ical
     url: https://api.lu.ma/ics/get?entity=calendar&id=cal-GgAvtCRuzwlQ5kE
-  last_scanned: 2026-11-20
-  scans: 3
+  last_scanned: 2026-11-23
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
+  zero_yield_streak: 4
   note: Luma calendar iCal (23 events when checked). Keyword filter on, so breakfasts and office days drop out.
 - id: unitary-foundation-bluesky
   name: Unitary Foundation on Bluesky
@@ -236,10 +236,10 @@
   feed:
     format: rss
     url: https://bsky.app/profile/unitary.foundation/rss
-  last_scanned: 2026-11-20
-  scans: 3
+  last_scanned: 2026-11-23
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
+  zero_yield_streak: 4
   note: Public profile RSS, no login. Posts are hints, not sources.
 - id: quantiki-bluesky
   name: Quantiki on Bluesky

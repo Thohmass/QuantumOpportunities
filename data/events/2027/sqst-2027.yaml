@@ -1,0 +1,25 @@
+id: sqst-2027
+name: SQST 2027 – Symposium on Quantum Science and Technology (co-located with COMSNETS)
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: 2027-01-09
+  end: 2027-01-10
+location:
+  city: Bengaluru
+  country: IN
+url: https://archive.comsnets.org/SQST.php
+topics: [computing, communication, sensing, materials]
+audience: [researcher, industry]
+description: Two-day symposium alongside COMSNETS 2027 covering quantum sensing, communication, computing and materials, with a focus on India's National Quantum Mission and moving technology from academia to industry. Venue within Bengaluru not stated.
+sources:
+  - url: https://archive.comsnets.org/SQST.php
+    kind: official
+    accessed: 2026-11-23
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23

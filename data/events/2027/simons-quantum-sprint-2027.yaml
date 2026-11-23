@@ -1,0 +1,27 @@
+id: simons-quantum-sprint-2027
+name: A Quantum Sprint (Simons Institute programme 2027)
+type: programme
+status: confirmed
+format: in_person
+dates:
+  start: 2027-03-01
+  end: 2027-08-06
+location:
+  city: Berkeley
+  country: US
+  venue: Simons Institute for the Theory of Computing
+organizers: [simons-institute]
+topics: [qec, qc-algorithms, pqc]
+audience: [researcher, phd]
+url: https://simons.berkeley.edu/programs/quantum-sprint
+description: Long research programme on theoretical foundations of scalable quantum computing, starting with a boot camp and an experimental focus fortnight, then workshops on fault tolerance, algorithms, complexity and the quantum PCP conjecture. Long-term visitors apply via the page.
+sources:
+  - url: https://simons.berkeley.edu/programs/quantum-sprint
+    kind: official
+    accessed: 2026-11-23
+checks:
+  last_checked: 2026-11-23
+  unchanged_streak: 0
+added:
+  date: 2026-11-23
+  by: scout-2026-11-23

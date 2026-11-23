@@ -1,16 +1,16 @@
 # Rotating discovery queries (docs/04-data-pipeline.md §6). The Scout uses the M with the oldest
 # last_used each run and updates last_used, uses and yield. Use the current and next year in queries.
 - q: quantum hackathon {year}
-  last_used: 2026-11-15
-  uses: 2
+  last_used: 2026-11-23
+  uses: 3
   yield: 1
 - q: quantum computing hackathon Europe {year}
-  last_used: 2026-11-11
-  uses: 3
+  last_used: 2026-11-23
+  uses: 4
   yield: 0
 - q: quantum hackathon Nordic Denmark Sweden Finland Norway {year}
-  last_used: 2026-11-15
-  uses: 2
+  last_used: 2026-11-23
+  uses: 3
   yield: 0
 - q: quantum challenge competition prize {year}
   last_used: 2026-11-20
@@ -25,16 +25,16 @@
   uses: 2
   yield: 1
 - q: quantum computing summer school PhD master's {year}
-  last_used: 2026-11-15
-  uses: 2
+  last_used: 2026-11-23
+  uses: 3
   yield: 1
 - q: quantum information conference {year}
   last_used: 2026-11-15
   uses: 2
   yield: 0
 - q: quantum error correction conference workshop {year}
-  last_used: 2026-11-15
-  uses: 2
+  last_used: 2026-11-23
+  uses: 3
   yield: 1
 - q: quantum sensing metrology conference {year}
   last_used: 2026-11-18
@@ -65,8 +65,8 @@
   uses: 3
   yield: 0
 - q: quantum education outreach conference {year}
-  last_used: 2026-11-15
-  uses: 2
+  last_used: 2026-11-23
+  uses: 3
   yield: 1
 - q: student quantum hackathon university {year}
   last_used: 2026-11-20
