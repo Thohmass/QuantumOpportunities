@@ -1,52 +1,55 @@
 # Unverified hints (no official page confirmed yet). Not shown on the site.
 # The Scout tries to confirm each on its official page; confirmed leads become events and are removed.
-- title: More 2027 events on quantum.info – IQT PQC (25–26 Oct, New York); QSDC27 is already an event
-  found: 2026-11-08
-  hint: iqtevent.com has no 2027 PQC page, only PQC+IQT 25–26 Oct 2026 and Q+AI Munich 26–28 Apr 2027 with site forthcoming
-  url: https://quantum.info/conf/2027.html
-  tries: 3
-  last_tried: 2026-11-08
 - title: IBM Quantum Challenge 2027 (online)
   found: 2026-11-08
-  hint: 2026-11-20 search found the challenge only for 2024 (5–14 Jun 2024); no 2025 or 2026 edition seen, so recurrence is not shown. Check IBM Quantum events if it returns.
+  hint: 2026-11-20 search found the challenge only for 2024 (5–14 Jun 2024); 2026-11-25 search again found no 2027 challenge (only qdc 2025 challenges and the Q4Bio challenge). Check IBM Quantum events if it returns.
   url: https://www.ibm.com/quantum/events
-  tries: 1
-  last_tried: 2026-11-20
-- title: Q2B Tokyo 2027 and Q2B Paris 2027
-  found: 2026-11-08
-  hint: q2b.qcware.com (2026-11-20) still lists only 2026 events (Tokyo 4–5 Jun, Copenhagen 9–10 Sep, Chicago 8–10 Dec); no Paris and no 2027 dates yet; series q2b already exists
-  url: https://q2b.qcware.com/
-  tries: 3
-  last_tried: 2026-11-23
+  tries: 2
+  last_tried: 2026-11-25
 - title: Quantum hackathons and schools in Africa and Latin America (QWorld, Quantum Africa, Africa Quantum Institute, Quantum Hackathon LATAM)
   found: 2026-11-08
-  hint: 2026-11-20 - Africa Quantum Institute says more events on the African continent follow in 2027 (no dates); Quantum Hackathon LATAM ran 1–3 Oct 2025, no 2027 edition seen; QWorld event list at qworld.net has QBronze/QSilver workshops by country (QNigeria, QMexico etc., 2026)
+  hint: 2026-11-20 - Africa Quantum Institute says more events on the African continent follow in 2027 (no dates); Quantum Hackathon LATAM ran 1–3 Oct 2025, no 2027 edition seen; 2026-11-25 qworld.net lists only 2026 QBronze/QSilver events (month only) plus a QWorld Annual Meeting 2026 and QIntern 2026 without dates, no 2027 events yet
   url: https://qworld.net/
+  tries: 1
+  last_tried: 2026-11-25
 - title: QED-C Quantum Summit, Washington DC, mid-April 2027
   found: 2026-11-08
-  hint: Official page shows only the 2026 edition (14–15 Apr 2026, Convene Hamilton Square, Washington DC); no 2027 announcement as of 2026-11-18
+  hint: Official page shows only the 2026 edition (14–15 Apr 2026, Convene Hamilton Square, Washington DC); no 2027 announcement as of 2026-11-25
   url: https://quantumconsortium.org/current-plenary
-  tries: 2
-  last_tried: 2026-11-23
+  tries: 3
+  last_tried: 2026-11-25
 - title: Quantum-2027 (PAGES Conferences), Berlin, 24–25 May 2027
   found: 2026-11-18
-  hint: Only seen in a search summary of a listing site; commercial-style organiser, so check reputation and find the official page before creating
-  tries: 1
-  last_tried: 2026-11-23
+  hint: Only seen in a visitberlin.de listing (2026-11-25, "International Conference on Quantum Computing, Cyber Security and Artificial Intelligence"); no official PAGES Conferences page found; commercial-style organiser, so check reputation before creating
+  url: https://www.visitberlin.de/en/event/international-conference-quantum-computing-cyber-security-and-artificial-intelligence
+  tries: 2
+  last_tried: 2026-11-25
 - title: Black Hat Asia 2027 Quantum Security Summit, Singapore (2 Mar 2027, Marina Bay Sands)
   found: 2026-11-20
-  hint: Seen only in a search summary of blackhat.com/asia/quantum-security-summit.html; WebFetch 403 and browser Cloudflare block; one-day summit track of a commercial security conference
+  hint: Seen only in a search summary of blackhat.com/asia/quantum-security-summit.html; WebFetch 403 (again 2026-11-25) and browser Cloudflare block earlier; one-day summit track of a commercial security conference
   url: https://blackhat.com/asia/quantum-security-summit.html
-  tries: 1
-  last_tried: 2026-11-20
+  tries: 2
+  last_tried: 2026-11-25
 - title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
   found: 2026-11-08
-  hint: Probably 2027; no dates or place announced as of 2026-11-23 (search found only QEC25, 11–15 Aug 2025)
-  tries: 2
-  last_tried: 2026-11-23
+  hint: Probably 2027; no dates or place announced as of 2026-11-25 (search found only QEC25, 11–15 Aug 2025, and QEC23 Sydney)
+  tries: 3
+  last_tried: 2026-11-25
 - title: Utah Quantum Summit (first edition, December 2026)
   found: 2026-11-23
-  hint: Mentioned only in a Deseret News opinion piece (22 Nov 2026) as "in December"; search found no event page (related - Utah Quantum Initiative, Nucleus Institute)
+  hint: Mentioned only in a Deseret News opinion piece (22 Nov 2026) as "in December"; 2026-11-25 search again found no event page (related - Utah Quantum Initiative, Nucleus Institute)
   url: https://www.deseret.com/opinion/2026/11/22/quantum-tech-is-utahs-generational-opportunity/
+  tries: 2
+  last_tried: 2026-11-25
+- title: Quantum.Tech World 2027, Boston (25–26 May 2027, Encore Boston Harbor, co-located with Compute.Tech)
+  found: 2026-11-25
+  hint: Dates seen only on aggregator showsbee.com; official Alpha Events page alphaevents.com/events-quantumtechus returns 403 to WebFetch and the browser; 2026 edition was 25–26 Jun 2026
+  url: https://www.alphaevents.com/events-quantumtechus
   tries: 1
-  last_tried: 2026-11-23
+  last_tried: 2026-11-25
+- title: IQT PQC 2027 (25–26 Oct, New York) and other 2027 events on quantum.info
+  found: 2026-11-25
+  hint: quantum.info/conf/2027.html lists IQT PQC 25–26 Oct 2027 New York (iqtevent.com has no 2027 page yet); also unchecked there - QuanTim (7–9 Jul 2027, Brisbane, no link; search found nothing), Qx Queensland's Advanced Technologies Future (17 Aug 2027, Brisbane), Photonics North (Ottawa, Jun 2027)
+  url: https://quantum.info/conf/2027.html
+  tries: 1
+  last_tried: 2026-11-25

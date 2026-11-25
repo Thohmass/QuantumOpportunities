@@ -1,0 +1,28 @@
+id: uk-quantum-sensing-conference-2027
+name: UK Quantum Sensing Conference 2027
+type: conference
+status: confirmed
+format: in_person
+dates:
+  start: "2027-02-23"
+  end: "2027-02-24"
+location:
+  city: Birmingham
+  country: GB
+  venue: Edgbaston Park Hotel and Conference Centre
+organizers: [qusit]
+topics: [sensing]
+url: https://luma.com/5n26deme
+cost:
+  kind: free
+description: Two-day meeting on quantum sensing, imaging and timing with research briefings, end-user perspectives and networking, hosted by the UK QuSIT hub. Attendance needs host approval of a join request; the first day includes a conference dinner.
+sources:
+  - url: https://luma.com/5n26deme
+    kind: organiser_social
+    accessed: 2026-11-25
+checks:
+  last_checked: 2026-11-25
+  unchanged_streak: 0
+added:
+  date: 2026-11-25
+  by: scout-2026-11-25
