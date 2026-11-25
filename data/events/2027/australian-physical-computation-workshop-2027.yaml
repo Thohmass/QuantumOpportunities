@@ -1,0 +1,30 @@
+id: australian-physical-computation-workshop-2027
+name: Australian Physical Computation Workshop 2027
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: 2027-02-03
+  end: 2027-02-03
+location:
+  city: Canberra
+  country: AU
+  venue: UNSW Canberra City, Building 01, Room 25
+organizers: [unsw-canberra]
+topics: [computing, qit]
+audience: [phd, postdoc, researcher, industry]
+url: https://www.eventbrite.com.au/e/australian-physical-computation-workshop-tickets-2001166813810
+description: One-day workshop on computing with physical systems (neuromorphic, quantum, photonic, electronic and mechanical), bringing together academia, industry and government to build Australian collaboration across physics, engineering and computer science.
+sources:
+  - url: https://www.eventbrite.com.au/e/australian-physical-computation-workshop-tickets-2001166813810
+    kind: organiser_social
+    accessed: 2026-11-25
+  - url: https://quantum.info/conf/2027.html
+    kind: aggregator
+    accessed: 2026-11-25
+checks:
+  last_checked: 2026-11-25
+  unchanged_streak: 0
+added:
+  date: 2026-11-25
+  by: scout-2026-11-25

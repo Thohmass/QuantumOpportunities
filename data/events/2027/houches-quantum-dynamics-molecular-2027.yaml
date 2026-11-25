@@ -1,0 +1,29 @@
+id: houches-quantum-dynamics-molecular-2027
+name: "Les Houches: Quantum Dynamics and Spectroscopy of Functional Molecular Materials and Biological Photosystems 2027"
+type: workshop
+status: confirmed
+format: in_person
+dates:
+  start: "2027-02-28"
+  end: "2027-03-12"
+location:
+  city: Les Houches
+  country: FR
+  venue: École de Physique des Houches
+organizers: [ecole-de-physique-des-houches]
+topics: [materials, optics]
+url: https://www.houches-school-physics.com/program/program-2027/quantum-dynamics-and-spectroscopy-of-functional-molecular-materials-and-biological-photosystems-1739264.kjsp
+description: Two-week workshop on light-driven energy and charge transfer in photosynthetic complexes and synthetic optoelectronic materials, pairing ultrafast spectroscopy with theory of quantum dynamics in molecular systems.
+sources:
+  - url: https://www.houches-school-physics.com/program/program-2027/
+    kind: official
+    accessed: 2026-11-25
+  - url: https://www.houches-school-physics.com/program/program-2027/quantum-dynamics-and-spectroscopy-of-functional-molecular-materials-and-biological-photosystems-1739264.kjsp
+    kind: official
+    accessed: 2026-11-25
+checks:
+  last_checked: 2026-11-25
+  unchanged_streak: 0
+added:
+  date: 2026-11-25
+  by: scout-2026-11-25

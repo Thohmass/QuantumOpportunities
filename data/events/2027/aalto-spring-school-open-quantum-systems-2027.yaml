@@ -1,0 +1,35 @@
+id: aalto-spring-school-open-quantum-systems-2027
+name: Spring School on Open Quantum Systems and Mesoscopic Physics 2027 (Aalto)
+type: summer_school
+status: confirmed
+format: in_person
+dates:
+  start: "2027-05-10"
+  end: "2027-05-14"
+location:
+  city: Turku
+  country: FI
+  venue: Seili Island, Turku Archipelago
+organizers: [aalto]
+topics: [materials, sensing]
+url: https://www.aalto.fi/en/events/oqs2027
+deadlines:
+  - kind: application
+    date: 2027-01-15
+cost:
+  kind: paid
+  min: 450
+  max: 450
+  currency: EUR
+  note: Includes accommodation, meals and transfer from Turku
+description: Intensive week for advanced doctoral students and postdocs on quantum transport, dissipation, superconducting circuits and mesoscopic systems, covering experimental and theoretical approaches, held on an island in the Turku archipelago.
+sources:
+  - url: https://www.aalto.fi/en/events/oqs2027
+    kind: official
+    accessed: 2026-11-25
+checks:
+  last_checked: 2026-11-25
+  unchanged_streak: 0
+added:
+  date: 2026-11-25
+  by: scout-2026-11-25
