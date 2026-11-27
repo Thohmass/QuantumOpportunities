@@ -4,19 +4,13 @@
   found: 2026-11-08
   hint: 2026-11-20 search found the challenge only for 2024 (5–14 Jun 2024); 2026-11-25 search again found no 2027 challenge (only qdc 2025 challenges and the Q4Bio challenge). Check IBM Quantum events if it returns.
   url: https://www.ibm.com/quantum/events
-  tries: 2
-  last_tried: 2026-11-25
+  tries: 3
+  last_tried: 2026-11-27
 - title: Quantum hackathons and schools in Africa and Latin America (QWorld, Quantum Africa, Africa Quantum Institute, Quantum Hackathon LATAM)
   found: 2026-11-08
   hint: 2026-11-20 - Africa Quantum Institute says more events on the African continent follow in 2027 (no dates); Quantum Hackathon LATAM ran 1–3 Oct 2025, no 2027 edition seen; 2026-11-25 qworld.net lists only 2026 QBronze/QSilver events (month only) plus a QWorld Annual Meeting 2026 and QIntern 2026 without dates, no 2027 events yet
   url: https://qworld.net/
   tries: 1
-  last_tried: 2026-11-25
-- title: QED-C Quantum Summit, Washington DC, mid-April 2027
-  found: 2026-11-08
-  hint: Official page shows only the 2026 edition (14–15 Apr 2026, Convene Hamilton Square, Washington DC); no 2027 announcement as of 2026-11-25
-  url: https://quantumconsortium.org/current-plenary
-  tries: 3
   last_tried: 2026-11-25
 - title: Quantum-2027 (PAGES Conferences), Berlin, 24–25 May 2027
   found: 2026-11-18
@@ -30,17 +24,18 @@
   url: https://blackhat.com/asia/quantum-security-summit.html
   tries: 2
   last_tried: 2026-11-25
-- title: International Conference on Quantum Error Correction (QEC), next biennial edition after QEC25 at Yale
-  found: 2026-11-08
-  hint: Probably 2027; no dates or place announced as of 2026-11-25 (search found only QEC25, 11–15 Aug 2025, and QEC23 Sydney)
-  tries: 3
-  last_tried: 2026-11-25
+- title: World Conference on Quantum Computing and Applications (WCQCA-2027), Osaka, 22–24 Mar 2027
+  found: 2026-11-27
+  hint: Only on aggregators (conferenceindex.org, skiddle, ctomagazine); organiser The Iconic Meetings (commercial, many generic conferences), official site not opened; sources disagree on end date; check reputation before creating
+  url: https://conferenceindex.org/event/world-conference-on-quantum-computing-and-applications-wcqca-2027-2027-march-osaka-jp
+  tries: 1
+  last_tried: 2026-11-27
 - title: Utah Quantum Summit (first edition, December 2026)
   found: 2026-11-23
   hint: Mentioned only in a Deseret News opinion piece (22 Nov 2026) as "in December"; 2026-11-25 search again found no event page (related - Utah Quantum Initiative, Nucleus Institute)
   url: https://www.deseret.com/opinion/2026/11/22/quantum-tech-is-utahs-generational-opportunity/
-  tries: 2
-  last_tried: 2026-11-25
+  tries: 3
+  last_tried: 2026-11-27
 - title: Quantum.Tech World 2027, Boston (25–26 May 2027, Encore Boston Harbor, co-located with Compute.Tech)
   found: 2026-11-25
   hint: Dates seen only on aggregator showsbee.com; official Alpha Events page alphaevents.com/events-quantumtechus returns 403 to WebFetch and the browser; 2026 edition was 25–26 Jun 2026
@@ -49,7 +44,7 @@
   last_tried: 2026-11-25
 - title: IQT PQC 2027 (25–26 Oct, New York) and other 2027 events on quantum.info
   found: 2026-11-25
-  hint: quantum.info/conf/2027.html lists IQT PQC 25–26 Oct 2027 New York (iqtevent.com has no 2027 page yet); also unchecked there - QuanTim (7–9 Jul 2027, Brisbane, no link; search found nothing), Qx Queensland's Advanced Technologies Future (17 Aug 2027, Brisbane), Photonics North (Ottawa, Jun 2027)
+  hint: quantum.info/conf/2027.html lists IQT PQC 25–26 Oct 2027 New York (iqtevent.com has no 2027 page yet); also unchecked there - QuanTim (7–9 Jul 2027, Brisbane, no link; search found nothing), Qx Queensland's Advanced Technologies Future (17 Aug 2027, Brisbane). 2026-11-27 - Qx humanitix page 404 (WebFetch and browser); Photonics North checked and dropped (photonicsnorth.org, 8–11 Jun 2027 Ottawa, page shows no quantum content); 2026-11-27 iqtevent.com lists no IQT PQC 25–26 Oct, only "Post-Quantum Strategies" 15–16 Jun 2027 New York (website forthcoming, no link); QuanTim still no link
   url: https://quantum.info/conf/2027.html
-  tries: 1
-  last_tried: 2026-11-25
+  tries: 2
+  last_tried: 2026-11-27
