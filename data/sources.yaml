@@ -6,10 +6,10 @@
   kind: aggregator
   covers: [conferences, workshops, schools]
   note: One page per year (/conf/<year>.html). Dates there are hints; confirm on official pages.
-  last_scanned: 2026-11-23
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 18
-  zero_yield_streak: 0
+  zero_yield_streak: 1
 - id: nordita-nordic-quantum-events
   name: Nordita – Nordic quantum events
   url: https://nordita.org/nordic-quantum/nordic-quantum-events
@@ -29,47 +29,47 @@
     format: ical
     url: https://www.qureca.com/events/list/?ical=1
     all_quantum: true
-  last_scanned: 2026-11-25
-  scans: 8
+  last_scanned: 2026-11-27
+  scans: 9
   yield: 5
-  zero_yield_streak: 4
+  zero_yield_streak: 5
 - id: qt-eu-events
   name: Quantum Flagship (qt.eu) events
   url: https://qt.eu/events
   kind: aggregator
   covers: [European conferences, schools]
-  last_scanned: 2026-11-23
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 3
-  zero_yield_streak: 1
+  zero_yield_streak: 2
 - id: nanowerk-quantum-events
   name: Nanowerk event calendar (quantum)
   url: https://www.nanowerk.com/events.php
   kind: aggregator
   covers: [conferences]
-  last_scanned: 2026-11-25
-  scans: 4
+  last_scanned: 2026-11-27
+  scans: 5
   yield: 0
-  zero_yield_streak: 4
-  note: Fetch returned HTTP 403 on 2026-11-08, 2026-11-15 and 2026-11-20 (not retried 2026-11-25); the browser hits a Cloudflare challenge (not bypassed).
+  zero_yield_streak: 5
+  note: Fetch returned HTTP 403 on 2026-11-08, 2026-11-15, 2026-11-20 and 2026-11-27 (not retried 2026-11-25); the browser hits a Cloudflare challenge (not bypassed).
 - id: benasque-center
   name: Centro de Ciencias de Benasque – programme
   url: https://www.benasque.org/
   kind: organiser
   covers: [workshops, schools]
-  last_scanned: 2026-11-25
-  scans: 6
+  last_scanned: 2026-11-27
+  scans: 7
   yield: 7
-  zero_yield_streak: 1
+  zero_yield_streak: 2
 - id: les-houches-school
   name: École de Physique des Houches – schools
   url: https://www.houches-school-physics.com/
   kind: organiser
   covers: [schools]
-  last_scanned: 2026-11-25
-  scans: 5
+  last_scanned: 2026-11-27
+  scans: 6
   yield: 11
-  zero_yield_streak: 0
+  zero_yield_streak: 1
   note: The programme page works at /program/program-2027/ (with trailing slash; without it 404).
 - id: ihp-paris
   name: Institut Henri Poincaré – programmes
@@ -96,30 +96,30 @@
   url: https://unitary.foundation/
   kind: community
   covers: [hackathons, challenges]
-  last_scanned: 2026-11-23
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
+  zero_yield_streak: 4
   note: Calendar at /community/events is a Google Calendar iframe with only weekly calls and office hours (read in the browser 2026-11-18); no fixed-date events.
 - id: qworld-events
   name: QWorld events
   url: https://qworld.net/
   kind: community
   covers: [workshops, schools, hackathons]
-  last_scanned: 2026-11-23
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
+  zero_yield_streak: 4
   note: Lists only 2026 events (QBronze/QSilver series) as of 2026-11-23; /calendar/ not opened.
 - id: nbi-events
   name: Niels Bohr Institute events
   url: https://nbi.ku.dk/english/calendar/
   kind: university
   covers: [Copenhagen talks, workshops, schools]
-  last_scanned: 2026-11-25
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
+  zero_yield_streak: 4
   note: /english/news-events/ returned 404; the calendar at /english/calendar/ works (only talks and an info session there).
 - id: dtu-physics-events
   name: DTU Physics events
@@ -201,11 +201,11 @@
   feed:
     format: rss
     url: https://realmscape.substack.com/feed
-  last_scanned: 2026-11-25
-  scans: 3
+  last_scanned: 2026-11-27
+  scans: 4
   yield: 0
-  zero_yield_streak: 3
-  note: Weekly Substack roundup with a student-opportunities section. Items are hints, not sources. Feed returned HTTP 403 to the prep step and WebFetch on 2026-11-15, 2026-11-18 and 2026-11-25; the browser got a Cloudflare check on 2026-11-18 and 2026-11-25 (not bypassed).
+  zero_yield_streak: 4
+  note: Weekly Substack roundup with a student-opportunities section. Items are hints, not sources. Feed returned HTTP 403 to the prep step and WebFetch on 2026-11-15, 2026-11-18, 2026-11-25 and 2026-11-27; the browser got a Cloudflare check on 2026-11-18 and 2026-11-25 (not bypassed).
 - id: nordic-qai-community-meetup
   name: Nordic Quantum AI Community (Meetup)
   url: https://www.meetup.com/quantum-ai/
@@ -224,10 +224,10 @@
   feed:
     format: ical
     url: https://api.lu.ma/ics/get?entity=calendar&id=cal-GgAvtCRuzwlQ5kE
-  last_scanned: 2026-11-25
-  scans: 5
+  last_scanned: 2026-11-27
+  scans: 6
   yield: 0
-  zero_yield_streak: 5
+  zero_yield_streak: 6
   note: Luma calendar iCal (23 events when checked). Keyword filter on, so breakfasts and office days drop out.
 - id: unitary-foundation-bluesky
   name: Unitary Foundation on Bluesky
@@ -237,10 +237,10 @@
   feed:
     format: rss
     url: https://bsky.app/profile/unitary.foundation/rss
-  last_scanned: 2026-11-25
-  scans: 5
+  last_scanned: 2026-11-27
+  scans: 6
   yield: 0
-  zero_yield_streak: 5
+  zero_yield_streak: 6
   note: Public profile RSS, no login. Posts are hints, not sources.
 - id: quantiki-bluesky
   name: Quantiki on Bluesky
